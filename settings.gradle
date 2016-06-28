@@ -1,1 +1,2 @@
-rootProject.name = 'lolixl'
+rootProject.name = 'lolixl-parent'
+include ':lolixl', ':lolixl-api'
