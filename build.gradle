@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+project.group = 'org.to2mbn.lolixl'
+project.version = '0.0.1-SNAPSHOT'
+
+compileJava.options.encoding = 'UTF-8'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven {
+		url "https://oss.sonatype.org/content/groups/public/"
+	}
+}
+
+dependencies {
+	compile 'org.to2mbn:jmccc:2.5-SNAPSHOT'
+	compile 'org.to2mbn:jmccc-yggdrasil-authenticator:2.5-SNAPSHOT'
+	compile 'org.to2mbn:jmccc-mcdownloader:2.5-SNAPSHOT'
+	compile 'org.to2mbn:jmccc-mojang-api:2.5-SNAPSHOT'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.7.5'
+}
+
+jar {
+	doFirst {
+		from ( configurations.compile.collect { it.isDirectory() ? it : zipTree(it)} ) {
+			exclude('META-INF/MANIFEST.MF')
+			exclude('META-INF/*.SF')
+			exclude('META-INF/*.DSA')
+			exclude('META-INF/*.RSA')
+			exclude('META-INF/NOTICE')
+			exclude('META-INF/LICENSE')
+		}
+	}
+
+	manifest {
+		attributes(
+			'Main-Class': 'org.to2mbn.lolixl.Bootstrap'
+		)
+	}
+}
