@@ -16,3 +16,6 @@ jar {
 	}
 }
 
+dependencies {
+	compile project(':lolixl-api')
+}
