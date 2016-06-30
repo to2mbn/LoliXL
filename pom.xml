@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.to2mbn</groupId>
+	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>lolixl-parent</artifactId>
+	<url>https://github.com/to2mbn/LoliXL</url>
+	<packaging>pom</packaging>
+	<name>lolixl-parent</name>
+	<description>Lolixl - Minecraft Launcher</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jar.source>1.8</jar.source>
+		<jar.target>1.8</jar.target>
+	</properties>
+	<issueManagement>
+		<url>https://github.com/to2mbn/LoliXL/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL), Version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>
+				Lolixl - Minecraft Launcher
+				Copyright (C) 2016  to2mbn
+
+				This program is free software: you can redistribute it and/or modify
+				it under the terms of the GNU General Public License as published by
+				the Free Software Foundation, either version 3 of the License, or
+				(at your option) any later version.
+
+				This program is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU General Public License for more details.
+
+				You should have received a copy of the GNU General Public License
+				along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+			</comments>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/to2mbn/LoliXL</url>
+		<connection>scm:git:git://github.com/to2mbn/LoliXL.git</connection>
+		<developerConnection>scm:git:git@github.com:to2mbn/LoliXL.git</developerConnection>
+		<tag>master</tag>
+	</scm>
+	<developers>
+		<developer>
+			<email>2569766005@qq.com</email>
+			<name>Qiyun Zhou</name>
+			<url>https://github.com/darkyoooooo</url>
+			<id>darkyoooooo</id>
+		</developer>
+		<developer>
+			<email>yushijinhun@gmail.com</email>
+			<name>Haowei Wen</name>
+			<url>https://github.com/yushijinhun</url>
+			<id>yushijinhun</id>
+		</developer>
+	</developers>
+	<modules>
+	</modules>
+</project>
