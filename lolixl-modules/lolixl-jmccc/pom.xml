@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.to2mbn.lolixl</groupId>
+		<artifactId>lolixl-modules</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>lolixl-jmccc</artifactId>
+	<packaging>bundle</packaging>
+	<name>lolixl-jmccc</name>
+	<description>LoliXL JMCCC module</description>
+
+	<properties>
+		<jmccc.version>2.5-SNAPSHOT</jmccc.version>
+	</properties>
+
+	<modules>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<configuration>
+					<artifactSet>
+						<includes>
+							<include>org.to2mbn:jmccc</include>
+							<include>org.to2mbn:jmccc-yggdrasil-authenticator</include>
+							<include>org.to2mbn:jmccc-mcdownloader</include>
+							<include>org.to2mbn:jmccc-mojang-api</include>
+							<include>org.tukaani:xz</include>
+						</includes>
+					</artifactSet>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc</artifactId>
+			<version>${jmccc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-yggdrasil-authenticator</artifactId>
+			<version>${jmccc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-mcdownloader</artifactId>
+			<version>${jmccc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-mojang-api</artifactId>
+			<version>${jmccc.version}</version>
+		</dependency>
+	</dependencies>
+</project>
+

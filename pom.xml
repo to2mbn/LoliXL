@@ -1,6 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.to2mbn</groupId>
+	<groupId>org.to2mbn.lolixl</groupId>
 	<version>0.0.1-SNAPSHOT</version>
 	<artifactId>lolixl-parent</artifactId>
 	<url>https://github.com/to2mbn/LoliXL</url>
@@ -58,6 +59,12 @@
 			<name>Haowei Wen</name>
 			<url>https://github.com/yushijinhun</url>
 			<id>yushijinhun</id>
+		</developer>
+		<developer>
+			<email>mickeyxiami@qq.com</email>
+			<name>Zhuonan Zou</name>
+			<url>https://github.com/Mickeyxiami</url>
+			<id>Mickeyxiami</id>
 		</developer>
 	</developers>
 
@@ -151,7 +158,6 @@
 									<filter>
 										<artifact>*:*</artifact>
 										<excludes>
-											<exclude>META-INF/MANIFEST.MF</exclude>
 											<exclude>META-INF/*.SF</exclude>
 											<exclude>META-INF/*.DSA</exclude>
 											<exclude>META-INF/*.RSA</exclude>
