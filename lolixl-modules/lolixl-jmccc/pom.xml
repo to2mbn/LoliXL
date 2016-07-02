@@ -15,9 +15,6 @@
 		<jmccc.version>2.5-SNAPSHOT</jmccc.version>
 	</properties>
 
-	<modules>
-	</modules>
-
 	<build>
 		<plugins>
 			<plugin>

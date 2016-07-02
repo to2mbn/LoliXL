@@ -13,14 +13,10 @@
 
 	<modules>
 		<module>lolixl-jmccc</module>
+		<module>lolixl-i18n</module>
 	</modules>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>osgi.annotation</artifactId>
-			<version>6.0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
