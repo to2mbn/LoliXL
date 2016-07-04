@@ -2,7 +2,7 @@ package org.to2mbn.lolixl.i18n;
 
 import java.util.Arrays;
 import java.util.Locale;
-import org.to2mbn.lolixl.i18n.impl.I18NActivator;
+import org.to2mbn.lolixl.i18n.impl.LocalizationServiceImpl;
 
 public final class I18N {
 
@@ -22,9 +22,10 @@ public final class I18N {
 	}
 
 	private static LocalizationService getLocalizationService() {
-		if (I18NActivator.publicService == null) {
+		LocalizationService service = LocalizationServiceImpl.public_instance;
+		if (service == null) {
 			throw new IllegalStateException("No LocalizationService is available");
 		}
-		return I18NActivator.publicService;
+		return service;
 	}
 }

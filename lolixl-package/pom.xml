@@ -9,5 +9,73 @@
 	<artifactId>lolixl-package</artifactId>
 	<name>LoliXL</name>
 	<description>The packaged LoliXL</description>
+
+	<properties>
+		<lolixl.bundles>a,b,c</lolixl.bundles>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<configuration>
+					<artifactSet>
+						<includes>
+							<include>org.apache.felix:org.apache.felix.framework</include>
+						</includes>
+					</artifactSet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.to2mbn.lolixl.main.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy-bundles</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/bundles</outputDirectory>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-i18n</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-jmccc</artifactId>
+									<version>${project.version}</version>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.framework</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+	</dependencies>
 </project>
 

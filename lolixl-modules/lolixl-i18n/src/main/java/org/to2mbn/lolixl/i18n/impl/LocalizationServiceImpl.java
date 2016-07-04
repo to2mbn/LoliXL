@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.i18n.impl;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,16 +16,25 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Modified;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.i18n.LocaleChangedEvent;
 import org.to2mbn.lolixl.i18n.LocalizationService;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
 import org.to2mbn.lolixl.i18n.spi.LocalizationRegistry;
 
-public class LocalizationServiceImpl implements LocalizationService, LocalizationRegistry, ManagedService {
+@Component
+@Service({ LocalizationService.class, LocalizationRegistry.class })
+public class LocalizationServiceImpl implements LocalizationService, LocalizationRegistry, BundleListener {
+
+	public static LocalizationService public_instance;
 
 	private static class LocalizationCacheKey {
 
@@ -60,6 +68,7 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 
 	private static final Logger LOGGER = Logger.getLogger(LocalizationServiceImpl.class.getCanonicalName());
 
+	@Reference
 	private EventAdmin eventAdmin;
 
 	private Locale currentLocale;
@@ -71,12 +80,13 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 	private ReadWriteLock providersLock = new ReentrantReadWriteLock();
 
 	public LocalizationServiceImpl() {
+		public_instance = this;
 		currentLocale = Locale.getDefault();
 		LOGGER.info("Using locale " + currentLocale);
 	}
 
-	@Override
-	public void updated(Dictionary<String, ?> properties) throws ConfigurationException {
+	@Modified
+	public void updated(Map<String, Object> properties) throws ConfigurationException {
 		Locale newLocale = (Locale) properties.get(CONFIG_LOCALE);
 		if (newLocale != null) {
 			setCurrentLocale(newLocale);
@@ -193,6 +203,11 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 			}
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public void bundleChanged(BundleEvent event) {
+		checkBundleState(event.getBundle());
 	}
 
 }
