@@ -30,7 +30,6 @@ public interface PluginService {
 	 * 
 	 * @param artifact 插件的Maven信息
 	 * @return 插件
-	 * @async
 	 */
 	CompletableFuture<Plugin> loadPlugin(MavenArtifact artifact);
 

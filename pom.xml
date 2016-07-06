@@ -69,6 +69,7 @@
 	</developers>
 
 	<modules>
+		<module>lolixl-description-plugin</module>
 		<module>lolixl-modules</module>
 		<module>lolixl-package</module>
 	</modules>

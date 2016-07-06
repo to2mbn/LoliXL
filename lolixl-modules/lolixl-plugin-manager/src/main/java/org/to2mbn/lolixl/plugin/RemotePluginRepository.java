@@ -17,7 +17,6 @@ public interface RemotePluginRepository extends PluginRepository {
 	 * 
 	 * @param artifact 插件的Maven信息
 	 * @return void
-	 * @async
 	 */
 	CompletableFuture<Void> downloadPlugin(MavenArtifact artifact);
 

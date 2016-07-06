@@ -15,7 +15,6 @@ public interface PluginRepository {
 	 * 
 	 * @param artifact 插件的Maven信息
 	 * @return 插件信息，可能不存在
-	 * @async
 	 */
 	CompletableFuture<Optional<PluginDescription>> getPluginDescription(MavenArtifact artifact);
 

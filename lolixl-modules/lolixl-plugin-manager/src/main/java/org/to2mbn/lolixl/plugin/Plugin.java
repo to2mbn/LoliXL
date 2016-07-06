@@ -28,7 +28,6 @@ public interface Plugin {
 	 * 
 	 * @param updateTo 要升级到的版本
 	 * @return void
-	 * @async
 	 */
 	CompletableFuture<Void> update(String updateTo);
 
