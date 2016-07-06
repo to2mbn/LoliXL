@@ -15,6 +15,7 @@
 		<module>lolixl-jmccc</module>
 		<module>lolixl-i18n</module>
 		<module>lolixl-plugin-manager</module>
+		<module>lolixl-ui</module>
 	</modules>
 
 	<build>
