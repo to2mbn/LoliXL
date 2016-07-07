@@ -12,7 +12,6 @@
 	<description>LoliXL OSGi modules</description>
 
 	<modules>
-		<module>lolixl-jmccc</module>
 		<module>lolixl-i18n</module>
 		<module>lolixl-plugin-manager</module>
 	</modules>

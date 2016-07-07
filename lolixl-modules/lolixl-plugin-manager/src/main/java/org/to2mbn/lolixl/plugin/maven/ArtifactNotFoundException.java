@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.plugin.provider;
+package org.to2mbn.lolixl.plugin.maven;
 
 public class ArtifactNotFoundException extends Exception {
 
