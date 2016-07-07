@@ -7,9 +7,9 @@ import org.to2mbn.lolixl.plugin.MavenArtifact;
 
 public interface LocalMavenRepository extends MavenRepository {
 
-	Path getReleasePath(MavenArtifact artifact, String classifier, String type);
-
-	Path getSnapshotPath(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type);
+	// Notice: Do not write to these files directly
+	Path getReleasePath(MavenArtifact artifact, String classifier, String type) throws IllegalVersionException;
+	Path getSnapshotPath(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException;
 	
 	/**
 	 * 删除给定构件。

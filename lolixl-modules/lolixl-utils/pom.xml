@@ -6,13 +6,13 @@
 		<artifactId>lolixl-modules</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lolixl-plugin-manager</artifactId>
+	<artifactId>lolixl-utils</artifactId>
 	<packaging>bundle</packaging>
-	<name>lolixl-plugin-manager</name>
-	<description>LoliXL plugin manager module</description>
+	<name>lolixl-utils</name>
+	<description>LoliXL utils module</description>
 
 	<build>
-		<plugins>
+		<plugins> 
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -21,11 +21,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.to2mbn.lolixl</groupId>
-			<artifactId>lolixl-utils</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 	</dependencies>
 
 </project>

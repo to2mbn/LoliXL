@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.plugin.impl;
+package org.to2mbn.lolixl.plugin.impl.maven;
 
 import java.io.Serializable;
 import java.util.Set;

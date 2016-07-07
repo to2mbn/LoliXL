@@ -12,8 +12,9 @@
 	<description>LoliXL OSGi modules</description>
 
 	<modules>
-		<module>lolixl-i18n</module>
+		<module>lolixl-utils</module>
 		<module>lolixl-plugin-manager</module>
+		<module>lolixl-i18n</module>
 		<module>lolixl-ui</module>
 	</modules>
 

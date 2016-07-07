@@ -15,21 +15,20 @@ public interface MavenRepository {
 	 * MavenRepository在下载失败的情况下可以自行决定进行重试：首先需要关闭原来的Channel，然后重新调用output.get()
 	 * 打开一个Channel。 如果无法找到该构件，则Future应该抛出一个{@link ArtifactNotFoundException}
 	 * 。如果下载出现异常，并且MavenRepository不再决定重试，Future也应该抛出异常。
-	 * 如果构件是一个snapshot却调用了该方法，应该抛出一个IllegalVersionException。
 	 * 
 	 * @param artifact 构件信息
 	 * @param classifier 构件的classifier
 	 * @param type 构件的type
 	 * @param output 下载到的数据的目的地
 	 * @return void
+	 * @throws IllegalVersionException 如果构件是一个snapshot却调用了该方法
 	 */
-	CompletableFuture<Void> downloadRelease(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output);
+	CompletableFuture<Void> downloadRelease(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException;
 
 	/**
 	 * 尝试下载指定的snapshot版本的构件。
 	 * <p>
 	 * 大部分要求同{@link #downloadRelease(MavenArtifact, String, String, Supplier)}。
-	 * 如果构件是一个release却调用了该方法，应该抛出一个IllegalVersionException。
 	 *
 	 * @param artifact 构件信息
 	 * @param snapshot 该snapshot的信息
@@ -37,9 +36,10 @@ public interface MavenRepository {
 	 * @param type 构件的type
 	 * @param output 下载到的数据的目的地
 	 * @return void
+	 * @throws IllegalVersionException 如果构件是一个release却调用了该方法
 	 * @see #downloadRelease(MavenArtifact, String, String, Supplier)
 	 */
-	CompletableFuture<Void> downloadSnapshot(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type, Supplier<WritableByteChannel> output);
+	CompletableFuture<Void> downloadSnapshot(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException;
 
 	/**
 	 * 尝试下载所给构件的versioning。
@@ -58,11 +58,11 @@ public interface MavenRepository {
 	 * 尝试下载所给构件的snapshot信息。
 	 * <p>
 	 * 大部分要求同{@link #getVersioning(String, String)}。
-	 * 如果构件是一个release却调用了该方法，应该抛出一个IllegalVersionException。
 	 * 
 	 * @param artifact 构件信息
 	 * @return snapshot信息
+	 * @throws IllegalVersionException 如果构件是一个release却调用了该方法
 	 */
-	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact);
+	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) throws IllegalVersionException;
 
 }
