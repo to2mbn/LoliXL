@@ -18,6 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Modified;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.Bundle;
@@ -71,7 +72,9 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 	@Reference
 	private EventAdmin eventAdmin;
 
+	@Property
 	private Locale currentLocale;
+
 	private Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 
 	private Set<LocalizationProvider> providers = new CopyOnWriteArraySet<>();

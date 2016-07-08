@@ -9,16 +9,12 @@ public final class MavenUtils {
 	private MavenUtils() {}
 
 	public static String getArtifactFileName(MavenArtifact artifact, String classifier, String type) {
-		if (isSnapshot(artifact.getVersion())) {
-			throw new IllegalVersionException("Not a release version: " + artifact);
-		}
+		requireRelease(artifact);
 		return getArtifactFileName0(artifact.getArtifactId(), artifact.getVersion(), classifier, type);
 	}
 
 	public static String getArtifactFileName(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) {
-		if (!isSnapshot(artifact.getVersion())) {
-			throw new IllegalVersionException("Not a snapshot version: " + artifact);
-		}
+		requireSnapshot(artifact);
 		String artifactVersion = artifact.getVersion();
 		String version0 = artifactVersion.substring(0, artifactVersion.length() - "SNAPSHOT".length()) + snapshot.getTimestamp() + "-" + snapshot.getBuildNumber();
 		return getArtifactFileName0(artifact.getArtifactId(), version0, classifier, type);
@@ -40,6 +36,18 @@ public final class MavenUtils {
 
 	public static boolean isSnapshot(String version) {
 		return version.endsWith("-SNAPSHOT");
+	}
+
+	public static void requireRelease(MavenArtifact artifact) throws IllegalVersionException {
+		if (isSnapshot(artifact.getVersion())) {
+			throw new IllegalVersionException("Not a release version: " + artifact);
+		}
+	}
+
+	public static void requireSnapshot(MavenArtifact artifact) throws IllegalVersionException {
+		if (!isSnapshot(artifact.getVersion())) {
+			throw new IllegalVersionException("Not a snapshot version: " + artifact);
+		}
 	}
 
 }
