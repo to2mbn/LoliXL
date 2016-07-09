@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.plugin.maven;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 
 public interface LocalMavenRepository extends MavenRepository {
 
@@ -31,5 +30,8 @@ public interface LocalMavenRepository extends MavenRepository {
 	 * @return void
 	 */
 	CompletableFuture<Void> deleteArtifactAllVersions(String groupId, String artifactId);
+
+	CompletableFuture<Void> installRelease(MavenRepository from, MavenArtifact artifact, String classifier, String type) throws IllegalVersionException;
+	CompletableFuture<Void> installSnapshot(MavenRepository from, MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException;
 
 }

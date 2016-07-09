@@ -16,11 +16,11 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.IllegalVersionException;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 import org.to2mbn.lolixl.plugin.util.MavenUtils;
 

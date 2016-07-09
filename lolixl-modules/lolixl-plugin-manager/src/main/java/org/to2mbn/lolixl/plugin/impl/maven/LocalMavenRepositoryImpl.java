@@ -1,31 +1,44 @@
 package org.to2mbn.lolixl.plugin.impl.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
+import org.to2mbn.lolixl.plugin.maven.IllegalVersionException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
+import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 import org.to2mbn.lolixl.plugin.util.MavenUtils;
 import org.to2mbn.lolixl.plugin.util.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import com.google.gson.Gson;
+import static java.lang.String.format;
 
 @Component
 @Service({ LocalMavenRepository.class })
@@ -33,6 +46,95 @@ import com.google.gson.Gson;
 		@Property(name = "m2repository.type", value = "local")
 })
 public class LocalMavenRepositoryImpl implements LocalMavenRepository {
+
+	private static final Logger LOGGER = Logger.getLogger(LocalMavenRepositoryImpl.InstallProcessor.class.getCanonicalName());
+
+	private static class InstallProcessor implements Supplier<WritableByteChannel> {
+
+		private Path to;
+		private Path toTemp;
+		private Function<Supplier<WritableByteChannel>, CompletableFuture<Void>> operation;
+
+		private AtomicInteger openCount = new AtomicInteger();
+		private AtomicBoolean channelOpened = new AtomicBoolean();
+		private FileChannel lastChannel;
+
+		public InstallProcessor(Path to, Function<Supplier<WritableByteChannel>, CompletableFuture<Void>> operation) {
+			this.to = Objects.requireNonNull(to);
+			this.operation = Objects.requireNonNull(operation);
+
+			Path parent = to.getParent();
+			if (parent == null) {
+				toTemp = to.getFileSystem().getPath(to.getFileName() + ".part");
+			} else {
+				toTemp = parent.resolve(to.getFileName() + ".part");
+			}
+		}
+
+		public CompletableFuture<Void> invoke() {
+			return operation.apply(this)
+					.whenComplete((dummy, exception) -> {
+						if (exception != null) {
+							try {
+								Files.deleteIfExists(toTemp);
+							} catch (IOException e) {
+								exception.addSuppressed(e);
+							}
+						} else {
+							try {
+								Files.move(toTemp, to, StandardCopyOption.REPLACE_EXISTING);
+							} catch (IOException exCopy) {
+								try {
+									Files.deleteIfExists(toTemp);
+								} catch (IOException e) {
+									exCopy.addSuppressed(e);
+								}
+								throw new UncheckedIOException(exCopy);
+							}
+						}
+					});
+		}
+
+		@Override
+		public WritableByteChannel get() {
+			if (channelOpened.compareAndSet(false, true)) {
+				// Illegal state
+				RuntimeException ex = new IllegalStateException("The previous channel is not closed");
+
+				LOGGER.log(Level.SEVERE, ex, () -> format(
+						"[%s] channel #%d is not closed, but caller is trying to open another channel. For security, close the channel first, and then throw an exception.",
+						this, openCount));
+
+				if (lastChannel != null) {
+					try {
+						lastChannel.close();
+					} catch (IOException e) {
+						ex.addSuppressed(e);
+					}
+				}
+
+				throw ex;
+
+			} else {
+				int idx = openCount.getAndIncrement();
+				LOGGER.finer(() -> format("[%s] opening channel #%d", this, idx));
+				try {
+					Files.deleteIfExists(toTemp);
+					PathUtils.tryMkdirsParent(toTemp);
+					lastChannel = FileChannel.open(toTemp, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+					return lastChannel;
+				} catch (IOException e) {
+					throw new UncheckedIOException(e);
+				}
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "[to=" + to + "@" + System.identityHashCode(this) + "]";
+		}
+
+	}
 
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
@@ -66,7 +168,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(groupId);
 		Objects.requireNonNull(artifactId);
 
-		return readMetadataJson(ArtifactVersioning.class, getArtifactDir(groupId, artifactId).resolve("maven-metadata.json"));
+		return asyncReadMetadataJson(ArtifactVersioning.class, getVersioningMetadataPath(groupId, artifactId));
 	}
 
 	@Override
@@ -74,7 +176,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(artifact);
 		MavenUtils.requireSnapshot(artifact);
 
-		return readMetadataJson(ArtifactSnapshot.class, getVersionDir(artifact).resolve("maven-metadata.json"));
+		return asyncReadMetadataJson(ArtifactSnapshot.class, getSnapshotMetadataPath(artifact));
 	}
 
 	@Override
@@ -140,7 +242,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		}, localIOPool);
 	}
 
-	private <T> CompletableFuture<T> readMetadataJson(Class<T> clazz, Path path) {
+	private <T> CompletableFuture<T> asyncReadMetadataJson(Class<T> clazz, Path path) {
 		return AsyncUtils.asyncRun(() -> {
 			checkArtifactExisting(path);
 
@@ -153,6 +255,64 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 	private void checkArtifactExisting(Path path) throws ArtifactNotFoundException {
 		if (!Files.exists(path)) {
 			throw new ArtifactNotFoundException("Artifact file not found: " + path);
+		}
+	}
+
+	private Path getVersioningMetadataPath(String groupId, String artifactId) {
+		return getArtifactDir(groupId, artifactId).resolve("maven-metadata.json");
+	}
+
+	private Path getSnapshotMetadataPath(MavenArtifact artifact) {
+		return getVersionDir(artifact).resolve("maven-metadata.json");
+	}
+
+	@Override
+	public CompletableFuture<Void> installRelease(MavenRepository from, MavenArtifact artifact, String classifier, String type) throws IllegalVersionException {
+		return updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId())
+				.thenCompose(
+						dummy -> processDownloading(
+								getReleasePath(artifact, classifier, type),
+								output -> from.downloadRelease(artifact, classifier, type, output)));
+	}
+
+	@Override
+	public CompletableFuture<Void> installSnapshot(MavenRepository from, MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException {
+		return updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId())
+				.thenCompose(dummy -> updateSnapshot(from, artifact))
+				.thenCompose(
+						dummy -> processDownloading(
+								getSnapshotPath(artifact, snapshot, classifier, type),
+								output -> from.downloadSnapshot(artifact, snapshot, classifier, type, output)));
+	}
+
+	private CompletableFuture<Void> processDownloading(Path to, Function<Supplier<WritableByteChannel>, CompletableFuture<Void>> operation) {
+		return new InstallProcessor(to, operation).invoke();
+	}
+
+	private CompletableFuture<Void> updateVersioning(MavenRepository from, String groupId, String artifactId) {
+		return from.getVersioning(groupId, artifactId)
+				.thenApplyAsync(versioning -> {
+					writeMetadataJson(getVersioningMetadataPath(groupId, artifactId), versioning);
+					return null;
+				}, localIOPool);
+	}
+
+	private CompletableFuture<Void> updateSnapshot(MavenRepository from, MavenArtifact artifact) {
+		return from.getSnapshot(artifact)
+				.thenApplyAsync(snapshot -> {
+					writeMetadataJson(getSnapshotMetadataPath(artifact), snapshot);
+					return null;
+				}, localIOPool);
+	}
+
+	private void writeMetadataJson(Path path, Object metadata) throws UncheckedIOException {
+		try {
+			PathUtils.tryMkdirsParent(path);
+			try (Writer writer = new OutputStreamWriter(Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE), "UTF-8")) {
+				gson.toJson(metadata, writer);
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 	}
 

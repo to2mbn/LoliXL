@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.plugin;
 
 import java.util.Set;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 public interface PluginDescription {
 

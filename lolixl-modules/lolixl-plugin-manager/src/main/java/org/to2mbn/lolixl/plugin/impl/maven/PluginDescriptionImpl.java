@@ -2,8 +2,8 @@ package org.to2mbn.lolixl.plugin.impl.maven;
 
 import java.io.Serializable;
 import java.util.Set;
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 import org.to2mbn.lolixl.plugin.PluginDescription;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 public class PluginDescriptionImpl implements PluginDescription, Serializable {
 

@@ -1,8 +1,8 @@
 package org.to2mbn.lolixl.plugin.util;
 
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.IllegalVersionException;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 public final class MavenUtils {
 

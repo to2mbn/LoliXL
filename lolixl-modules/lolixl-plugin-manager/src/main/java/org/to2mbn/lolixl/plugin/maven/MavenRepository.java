@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.plugin.maven;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import org.to2mbn.lolixl.plugin.MavenArtifact;
 
 public interface MavenRepository {
 

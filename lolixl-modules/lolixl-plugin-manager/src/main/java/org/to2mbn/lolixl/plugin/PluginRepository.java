@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.plugin;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 /**
  * 代表一个插件仓库（可能是远程或本地）
