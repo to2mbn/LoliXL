@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.plugin;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.osgi.framework.Bundle;
 
@@ -21,15 +22,9 @@ public interface Plugin {
 	Bundle getBundle();
 
 	/**
-	 * 将插件升级为指定版本。
-	 * <p>
-	 * 新版本的groupId、artifactId与原来相同，version为指定的updateTo。该插件必须已经在本地仓库中存在。
-	 * 如果说升级过程中出现异常，则升级失败， 插件滚回原来的版本。
-	 * 
-	 * @param updateTo 要升级到的版本
-	 * @return void
+	 * @return 插件所依赖的Bundle，在依赖关系未解决的情况下，该方法返回的依赖是不完整的
 	 */
-	CompletableFuture<Void> update(String updateTo);
+	Set<Bundle> getDependentBundles();
 
 	/**
 	 * 将该插件禁用并从内存中卸载。
@@ -37,4 +32,5 @@ public interface Plugin {
 	 * @return void
 	 */
 	CompletableFuture<Void> unload();
+
 }

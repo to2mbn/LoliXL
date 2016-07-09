@@ -1,7 +1,9 @@
 package org.to2mbn.lolixl.plugin;
 
 import java.util.concurrent.CompletableFuture;
+import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
+import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 
 /**
  * 代表本地插件仓库。
@@ -10,14 +12,9 @@ import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
  */
 public interface LocalPluginRepository extends PluginRepository {
 
-	/**
-	 * 从仓库中删除插件。
-	 * <p>
-	 * 该方法可能会出现异常，如插件不存在，或还在使用中。
-	 * 
-	 * @param artifact 插件的Maven信息
-	 * @return void
-	 */
-	CompletableFuture<Void> deletePlugin(MavenArtifact artifact);
+	CompletableFuture<Void> downloadBundle(MavenRepository from, MavenArtifact artifact);
+
+	@Override
+	LocalMavenRepository getRepository();
 
 }
