@@ -41,10 +41,10 @@ class Main {
 		}
 	}
 
-	private static void setupFelix(Felix felix) {
-		// TODO setup felix
+	private static void setupFelix(Felix felix) throws Exception {
+		InternalBundleRepository repo = new InternalBundleRepository();
+		repo.init(felix);
 	}
-
 
 	public static void main(String[] args) {
 		Felix felix = null;

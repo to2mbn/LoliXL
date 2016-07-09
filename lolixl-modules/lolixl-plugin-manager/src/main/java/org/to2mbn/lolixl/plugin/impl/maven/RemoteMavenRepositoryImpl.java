@@ -19,10 +19,8 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
-import org.to2mbn.lolixl.plugin.maven.IllegalVersionException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
-import org.to2mbn.lolixl.plugin.util.MavenUtils;
 
 @Component
 @Service({ MavenRepository.class })
@@ -45,22 +43,11 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 	}
 
 	@Override
-	public CompletableFuture<Void> downloadRelease(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException {
+	public CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
 		Objects.requireNonNull(artifact);
 		Objects.requireNonNull(output);
-		MavenUtils.requireRelease(artifact);
 
-		return asyncInvokeChain(repo -> repo.downloadRelease(artifact, classifier, type, output));
-	}
-
-	@Override
-	public CompletableFuture<Void> downloadSnapshot(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException {
-		Objects.requireNonNull(artifact);
-		Objects.requireNonNull(snapshot);
-		Objects.requireNonNull(output);
-		MavenUtils.requireSnapshot(artifact);
-
-		return asyncInvokeChain(repo -> downloadSnapshot(artifact, snapshot, classifier, type, output));
+		return asyncInvokeChain(repo -> repo.downloadArtifact(artifact, classifier, type, output));
 	}
 
 	@Override
@@ -72,9 +59,8 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 	}
 
 	@Override
-	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) throws IllegalVersionException {
+	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) {
 		Objects.requireNonNull(artifact);
-		MavenUtils.requireSnapshot(artifact);
 
 		return asyncInvokeChain(repo -> repo.getSnapshot(artifact));
 	}

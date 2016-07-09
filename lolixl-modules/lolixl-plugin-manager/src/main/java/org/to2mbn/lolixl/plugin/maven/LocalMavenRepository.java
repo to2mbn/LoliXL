@@ -7,8 +7,7 @@ import java.util.concurrent.CompletableFuture;
 public interface LocalMavenRepository extends MavenRepository {
 
 	// Notice: Do not write to these files directly
-	Path getReleasePath(MavenArtifact artifact, String classifier, String type) throws IllegalVersionException;
-	Path getSnapshotPath(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException;
+	Path getArtifactPath(MavenArtifact artifact, String classifier, String type);
 	
 	/**
 	 * 删除给定构件。

@@ -147,22 +147,11 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 	private Path m2dir = new File(".lolixl/m2/repo").toPath();
 
 	@Override
-	public CompletableFuture<Void> downloadRelease(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
+	public CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
 		Objects.requireNonNull(artifact);
 		Objects.requireNonNull(output);
-		MavenUtils.requireRelease(artifact);
 
-		return asyncReadArtifact(getReleasePath(artifact, classifier, type), output);
-	}
-
-	@Override
-	public CompletableFuture<Void> downloadSnapshot(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type, Supplier<WritableByteChannel> output) {
-		Objects.requireNonNull(artifact);
-		Objects.requireNonNull(snapshot);
-		Objects.requireNonNull(output);
-		MavenUtils.requireSnapshot(artifact);
-
-		return asyncReadArtifact(getSnapshotPath(artifact, snapshot, classifier, type), output);
+		return asyncReadArtifact(getArtifactPath(artifact, classifier, type), output);
 	}
 
 	@Override
@@ -176,26 +165,15 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 	@Override
 	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) {
 		Objects.requireNonNull(artifact);
-		MavenUtils.requireSnapshot(artifact);
 
 		return asyncReadMetadataJson(ArtifactSnapshot.class, getSnapshotMetadataPath(artifact));
 	}
 
 	@Override
-	public Path getReleasePath(MavenArtifact artifact, String classifier, String type) {
+	public Path getArtifactPath(MavenArtifact artifact, String classifier, String type) {
 		Objects.requireNonNull(artifact);
-		MavenUtils.requireRelease(artifact);
 
 		return getVersionDir(artifact).resolve(MavenUtils.getArtifactFileName(artifact, classifier, type));
-	}
-
-	@Override
-	public Path getSnapshotPath(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) {
-		Objects.requireNonNull(artifact);
-		Objects.requireNonNull(snapshot);
-		MavenUtils.requireSnapshot(artifact);
-
-		return getVersionDir(artifact).resolve(MavenUtils.getArtifactFileName(artifact, snapshot, classifier, type));
 	}
 
 	@Override
@@ -224,21 +202,10 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(from);
 		Objects.requireNonNull(artifact);
 
-		CompletableFuture<ArtifactVersioning> future = updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId());
-		if (MavenUtils.isSnapshot(artifact.getVersion())) {
-			return future
-					.thenCompose(versioning -> updateSnapshot(from, artifact))
-					.thenCompose(
-							snapshot -> processDownloading(
-									getSnapshotPath(artifact, snapshot, classifier, type),
-									output -> from.downloadSnapshot(artifact, snapshot, classifier, type, output)));
-		} else {
-			return future
-					.thenCompose(
-							versioning -> processDownloading(
-									getReleasePath(artifact, classifier, type),
-									output -> from.downloadRelease(artifact, classifier, type, output)));
-		}
+		return CompletableFuture.allOf(
+				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
+				updateSnapshot(from, artifact),
+				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));
 	}
 
 	private Path getArtifactDir(String groupId, String artifactId) {

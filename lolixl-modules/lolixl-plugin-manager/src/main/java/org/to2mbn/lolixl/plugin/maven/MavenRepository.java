@@ -1,15 +1,13 @@
 package org.to2mbn.lolixl.plugin.maven;
 
 import java.nio.channels.WritableByteChannel;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
-import org.to2mbn.lolixl.plugin.util.MavenUtils;
 
 public interface MavenRepository {
 
 	/**
-	 * 尝试下载指定的release版本的构件。
+	 * 尝试下载指定的版本的构件。
 	 * <p>
 	 * 如果该MavenRepository能下载指定的构件，则应调用output.get()打开一个Channel，并在将数据写入后关闭，
 	 * Future返回void。
@@ -22,25 +20,8 @@ public interface MavenRepository {
 	 * @param type 构件的type
 	 * @param output 下载到的数据的目的地
 	 * @return void
-	 * @throws IllegalVersionException 如果构件是一个snapshot却调用了该方法
 	 */
-	CompletableFuture<Void> downloadRelease(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException;
-
-	/**
-	 * 尝试下载指定的snapshot版本的构件。
-	 * <p>
-	 * 大部分要求同{@link #downloadRelease(MavenArtifact, String, String, Supplier)}。
-	 *
-	 * @param artifact 构件信息
-	 * @param snapshot 该snapshot的信息
-	 * @param classifier 构件的classifier
-	 * @param type 构件的type
-	 * @param output 下载到的数据的目的地
-	 * @return void
-	 * @throws IllegalVersionException 如果构件是一个release却调用了该方法
-	 * @see #downloadRelease(MavenArtifact, String, String, Supplier)
-	 */
-	CompletableFuture<Void> downloadSnapshot(MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type, Supplier<WritableByteChannel> output) throws IllegalVersionException;
+	CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output);
 
 	/**
 	 * 尝试下载所给构件的versioning。
@@ -62,19 +43,7 @@ public interface MavenRepository {
 	 * 
 	 * @param artifact 构件信息
 	 * @return snapshot信息
-	 * @throws IllegalVersionException 如果构件是一个release却调用了该方法
 	 */
-	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) throws IllegalVersionException;
-
-	default CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
-		Objects.requireNonNull(artifact);
-		Objects.requireNonNull(output);
-		if (MavenUtils.isSnapshot(artifact.getVersion())) {
-			return getSnapshot(artifact)
-					.thenCompose(snapshot -> downloadSnapshot(artifact, snapshot, classifier, type, output));
-		} else {
-			return downloadRelease(artifact, classifier, type, output);
-		}
-	}
+	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact);
 
 }

@@ -11,15 +11,6 @@
 	<name>lolixl-ui</name>
 	<description>LoliXL UI module</description>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
 	</dependencies>
 
