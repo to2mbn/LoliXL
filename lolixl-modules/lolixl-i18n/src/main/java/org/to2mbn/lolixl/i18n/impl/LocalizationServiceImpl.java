@@ -1,7 +1,5 @@
 package org.to2mbn.lolixl.i18n.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -16,26 +14,28 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Modified;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.i18n.LocaleChangedEvent;
 import org.to2mbn.lolixl.i18n.LocalizationService;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
-import org.to2mbn.lolixl.i18n.spi.LocalizationRegistry;
 
 @Component
-@Service({ LocalizationService.class, LocalizationRegistry.class })
-public class LocalizationServiceImpl implements LocalizationService, LocalizationRegistry, BundleListener {
+@Service({ LocalizationService.class })
+public class LocalizationServiceImpl implements LocalizationService, ServiceTrackerCustomizer<LocalizationProvider, LocalizationProvider> {
 
-	public static LocalizationService public_instance;
+	public static volatile LocalizationService public_instance;
 
 	private static class LocalizationCacheKey {
 
@@ -73,27 +73,36 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 	private EventAdmin eventAdmin;
 
 	@Property
-	private Locale currentLocale;
+	private volatile Locale currentLocale;
 
 	private Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 
 	private Set<LocalizationProvider> providers = new CopyOnWriteArraySet<>();
-	private Map<Bundle, Set<LocalizationProvider>> bundleMapping = new HashMap<>();
 	private Map<LocalizationCacheKey, Optional<String>> caches = new ConcurrentHashMap<>();
 	private ReadWriteLock providersLock = new ReentrantReadWriteLock();
+	private ServiceTracker<LocalizationProvider, LocalizationProvider> tracker;
 
-	public LocalizationServiceImpl() {
+	@Activate
+	public void active(ComponentContext compCtx) {
 		public_instance = this;
 		currentLocale = Locale.getDefault();
 		LOGGER.info("Using locale " + currentLocale);
+		tracker = new ServiceTracker<>(compCtx.getBundleContext(), LocalizationProvider.class, this);
+		tracker.open();
 	}
 
 	@Modified
-	public void updated(Map<String, Object> properties) throws ConfigurationException {
+	public void modified(Map<String, Object> properties) throws ConfigurationException {
 		Locale newLocale = (Locale) properties.get(CONFIG_LOCALE);
 		if (newLocale != null) {
 			setCurrentLocale(newLocale);
 		}
+	}
+
+	@Deactivate
+	public void deactive() {
+		public_instance = null;
+		tracker.close();
 	}
 
 	@Override
@@ -138,63 +147,6 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 		return cache.orElse(null);
 	}
 
-	@Override
-	public void register(Bundle bundle, LocalizationProvider provider) {
-		Objects.requireNonNull(bundle);
-		Objects.requireNonNull(provider);
-		Lock wlock = providersLock.writeLock();
-		wlock.lock();
-		try {
-			Set<LocalizationProvider> bundleProviders = bundleMapping.get(bundle);
-			if (bundleProviders == null) {
-				bundleProviders = new HashSet<>();
-				bundleMapping.put(bundle, bundleProviders);
-			}
-			bundleProviders.add(provider);
-			providers.add(provider);
-
-			if (bundle.getState() != Bundle.ACTIVE) {
-				removeBundleProviders(bundle);
-			}
-
-			caches.clear();
-		} finally {
-			wlock.unlock();
-		}
-
-		refresh();
-	}
-
-	public void checkBundleState(Bundle bundle) {
-		if (bundle.getState() != Bundle.ACTIVE) {
-			Lock wlock = providersLock.writeLock();
-			wlock.lock();
-			try {
-				if (!removeBundleProviders(bundle)) {
-					return;
-				}
-				caches.clear();
-			} finally {
-				wlock.unlock();
-			}
-
-			refresh();
-		}
-	}
-
-	/**
-	 * @param bundle bundle
-	 * @return 该bundle是否注册有LocalizationProvider
-	 */
-	private boolean removeBundleProviders(Bundle bundle) {
-		Set<LocalizationProvider> bundleProviders = bundleMapping.remove(bundle);
-		if (bundleProviders != null) {
-			providers.removeAll(bundleProviders);
-			return true;
-		}
-		return false;
-	}
-
 	private Optional<String> lookupLocalizedString(Locale idealLocale, String key) {
 		List<Locale> locales = control.getCandidateLocales("org.to2mbn.lolixl.i18n", idealLocale);
 		for (Locale locale : locales) {
@@ -209,8 +161,47 @@ public class LocalizationServiceImpl implements LocalizationService, Localizatio
 	}
 
 	@Override
-	public void bundleChanged(BundleEvent event) {
-		checkBundleState(event.getBundle());
+	public LocalizationProvider addingService(ServiceReference<LocalizationProvider> reference) {
+		LocalizationProvider provider = reference.getBundle().getBundleContext().getService(reference);
+
+		Lock wlock = providersLock.writeLock();
+		wlock.lock();
+		try {
+			providers.add(provider);
+			caches.clear();
+		} finally {
+			wlock.unlock();
+		}
+
+		refresh();
+		return provider;
+	}
+
+	@Override
+	public void modifiedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
+		Lock wlock = providersLock.writeLock();
+		wlock.lock();
+		try {
+			caches.clear();
+		} finally {
+			wlock.unlock();
+		}
+
+		refresh();
+	}
+
+	@Override
+	public void removedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
+		Lock wlock = providersLock.writeLock();
+		wlock.lock();
+		try {
+			providers.remove(service);
+			caches.clear();
+		} finally {
+			wlock.unlock();
+		}
+
+		refresh();
 	}
 
 }

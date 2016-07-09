@@ -11,17 +11,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.osgi.framework.BundleActivator;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 
 @Component
-public class CommonExecutors implements BundleActivator {
-
-	@Override
-	public void start(BundleContext ctx) {
-		addExecutor(ctx, "local_io", pool(Runtime.getRuntime().availableProcessors() * 2, 10, TimeUnit.SECONDS, "lolixl.local_io"));
-	}
+public class CommonExecutors {
 
 	private static class NamedThreadFactory implements ThreadFactory {
 
@@ -63,8 +60,14 @@ public class CommonExecutors implements BundleActivator {
 		}
 	}
 
-	@Override
-	public void stop(BundleContext ctx) {
+	@Activate
+	public void active(ComponentContext compCtx) {
+		BundleContext ctx = compCtx.getBundleContext();
+		addExecutor(ctx, "local_io", pool(Runtime.getRuntime().availableProcessors() * 2, 10, TimeUnit.SECONDS, "lolixl.local_io"));
+	}
+
+	@Deactivate
+	public void deactivate() {
 		synchronized (executors) {
 			Throwable exception = null;
 			for (ExecutorService executor : executors.values()) {
