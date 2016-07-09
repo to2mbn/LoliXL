@@ -30,7 +30,6 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
-import org.to2mbn.lolixl.plugin.maven.IllegalVersionException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
@@ -81,6 +80,9 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 								exception.addSuppressed(e);
 							}
 						} else {
+							if (openCount.get() == 0) {
+								throw new IllegalStateException("Download wasn't performed");
+							}
 							try {
 								Files.move(toTemp, to, StandardCopyOption.REPLACE_EXISTING);
 							} catch (IOException exCopy) {
@@ -217,6 +219,28 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		}, localIOPool);
 	}
 
+	@Override
+	public CompletableFuture<Void> install(MavenRepository from, MavenArtifact artifact, String classifier, String type) {
+		Objects.requireNonNull(from);
+		Objects.requireNonNull(artifact);
+
+		CompletableFuture<ArtifactVersioning> future = updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId());
+		if (MavenUtils.isSnapshot(artifact.getVersion())) {
+			return future
+					.thenCompose(versioning -> updateSnapshot(from, artifact))
+					.thenCompose(
+							snapshot -> processDownloading(
+									getSnapshotPath(artifact, snapshot, classifier, type),
+									output -> from.downloadSnapshot(artifact, snapshot, classifier, type, output)));
+		} else {
+			return future
+					.thenCompose(
+							versioning -> processDownloading(
+									getReleasePath(artifact, classifier, type),
+									output -> from.downloadRelease(artifact, classifier, type, output)));
+		}
+	}
+
 	private Path getArtifactDir(String groupId, String artifactId) {
 		Path p = m2dir;
 		for (String gid : groupId.split("\\."))
@@ -266,42 +290,23 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		return getVersionDir(artifact).resolve("maven-metadata.json");
 	}
 
-	@Override
-	public CompletableFuture<Void> installRelease(MavenRepository from, MavenArtifact artifact, String classifier, String type) throws IllegalVersionException {
-		return updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId())
-				.thenCompose(
-						dummy -> processDownloading(
-								getReleasePath(artifact, classifier, type),
-								output -> from.downloadRelease(artifact, classifier, type, output)));
-	}
-
-	@Override
-	public CompletableFuture<Void> installSnapshot(MavenRepository from, MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException {
-		return updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId())
-				.thenCompose(dummy -> updateSnapshot(from, artifact))
-				.thenCompose(
-						dummy -> processDownloading(
-								getSnapshotPath(artifact, snapshot, classifier, type),
-								output -> from.downloadSnapshot(artifact, snapshot, classifier, type, output)));
-	}
-
 	private CompletableFuture<Void> processDownloading(Path to, Function<Supplier<WritableByteChannel>, CompletableFuture<Void>> operation) {
 		return new InstallProcessor(to, operation).invoke();
 	}
 
-	private CompletableFuture<Void> updateVersioning(MavenRepository from, String groupId, String artifactId) {
+	private CompletableFuture<ArtifactVersioning> updateVersioning(MavenRepository from, String groupId, String artifactId) {
 		return from.getVersioning(groupId, artifactId)
 				.thenApplyAsync(versioning -> {
 					writeMetadataJson(getVersioningMetadataPath(groupId, artifactId), versioning);
-					return null;
+					return versioning;
 				}, localIOPool);
 	}
 
-	private CompletableFuture<Void> updateSnapshot(MavenRepository from, MavenArtifact artifact) {
+	private CompletableFuture<ArtifactSnapshot> updateSnapshot(MavenRepository from, MavenArtifact artifact) {
 		return from.getSnapshot(artifact)
 				.thenApplyAsync(snapshot -> {
 					writeMetadataJson(getSnapshotMetadataPath(artifact), snapshot);
-					return null;
+					return snapshot;
 				}, localIOPool);
 	}
 

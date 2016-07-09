@@ -1,8 +1,10 @@
 package org.to2mbn.lolixl.plugin.maven;
 
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import org.to2mbn.lolixl.plugin.util.MavenUtils;
 
 public interface MavenRepository {
 
@@ -63,5 +65,16 @@ public interface MavenRepository {
 	 * @throws IllegalVersionException 如果构件是一个release却调用了该方法
 	 */
 	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) throws IllegalVersionException;
+
+	default CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
+		Objects.requireNonNull(artifact);
+		Objects.requireNonNull(output);
+		if (MavenUtils.isSnapshot(artifact.getVersion())) {
+			return getSnapshot(artifact)
+					.thenCompose(snapshot -> downloadSnapshot(artifact, snapshot, classifier, type, output));
+		} else {
+			return downloadRelease(artifact, classifier, type, output);
+		}
+	}
 
 }

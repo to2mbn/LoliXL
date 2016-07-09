@@ -31,7 +31,6 @@ public interface LocalMavenRepository extends MavenRepository {
 	 */
 	CompletableFuture<Void> deleteArtifactAllVersions(String groupId, String artifactId);
 
-	CompletableFuture<Void> installRelease(MavenRepository from, MavenArtifact artifact, String classifier, String type) throws IllegalVersionException;
-	CompletableFuture<Void> installSnapshot(MavenRepository from, MavenArtifact artifact, ArtifactSnapshot snapshot, String classifier, String type) throws IllegalVersionException;
+	CompletableFuture<Void> install(MavenRepository from, MavenArtifact artifact, String classifier, String type);
 
 }
