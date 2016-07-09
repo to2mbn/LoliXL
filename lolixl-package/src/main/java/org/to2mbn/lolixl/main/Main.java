@@ -42,8 +42,7 @@ class Main {
 	}
 
 	private static void setupFelix(Felix felix) throws Exception {
-		InternalBundleRepository repo = new InternalBundleRepository();
-		repo.init(felix);
+		AccessEndpoint.internalBundleRepository.init(felix);
 	}
 
 	public static void main(String[] args) {
@@ -53,6 +52,7 @@ class Main {
 			setupSystemProperties();
 			Properties felixConfigration = loadConfigration();
 			setupWorkingDir();
+			AccessEndpoint.internalBundleRepository = new InternalBundleRepository();
 
 			felix = new Felix(felixConfigration);
 			felix.start();

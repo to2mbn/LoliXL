@@ -20,4 +20,14 @@ public final class AsyncUtils {
 		return future;
 	}
 
+	public static <T> CompletableFuture<T> syncRun(Callable<T> callable) {
+		CompletableFuture<T> future = new CompletableFuture<>();
+		try {
+			future.complete(callable.call());
+		} catch (Throwable e) {
+			future.completeExceptionally(e);
+		}
+		return future;
+	}
+
 }

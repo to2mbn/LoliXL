@@ -80,6 +80,10 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-i18n</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-init</artifactId>
+								</artifactItem>
 
 								<!-- jar.asc -->
 								<artifactItem>
@@ -122,6 +126,11 @@
 									<artifactId>lolixl-i18n</artifactId>
 									<type>jar.asc</type>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-init</artifactId>
+									<type>jar.asc</type>
+								</artifactItem>
 
 								<!-- lolixl-plugin xml -->
 								<artifactItem>
@@ -142,6 +151,12 @@
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-init</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
 
 								<!-- lolixl-plugin xml.asc -->
 								<artifactItem>
@@ -159,6 +174,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-i18n</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml.asc</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-init</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml.asc</type>
 								</artifactItem>

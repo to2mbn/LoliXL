@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.security.CodeSource;
 import java.util.Comparator;
@@ -40,6 +41,8 @@ class InternalBundleRepository {
 	private Set<String> artifacts;
 	private Set<String> bootstrapBundles;
 	private Path localRepo = new File(".lolixl/m2/repo").toPath();
+	private Map<String, String> ga2v;
+	private Map<String, Set<String>> ga2names;
 
 	public InternalBundleRepository() throws URISyntaxException, IOException {
 		CodeSource codeSource = InternalBundleRepository.class.getProtectionDomain().getCodeSource();
@@ -54,7 +57,7 @@ class InternalBundleRepository {
 		repoRoot = jarRoot.resolve(PATH_BUNDLES_ROOT);
 		artifacts = readArtifacts(jarRoot.resolve(PATH_ARTIFACTS_LIST));
 		bootstrapBundles = readArtifacts(jarRoot.resolve(PATH_BOOTSTRAP_ARTIFACTS_LIST));
-
+		resolveGA2V();
 	}
 
 	private Set<String> readArtifacts(Path listFile) throws IOException {
@@ -64,31 +67,15 @@ class InternalBundleRepository {
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
-	public FileChannel openChannel(String groupId, String artifactId, String version, String classifier, String type) throws IOException {
-		if (!artifacts.contains(groupId + ":" + artifactId)) {
-			return null;
-		}
-		Path p = repoRoot.resolve(artifactId + "-" + version + (classifier == null ? "" : "-" + classifier) + "." + type);
-		if (!Files.exists(p)) {
-			return null;
-		}
-		return FileChannel.open(p, StandardOpenOption.READ);
-	}
-
-	/**
-	 * @return ga2v
-	 * @throws IOException when an io error occurs
-	 */
-	private Map<String, String> copyBootstrapArtifacts() throws IOException {
+	private void resolveGA2V() throws IOException {
 		Map<String, String> prefix2ga = new HashMap<>();
-		bootstrapBundles.forEach(gastr -> {
+		artifacts.forEach(gastr -> {
 			String[] ga = gastr.split(":");
 			if (ga.length != 2)
 				throw new IllegalArgumentException("Illegal GA: " + gastr);
 			prefix2ga.put(ga[1], gastr);
 		});
-
-		Map<String, Set<String>> ga2names = Files.list(repoRoot)
+		ga2names = Files.list(repoRoot)
 				.map(src -> {
 					String name = src.getFileName().toString();
 					String ga = null;
@@ -106,40 +93,60 @@ class InternalBundleRepository {
 				})
 				.filter(Objects::nonNull)
 				.collect(Collectors.groupingBy(o -> o[0], Collectors.mapping(o -> o[1], Collectors.toCollection(TreeSet::new))));
-
-		Map<String, String> ga2v = new HashMap<>();
-
+		ga2v = new HashMap<>();
 		ga2names.forEach((ga, names) -> {
 			String artifactNameToInfer = names.stream()
 					.sorted(Comparator.comparing((String s) -> s.length())
 							.thenComparing(s -> s))
 					.findFirst()
 					.get();
-			int idxMaohao = ga.indexOf(':');
-			String version = artifactNameToInfer.substring(ga.length() - idxMaohao, artifactNameToInfer.lastIndexOf('.'));
+			String version = artifactNameToInfer.substring(ga.length() - ga.indexOf(':'), artifactNameToInfer.lastIndexOf('.'));
 			ga2v.put(ga, version);
-			names.forEach(name -> {
+		});
+	}
+
+	public FileChannel openChannel(String groupId, String artifactId, String version, String classifier, String type) throws IOException {
+		if (!artifacts.contains(groupId + ":" + artifactId)) {
+			return null;
+		}
+		Path p = repoRoot.resolve(artifactId + "-" + version + (classifier == null ? "" : "-" + classifier) + "." + type);
+		if (!Files.exists(p)) {
+			return null;
+		}
+		return FileChannel.open(p, StandardOpenOption.READ);
+	}
+
+	public String getVersion(String groupId, String artifactId) {
+		return ga2v.get(groupId + ":" + artifactId);
+	}
+
+	private void copyBootstrapArtifacts() throws IOException {
+		for (String ga : bootstrapBundles) {
+			int idxMaohao = ga.indexOf(':');
+			String g = ga.substring(0, idxMaohao);
+			String a = ga.substring(idxMaohao + 1);
+			String v = ga2v.get(ga);
+			for (String name : ga2names.get(ga)) {
 				Path src = repoRoot.resolve(name);
 				Path target = localRepo;
-				for (String g : ga.substring(0, idxMaohao).split("\\."))
-					target = target.resolve(g);
-				target = target.resolve(ga.substring(idxMaohao + 1))
-						.resolve(version)
+				for (String sg : g.split("\\."))
+					target = target.resolve(sg);
+				target = target.resolve(a)
+						.resolve(v)
 						.resolve(name);
 				try {
 					Files.createDirectories(target.getParent());
-					Files.copy(src, target);
+					Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException e) {
 					throw new UncheckedIOException(e);
 				}
-			});
-		});
-		return ga2v;
+			}
+		}
 	}
 
 	public void init(Felix felix) throws IOException, BundleException {
 		BundleContext ctx = felix.getBundleContext();
-		Map<String, String> ga2v = copyBootstrapArtifacts();
+		copyBootstrapArtifacts();
 		Set<Bundle> bundles = new LinkedHashSet<>();
 		for (String ga : bootstrapBundles) {
 			int idxMaohao = ga.indexOf(':');

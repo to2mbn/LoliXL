@@ -204,7 +204,10 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 		return CompletableFuture.allOf(
 				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
-				updateSnapshot(from, artifact),
+				updateSnapshot(from, artifact).exceptionally(ex -> {
+					LOGGER.log(Level.WARNING, ex, () -> format("Couldn't download snapshot metadata %s from %s", artifact, from));
+					return null;
+				}),
 				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));
 	}
 

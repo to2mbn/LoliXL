@@ -8,18 +8,18 @@ public class ArtifactVersioning implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String release;
+	private String latest;
 	private String snapshot;
 	private Set<String> versions;
 
-	public ArtifactVersioning(String release, String snapshot, Set<String> versions) {
-		this.release = release;
+	public ArtifactVersioning(String latest, String snapshot, Set<String> versions) {
+		this.latest = latest;
 		this.snapshot = snapshot;
 		this.versions = versions;
 	}
 
-	public String getRelease() {
-		return release;
+	public String getLatest() {
+		return latest;
 	}
 
 	public String getSnapshot() {
@@ -32,12 +32,12 @@ public class ArtifactVersioning implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("ArtifactVersioning [release=%s, snapshot=%s, versions=%s]", release, snapshot, versions);
+		return String.format("ArtifactVersioning [latest=%s, snapshot=%s, versions=%s]", latest, snapshot, versions);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(release, snapshot, versions);
+		return Objects.hash(latest, snapshot, versions);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class ArtifactVersioning implements Serializable {
 		}
 		if (obj instanceof ArtifactVersioning) {
 			ArtifactVersioning another = (ArtifactVersioning) obj;
-			return Objects.equals(release, another.release)
+			return Objects.equals(latest, another.latest)
 					&& Objects.equals(snapshot, another.snapshot)
 					&& Objects.equals(versions, another.versions);
 		}
