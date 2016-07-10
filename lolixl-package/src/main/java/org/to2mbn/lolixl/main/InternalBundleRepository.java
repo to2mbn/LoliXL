@@ -157,8 +157,9 @@ class InternalBundleRepository {
 			LOGGER.info("Installing bootstrap bundle " + uri);
 			bundles.add(ctx.installBundle(uri, Channels.newInputStream(openChannel(g, a, v, null, "jar"))));
 		}
-		for (Bundle bundle : bundles)
+		for (Bundle bundle : bundles) {
 			bundle.start();
+		}
 	}
 
 }

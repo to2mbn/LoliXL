@@ -31,7 +31,10 @@ import org.to2mbn.lolixl.utils.AsyncUtils;
 public class InternalMavenRepository implements MavenRepository {
 
 	@Reference(target = "(usage=local_io)")
-	private ExecutorService service;
+	private ExecutorService localIOPool;
+
+	@Reference(target = "(usage=cpu_compute)")
+	private ExecutorService cpuComputePool;
 
 	private Method methodOpenChannel;
 	private Method methodGetVersion;
@@ -54,19 +57,19 @@ public class InternalMavenRepository implements MavenRepository {
 				}
 			}
 			return null;
-		}, service);
+		}, localIOPool);
 	}
 
 	@Override
 	public CompletableFuture<ArtifactVersioning> getVersioning(String groupId, String artifactId) {
-		return AsyncUtils.syncRun(() -> {
+		return AsyncUtils.asyncRun(() -> {
 			String version = getVersion(groupId, artifactId);
 			if (MavenUtils.isSnapshot(version)) {
 				return new ArtifactVersioning(version, version, Collections.singleton(version));
 			} else {
 				return new ArtifactVersioning(version, null, Collections.singleton(version));
 			}
-		});
+		}, cpuComputePool);
 	}
 
 	@Override

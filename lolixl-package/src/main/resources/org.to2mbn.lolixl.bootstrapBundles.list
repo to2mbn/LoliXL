@@ -5,3 +5,5 @@ org.apache.felix:org.apache.felix.configadmin
 com.google.code.gson:gson
 org.to2mbn.lolixl:lolixl-utils
 org.to2mbn.lolixl:lolixl-plugin-manager
+org.to2mbn.lolixl:lolixl-init
+

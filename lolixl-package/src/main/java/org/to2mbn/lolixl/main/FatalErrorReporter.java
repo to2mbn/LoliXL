@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.main;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.io.CharArrayWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
@@ -38,13 +39,16 @@ class FatalErrorReporter {
 	}
 
 	private String generateErrorMessage() {
+		String logPath = new File(Metadata.LOG_FILE).toURI().toString();
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("LoliXL发生致命错误：\n");
 		sb.append(throwableToString(e));
 		sb.append('\n');
 		sb.append("Maven版本：").append(Metadata.M2_GROUP_ID).append(':').append(Metadata.M2_ARTIFACT_ID).append(':').append(Metadata.M2_VERSION).append('\n');
+		sb.append("日志文件：<a href=\"" + logPath + "\">" + logPath + "</a>");
 		sb.append("\n\n");
-		sb.append("我们为对您造成的不便深感抱歉，请将以上错误信息发送到"
+		sb.append("我们为对您造成的不便深感抱歉，请将以上错误信息及日志发送到"
 				+ "<a href=\"mailto:" + BUG_REPORT_EMAIL + "\">" + BUG_REPORT_EMAIL + "</a>"
 				+ "，\n或反馈到"
 				+ "<a href=\"" + BUG_REPORT_URL + "\">" + BUG_REPORT_URL + "</a>。");

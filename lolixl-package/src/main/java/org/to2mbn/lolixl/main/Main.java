@@ -5,12 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
+import org.apache.felix.framework.util.FelixConstants;
 
 class Main {
 
 	private static final String RESOURCE_FELIX_CONFIGRATION = "/org.to2mbn.lolixl.felix.properties";
+
+	private static FileHandler loggingHandler;
 
 	private static Properties loadConfigration() throws IOException {
 		Properties configration = new Properties();
@@ -45,13 +53,56 @@ class Main {
 		AccessEndpoint.internalBundleRepository.init(felix);
 	}
 
+	private static void setupLoggingHandler() throws IOException {
+		loggingHandler = new FileHandler(Metadata.LOG_FILE);
+		loggingHandler.setFormatter(new SimpleFormatter("%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL [%4$s] [%3$s] %5$s%6$s%n"));
+		loggingHandler.setLevel(Level.ALL);
+	}
+
+	private static void configureJUL() throws IOException {
+		setupLoggingHandler();
+		enableLogging("org.to2mbn", Level.ALL);
+		enableLogging("org.apache.felix", Level.ALL);
+	}
+
+	private static void enableLogging(String packageName, Level level) {
+		Logger logger = Logger.getLogger(packageName);
+		Handler handler = new Handler() {
+
+			@Override
+			public void publish(LogRecord record) {
+				if (isLoggable(record))
+					loggingHandler.publish(record);
+			}
+
+			@Override
+			public void flush() {
+				loggingHandler.flush();
+			}
+
+			@Override
+			public void close() throws SecurityException {
+				loggingHandler.close();
+			}
+		};
+		handler.setLevel(level);
+		logger.addHandler(handler);
+		logger.setLevel(level);
+	}
+
+	private static void processConfigration(Properties configration) {
+		configration.put(FelixConstants.LOG_LOGGER_PROP, new FelixLoggerAdapter());
+	}
+
 	public static void main(String[] args) {
 		Felix felix = null;
 		try {
 			Metadata.initMetadata();
 			setupSystemProperties();
-			Properties felixConfigration = loadConfigration();
 			setupWorkingDir();
+			configureJUL();
+			Properties felixConfigration = loadConfigration();
+			processConfigration(felixConfigration);
 			AccessEndpoint.internalBundleRepository = new InternalBundleRepository();
 
 			felix = new Felix(felixConfigration);

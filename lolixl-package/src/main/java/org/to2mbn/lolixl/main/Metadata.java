@@ -12,6 +12,8 @@ class Metadata {
 
 	public static final String LOLIXL_NAME = "LoliXL";
 
+	public static final String LOG_FILE = ".lolixl/lolixl-jul.log";
+
 	private static final String RESOURCE_M2_PROPERTIES = "/META-INF/maven/" + M2_GROUP_ID + "/" + M2_ARTIFACT_ID + "/pom.properties";
 
 	static void initMetadata() throws IOException {

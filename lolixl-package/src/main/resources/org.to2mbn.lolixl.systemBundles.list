@@ -6,4 +6,5 @@ com.google.code.gson:gson
 org.to2mbn.lolixl:lolixl-utils
 org.to2mbn.lolixl:lolixl-plugin-manager
 org.to2mbn.lolixl:lolixl-i18n
+org.to2mbn.lolixl:lolixl-init
 

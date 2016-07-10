@@ -99,13 +99,13 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 		@Override
 		public WritableByteChannel get() {
-			if (channelOpened.compareAndSet(false, true)) {
+			if (!channelOpened.compareAndSet(false, true)) {
 				// Illegal state
 				RuntimeException ex = new IllegalStateException("The previous channel is not closed");
 
 				LOGGER.log(Level.SEVERE, ex, () -> format(
 						"[%s] channel #%d is not closed, but caller is trying to open another channel. For security, close the channel first, and then throw an exception.",
-						this, openCount));
+						this, openCount.get()));
 
 				if (lastChannel != null) {
 					try {
@@ -204,8 +204,9 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 		return CompletableFuture.allOf(
 				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
-				updateSnapshot(from, artifact).exceptionally(ex -> {
-					LOGGER.log(Level.WARNING, ex, () -> format("Couldn't download snapshot metadata %s from %s", artifact, from));
+				updateSnapshot(from, artifact).handle((result, ex) -> {
+					if (ex != null)
+						LOGGER.log(Level.WARNING, ex, () -> format("Couldn't download snapshot metadata %s from %s", artifact, from));
 					return null;
 				}),
 				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));
@@ -277,7 +278,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 				.thenApplyAsync(snapshot -> {
 					writeMetadataJson(getSnapshotMetadataPath(artifact), snapshot);
 					return snapshot;
-				}, localIOPool);
+				});
 	}
 
 	private void writeMetadataJson(Path path, Object metadata) throws UncheckedIOException {

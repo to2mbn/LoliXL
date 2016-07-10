@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -21,6 +22,7 @@ import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
+import static java.lang.String.format;
 
 @Component
 @Service({ MavenRepository.class })
@@ -28,6 +30,8 @@ import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 		@Property(name = "m2repository.type", value = "remote")
 })
 public class RemoteMavenRepositoryImpl implements MavenRepository {
+
+	private static final Logger LOGGER = Logger.getLogger(RemoteMavenRepositoryImpl.class.getCanonicalName());
 
 	private ServiceTracker<MavenRepository, MavenRepository> tracker;
 
@@ -81,7 +85,7 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 			future.completeExceptionally(noProvidersEx);
 			return;
 		}
-
+		LOGGER.finer(() -> format("Trying repository[%d]: %s", idx, repositories[idx]));
 		CompletableFuture<T> thisStage;
 		try {
 			thisStage = operation.apply(repositories[idx]);

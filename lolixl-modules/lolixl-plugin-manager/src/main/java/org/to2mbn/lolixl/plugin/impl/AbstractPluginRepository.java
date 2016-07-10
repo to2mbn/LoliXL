@@ -43,13 +43,13 @@ abstract public class AbstractPluginRepository implements PluginRepository {
 
 		@Override
 		public WritableByteChannel get() {
-			if (channelOpened.compareAndSet(false, true)) {
+			if (!channelOpened.compareAndSet(false, true)) {
 				// Illegal state
 				RuntimeException ex = new IllegalStateException("The previous channel is not closed");
 
 				LOGGER.log(Level.SEVERE, ex, () -> format(
 						"[%s] channel #%d is not closed, but caller is trying to open another channel. For security, throw an exception.",
-						this, openCount));
+						this, openCount.get()));
 
 				throw ex;
 
