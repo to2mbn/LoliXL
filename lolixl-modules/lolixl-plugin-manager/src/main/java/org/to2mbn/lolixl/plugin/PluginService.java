@@ -27,6 +27,8 @@ public interface PluginService {
 	 */
 	Optional<Plugin> getPlugin(MavenArtifact artifact);
 	Optional<Plugin> getPlugin(Bundle bundle);
+	Optional<Bundle> getBundle(MavenArtifact artifact);
+	Optional<MavenArtifact> getArtifact(Bundle bundle);
 
 	/**
 	 * 从本地仓库加载一个插件。

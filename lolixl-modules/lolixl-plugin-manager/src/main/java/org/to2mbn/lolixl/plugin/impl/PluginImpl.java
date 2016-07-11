@@ -23,8 +23,7 @@ public class PluginImpl implements Plugin {
 
 	@Override
 	public CompletableFuture<Void> unload() {
-		// TODO Auto-generated method stub
-		return null;
+		return container.unloadPlugin(this);
 	}
 
 }
