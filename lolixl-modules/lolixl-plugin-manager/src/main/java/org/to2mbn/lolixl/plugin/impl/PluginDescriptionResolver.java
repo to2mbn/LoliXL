@@ -11,8 +11,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.plugin.PluginDescription;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.w3c.dom.Node;
@@ -20,8 +18,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-@Service({ PluginDescriptionResolver.class })
-@Component
 public class PluginDescriptionResolver {
 
 	private DocumentBuilder documentBuilder;
@@ -33,26 +29,30 @@ public class PluginDescriptionResolver {
 	private XPathExpression xexpDependencies;
 	private XPathExpression xexpPlugin;
 
-	public PluginDescriptionResolver() throws XPathExpressionException, ParserConfigurationException {
-		documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	public PluginDescriptionResolver() {
+		try {
+			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-		// Compile XPaths
-		xpath = XPathFactory.newInstance().newXPath();
-		xexpGroupId = xpath.compile("groupId");
-		xexpArtifactId = xpath.compile("artifactId");
-		xexpVersion = xpath.compile("version");
-		xexpDependencies = xpath.compile("dependencies/dependency");
-		xexpPlugin = xpath.compile("plugin");
+			// Compile XPaths
+			xpath = XPathFactory.newInstance().newXPath();
+			xexpGroupId = xpath.compile("groupId");
+			xexpArtifactId = xpath.compile("artifactId");
+			xexpVersion = xpath.compile("version");
+			xexpDependencies = xpath.compile("dependencies/dependency");
+			xexpPlugin = xpath.compile("plugin");
+		} catch (XPathExpressionException | ParserConfigurationException e) {
+			throw new IllegalStateException("Couldn't compile XPaths", e);
+		}
 	}
 
-	public MavenArtifact resolveArtifact(Node node) throws XPathExpressionException {
+	public synchronized MavenArtifact resolveArtifact(Node node) throws XPathExpressionException {
 		return new MavenArtifact(
 				xexpGroupId.evaluate(node),
 				xexpArtifactId.evaluate(node),
 				xexpVersion.evaluate(node));
 	}
 
-	public PluginDescription resolvePlugin(Node node) throws XPathExpressionException {
+	public synchronized PluginDescription resolvePlugin(Node node) throws XPathExpressionException {
 		MavenArtifact artifact = resolveArtifact(node);
 		Set<MavenArtifact> dependencies = new LinkedHashSet<>();
 		NodeList nodeList = (NodeList) xexpDependencies.evaluate(node, XPathConstants.NODESET);
@@ -62,7 +62,7 @@ public class PluginDescriptionResolver {
 		return new PluginDescriptionImpl(artifact, dependencies);
 	}
 
-	public PluginDescription resolve(InputSource source) throws XPathExpressionException, SAXException, IOException {
+	public synchronized PluginDescription resolve(InputSource source) throws XPathExpressionException, SAXException, IOException {
 		return resolvePlugin((Node) xexpPlugin.evaluate(documentBuilder.parse(source), XPathConstants.NODE));
 	}
 

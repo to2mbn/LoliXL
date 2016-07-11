@@ -49,10 +49,6 @@
 							<artifactItems>
 								<!-- jar -->
 								<artifactItem>
-									<groupId>org.osgi</groupId>
-									<artifactId>org.osgi.service.component</artifactId>
-								</artifactItem>
-								<artifactItem>
 									<groupId>org.apache.felix</groupId>
 									<artifactId>org.apache.felix.scr</artifactId>
 								</artifactItem>
@@ -85,12 +81,7 @@
 									<artifactId>lolixl-init</artifactId>
 								</artifactItem>
 
-								<!-- jar.asc -->
-								<artifactItem>
-									<groupId>org.osgi</groupId>
-									<artifactId>org.osgi.service.component</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
+								<!-- jar.asc --><!--
 								<artifactItem>
 									<groupId>org.apache.felix</groupId>
 									<artifactId>org.apache.felix.scr</artifactId>
@@ -130,7 +121,7 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-init</artifactId>
 									<type>jar.asc</type>
-								</artifactItem>
+								</artifactItem>-->
 
 								<!-- lolixl-plugin xml -->
 								<artifactItem>
@@ -158,7 +149,7 @@
 									<type>xml</type>
 								</artifactItem>
 
-								<!-- lolixl-plugin xml.asc -->
+								<!-- lolixl-plugin xml.asc --><!--
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-utils</artifactId>
@@ -182,7 +173,7 @@
 									<artifactId>lolixl-init</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml.asc</type>
-								</artifactItem>
+								</artifactItem>-->
 
 							</artifactItems>
 						</configuration>

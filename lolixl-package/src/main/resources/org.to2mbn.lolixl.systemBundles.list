@@ -1,4 +1,3 @@
-org.osgi:org.osgi.service.component
 org.apache.felix:org.apache.felix.scr
 org.apache.felix:org.apache.felix.eventadmin
 org.apache.felix:org.apache.felix.configadmin

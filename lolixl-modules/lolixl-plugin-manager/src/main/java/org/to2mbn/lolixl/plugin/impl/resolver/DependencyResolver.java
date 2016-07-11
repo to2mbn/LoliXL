@@ -32,7 +32,7 @@ public class DependencyResolver {
 								toCollection(() -> new TreeSet<>(reversedVersionComparator)))))
 				.entrySet().stream()
 				.map(entry -> {
-					String[] splitedGA = entry.getKey().split("\\.", 2);
+					String[] splitedGA = entry.getKey().split(":", 2);
 					String version = entry.getValue().first();
 					return new MavenArtifact(splitedGA[0], splitedGA[1], version);
 				})

@@ -1,9 +1,12 @@
 package org.to2mbn.lolixl.plugin.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import org.apache.felix.scr.annotations.Reference;
+import java.util.concurrent.CompletionException;
 import org.to2mbn.lolixl.plugin.PluginDescription;
 import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
@@ -12,8 +15,7 @@ import org.xml.sax.InputSource;
 
 abstract public class AbstractPluginRepository implements PluginRepository {
 
-	@Reference
-	private PluginDescriptionResolver descriptionResolver;
+	private PluginDescriptionResolver descriptionResolver = new PluginDescriptionResolver();
 
 	@Override
 	public CompletableFuture<Optional<PluginDescription>> getPluginDescription(MavenArtifact artifact) {
@@ -22,12 +24,13 @@ abstract public class AbstractPluginRepository implements PluginRepository {
 				.invoke()
 				.handle((data, exception) -> {
 					if (exception == null) {
-						try {
-							return Optional.of(descriptionResolver.resolve(new InputSource(new String(data, "UTF-8"))));
+						try (Reader reader = new InputStreamReader(new ByteArrayInputStream(data), "UTF-8")) {
+							return Optional.of(descriptionResolver.resolve(new InputSource(reader)));
 						} catch (Exception e) {
 							throw new IllegalArgumentException("${org.to2mbn.lolixl.plugin.badDescription}", e);
 						}
-					} else if (exception instanceof ArtifactNotFoundException) {
+					} else if (exception instanceof ArtifactNotFoundException ||
+							(exception instanceof CompletionException && exception.getCause() instanceof ArtifactNotFoundException)) {
 						return Optional.empty();
 					} else {
 						throw new RuntimeException(exception);

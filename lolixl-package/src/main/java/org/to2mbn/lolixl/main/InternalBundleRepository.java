@@ -16,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.security.CodeSource;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +44,7 @@ class InternalBundleRepository {
 	private Path localRepo = new File(".lolixl/m2/repo").toPath();
 	private Map<String, String> ga2v;
 	private Map<String, Set<String>> ga2names;
+	private Map<String, Bundle> gav2bootstrapBundles;
 
 	public InternalBundleRepository() throws URISyntaxException, IOException {
 		CodeSource codeSource = InternalBundleRepository.class.getProtectionDomain().getCodeSource();
@@ -120,6 +122,10 @@ class InternalBundleRepository {
 		return ga2v.get(groupId + ":" + artifactId);
 	}
 
+	public Map<String, Bundle> getGav2bootstrapBundles() {
+		return gav2bootstrapBundles;
+	}
+
 	private void copyBootstrapArtifacts() throws IOException {
 		for (String ga : bootstrapBundles) {
 			int idxMaohao = ga.indexOf(':');
@@ -148,14 +154,18 @@ class InternalBundleRepository {
 		BundleContext ctx = felix.getBundleContext();
 		copyBootstrapArtifacts();
 		Set<Bundle> bundles = new LinkedHashSet<>();
+		gav2bootstrapBundles = new LinkedHashMap<>();
 		for (String ga : bootstrapBundles) {
 			int idxMaohao = ga.indexOf(':');
 			String g = ga.substring(0, idxMaohao);
 			String a = ga.substring(idxMaohao + 1);
 			String v = ga2v.get(ga);
-			String uri = "lolixl:///localm2/" + g + ":" + a + ":" + v;
+			String gav = g + ":" + a + ":" + v;
+			String uri = "lolixl:///localm2/" + gav;
 			LOGGER.info("Installing bootstrap bundle " + uri);
-			bundles.add(ctx.installBundle(uri, Channels.newInputStream(openChannel(g, a, v, null, "jar"))));
+			Bundle bundle = ctx.installBundle(uri, Channels.newInputStream(openChannel(g, a, v, null, "jar")));
+			bundles.add(bundle);
+			gav2bootstrapBundles.put(gav, bundle);
 		}
 		for (Bundle bundle : bundles) {
 			bundle.start();
