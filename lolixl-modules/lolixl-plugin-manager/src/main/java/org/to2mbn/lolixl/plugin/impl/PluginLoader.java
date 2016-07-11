@@ -13,6 +13,11 @@ public class PluginLoader {
 
 	private MavenRepository repository;
 	private MavenArtifact artifact;
+
+	// TODO: We are not going to verify gpg signature currently.
+	//       But we may do this in the future.
+	//       So keep the field here.
+	@SuppressWarnings("unused")
 	private GPGVerifier verifier;
 
 	public PluginLoader(GPGVerifier verifier, MavenRepository repository, MavenArtifact artifact) {
@@ -39,17 +44,26 @@ public class PluginLoader {
 
 	public CompletableFuture<PluginLoader> load() {
 		return CompletableFuture.allOf(
+				readArtifact(null, "jar"),
+				readArtifact("lolixl-plugin", "xml"))
+				.thenApply(dummy -> this);
+	}
+
+	/*
+	public CompletableFuture<PluginLoader> load() {
+		return CompletableFuture.allOf(
 				readSignedArtifact(null, "jar"),
 				readSignedArtifact("lolixl-plugin", "xml"))
 				.thenApply(dummy -> this);
 	}
-
+	
 	private CompletableFuture<byte[]> readSignedArtifact(String classifier, String type) {
 		return readArtifact(classifier, type)
 				.thenCombine(readArtifact(classifier, type + ".asc"),
 						(data, signature) -> verifier.verify(data, signature))
 				.thenCompose(f -> f);
 	}
+	*/
 
 	private CompletableFuture<byte[]> readArtifact(String classifier, String type) {
 		return new ReadToMemoryProcessor(output -> repository.downloadArtifact(artifact, classifier, type, output))
