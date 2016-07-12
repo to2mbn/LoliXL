@@ -1,15 +1,18 @@
 package org.to2mbn.lolixl.main;
 
-import org.apache.felix.framework.Felix;
-import org.apache.felix.framework.util.FelixConstants;
-
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.apache.felix.framework.Felix;
+import org.apache.felix.framework.util.FelixConstants;
 
 class Main {
 
