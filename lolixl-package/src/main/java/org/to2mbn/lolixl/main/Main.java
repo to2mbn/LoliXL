@@ -1,34 +1,31 @@
 package org.to2mbn.lolixl.main;
 
+import org.apache.felix.framework.Felix;
+import org.apache.felix.framework.util.FelixConstants;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import org.apache.felix.framework.Felix;
-import org.apache.felix.framework.util.FelixConstants;
+import java.util.logging.*;
 
 class Main {
 
-	private static final String RESOURCE_FELIX_CONFIGRATION = "/org.to2mbn.lolixl.felix.properties";
+	private static final String RESOURCE_FELIX_CONFIGURATION = "/org.to2mbn.lolixl.felix.properties";
 
 	private static FileHandler loggingHandler;
 
-	private static Properties loadConfigration() throws IOException {
-		Properties configration = new Properties();
-		try (InputStream in = Main.class.getResourceAsStream(RESOURCE_FELIX_CONFIGRATION)) {
+	private static Properties loadConfiguration() throws IOException {
+		Properties configuration = new Properties();
+		try (InputStream in = Main.class.getResourceAsStream(RESOURCE_FELIX_CONFIGURATION)) {
 			if (in == null) {
-				throw new IOException("无法加载Felix配置: " + RESOURCE_FELIX_CONFIGRATION);
+				throw new IOException("无法加载Felix配置: " + RESOURCE_FELIX_CONFIGURATION);
 			}
-			configration.load(new InputStreamReader(in, "UTF-8"));
+			configuration.load(new InputStreamReader(in, "UTF-8"));
 		}
-		return configration;
+		return configuration;
 	}
 
 	private static void setupSystemProperties() {
@@ -90,8 +87,8 @@ class Main {
 		logger.setLevel(level);
 	}
 
-	private static void processConfigration(Properties configration) {
-		configration.put(FelixConstants.LOG_LOGGER_PROP, new FelixLoggerAdapter());
+	private static void processConfiguration(Properties configuration) {
+		configuration.put(FelixConstants.LOG_LOGGER_PROP, new FelixLoggerAdapter());
 	}
 
 	public static void main(String[] args) {
@@ -101,11 +98,11 @@ class Main {
 			setupSystemProperties();
 			setupWorkingDir();
 			configureJUL();
-			Properties felixConfigration = loadConfigration();
-			processConfigration(felixConfigration);
+			Properties felixConfiguration = loadConfiguration();
+			processConfiguration(felixConfiguration);
 			AccessEndpoint.internalBundleRepository = new InternalBundleRepository();
 
-			felix = new Felix(felixConfigration);
+			felix = new Felix(felixConfiguration);
 			felix.start();
 			setupFelix(felix);
 			felix.waitForStop(Long.MAX_VALUE);
