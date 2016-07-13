@@ -70,7 +70,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			addGAVElement(doc, elePlugin, project.getArtifact());
 			Element eleDependencies = doc.createElement("dependencies");
 			elePlugin.appendChild(eleDependencies);
-			((Set<Artifact>) project.getDependencyArtifacts()).stream()
+			((Set<Artifact>) project.getArtifacts()).stream()
 					.filter(artifact -> Artifact.SCOPE_COMPILE.equals(artifact.getScope()))
 					.filter(artifact -> excludes == null || !excludes.contains(artifact.getGroupId() + ":" + artifact.getArtifactId()))
 					.forEach(dependency -> {

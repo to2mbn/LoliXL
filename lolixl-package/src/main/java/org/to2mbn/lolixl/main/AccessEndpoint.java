@@ -23,4 +23,8 @@ public final class AccessEndpoint {
 		return internalBundleRepository.getGav2bootstrapBundles();
 	}
 
+	public static byte[] getBootstrapBundleData(String gav) {
+		return internalBundleRepository.getBootstrapBundleData(gav);
+	}
+
 }

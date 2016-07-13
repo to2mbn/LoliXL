@@ -1,17 +1,19 @@
 package org.to2mbn.lolixl.plugin.impl;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import org.to2mbn.lolixl.plugin.PluginDescription;
+import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.gpg.GPGVerifier;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
-import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 
-public class PluginLoader {
+public class ArtifactLoader {
 
 	private byte[] jar;
-	private PluginDescriptionImpl description;
+	private Optional<PluginDescription> description;
 
-	private MavenRepository repository;
+	private PluginRepository repository;
 	private MavenArtifact artifact;
 
 	// TODO: We are not going to verify gpg signature currently.
@@ -20,43 +22,38 @@ public class PluginLoader {
 	@SuppressWarnings("unused")
 	private GPGVerifier verifier;
 
-	public PluginLoader(GPGVerifier verifier, MavenRepository repository, MavenArtifact artifact) {
+	public ArtifactLoader(GPGVerifier verifier, PluginRepository repository, MavenArtifact artifact) {
 		this.verifier = Objects.requireNonNull(verifier);
 		this.repository = Objects.requireNonNull(repository);
 		this.artifact = Objects.requireNonNull(artifact);
+	}
+
+	public ArtifactLoader(byte[] jar, Optional<PluginDescription> description) {
+		this.jar = jar;
+		this.description = description;
 	}
 
 	public byte[] getJar() {
 		return jar;
 	}
 
-	public PluginDescriptionImpl getDescription() {
+	public Optional<PluginDescription> getDescription() {
 		return description;
 	}
 
-	public MavenRepository getRepository() {
-		return repository;
-	}
+	public CompletableFuture<ArtifactLoader> load() {
+		if (repository == null)
+			throw new IllegalStateException("Couldn't to load because of missing repository");
 
-	public MavenArtifact getArtifact() {
-		return artifact;
-	}
-
-	public CompletableFuture<PluginLoader> load() {
 		return CompletableFuture.allOf(
-				readArtifact(null, "jar"),
-				readArtifact("lolixl-plugin", "xml"))
+				repository.getPluginDescription(artifact)
+						.thenAccept(description -> this.description = description),
+				readArtifact(null, "jar")
+						.thenAccept(data -> this.jar = data))
 				.thenApply(dummy -> this);
 	}
 
 	/*
-	public CompletableFuture<PluginLoader> load() {
-		return CompletableFuture.allOf(
-				readSignedArtifact(null, "jar"),
-				readSignedArtifact("lolixl-plugin", "xml"))
-				.thenApply(dummy -> this);
-	}
-	
 	private CompletableFuture<byte[]> readSignedArtifact(String classifier, String type) {
 		return readArtifact(classifier, type)
 				.thenCombine(readArtifact(classifier, type + ".asc"),
@@ -66,7 +63,7 @@ public class PluginLoader {
 	*/
 
 	private CompletableFuture<byte[]> readArtifact(String classifier, String type) {
-		return new ReadToMemoryProcessor(output -> repository.downloadArtifact(artifact, classifier, type, output))
+		return new ReadToMemoryProcessor(output -> repository.getRepository().downloadArtifact(artifact, classifier, type, output))
 				.invoke();
 	}
 

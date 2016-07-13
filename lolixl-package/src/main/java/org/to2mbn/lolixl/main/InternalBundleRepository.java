@@ -1,5 +1,7 @@
 package org.to2mbn.lolixl.main;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -7,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,6 +48,7 @@ class InternalBundleRepository {
 	private Map<String, String> ga2v;
 	private Map<String, Set<String>> ga2names;
 	private Map<String, Bundle> gav2bootstrapBundles;
+	private Map<String, byte[]> gav2bootstrapBundlesData;
 
 	public InternalBundleRepository() throws URISyntaxException, IOException {
 		CodeSource codeSource = InternalBundleRepository.class.getProtectionDomain().getCodeSource();
@@ -126,6 +130,10 @@ class InternalBundleRepository {
 		return gav2bootstrapBundles;
 	}
 
+	public byte[] getBootstrapBundleData(String gav) {
+		return gav2bootstrapBundlesData.get(gav);
+	}
+
 	private void copyBootstrapArtifacts() throws IOException {
 		for (String ga : bootstrapBundles) {
 			int idxMaohao = ga.indexOf(':');
@@ -161,9 +169,17 @@ class InternalBundleRepository {
 			String a = ga.substring(idxMaohao + 1);
 			String v = ga2v.get(ga);
 			String gav = g + ":" + a + ":" + v;
-			String uri = "lolixl:///localm2/" + gav;
+			String uri = "lolixl:///bundles/" + gav;
 			LOGGER.info("Installing bootstrap bundle " + uri);
-			Bundle bundle = ctx.installBundle(uri, Channels.newInputStream(openChannel(g, a, v, null, "jar")));
+			ByteArrayOutputStream buf;
+			try (FileChannel channel = openChannel(g, a, v, null, "jar")) {
+				buf = new ByteArrayOutputStream((int) channel.size());
+				WritableByteChannel out = Channels.newChannel(buf);
+				channel.transferTo(0, channel.size(), out);
+			}
+			byte[] data = buf.toByteArray();
+			gav2bootstrapBundlesData.put(gav, data);
+			Bundle bundle = ctx.installBundle(uri, new ByteArrayInputStream(data));
 			bundles.add(bundle);
 			gav2bootstrapBundles.put(gav, bundle);
 		}
