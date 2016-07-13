@@ -1,14 +1,17 @@
 package org.to2mbn.lolixl.ui.container.view;
 
-import javafx.event.ActionEvent;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import org.to2mbn.lolixl.ui.UIApp;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
 
-public class DefaultTitleBarView {
+@Component
+public class DefaultTitleBarView extends View {
 	@FXML
 	public AnchorPane rootContainer;
 
@@ -25,16 +28,6 @@ public class DefaultTitleBarView {
 	public ImageView closeButton;
 
 	@FXML
-	public void onCloseButtonClicked(ActionEvent event) {
-		// TODO
-	}
-
-	@FXML
-	public void onMinimizeButtonClicked(ActionEvent event) {
-		UIApp.mainStage.get().hide();
-	}
-
-	@FXML
 	public void initialize() {
 		rootContainer.setLeftAnchor(titleLabel, 0D);
 		rootContainer.setRightAnchor(buttonContainer, 0D);
@@ -43,5 +36,12 @@ public class DefaultTitleBarView {
 			titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
 		}
 
+		rootContainer.idProperty().bind(Bindings
+				.when(mainStageProvider.getMainStage().focusedProperty())
+				.then(rootContainer.idProperty().get().replace("_unfocused", ""))
+				.otherwise(rootContainer.idProperty().get().concat("_unfocused")));
 	}
+
+	@Reference
+	private UIPrimaryReferenceProvider mainStageProvider;
 }

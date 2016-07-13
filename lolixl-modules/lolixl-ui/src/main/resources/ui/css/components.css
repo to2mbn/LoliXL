@@ -1,4 +1,12 @@
-.close-window-button:hover .minimize-window-button:hover {
+#close-window-button:hover, #minimize-window-button:hover {
     -fx-background-color: #d1d6e1;
     -fx-tooltip-visible: false;
+}
+
+#default_title_bar {
+    -fx-background-color: #3498db;
+}
+
+#default_title_bar_unfocused {
+    -fx-background-color: #a5a5a5;
 }

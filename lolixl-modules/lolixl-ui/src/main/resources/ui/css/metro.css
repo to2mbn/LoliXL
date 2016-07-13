@@ -8,37 +8,47 @@
     SOME OF THE FOLLOWING CSS-ES WERE WRITTEN BY @Herudi
 */
 
+.root {
+    -fx-font-family: "Segoe UI", "PingFang", Arial, sans-serif;
+}
+
 .background {
     -fx-background-color: white;
 }
 
 .header {
     -fx-font-size: 42pt;
-    -fx-font-family: "Segoe UI Light";
     -fx-text-fill: black;
 }
 
 .item-title {
     -fx-font-size: 11pt;
-    -fx-font-family: "Segoe UI Semibold";
     -fx-text-fill: black;
     -fx-opacity: 0.6;
-
 }
 
 .button {
-    -fx-background-color: #3498db;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-text-fill: white;
+    -fx-background-color: white;
+    -fx-text-fill: #193555;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
     -fx-opacity: 0.95;
-    -fx-border-width: 1;
+    -fx-border-width: 2;
     -fx-border-color: #193555;
+}
+
+.button:default {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
 }
 
 .button:hover {
     -fx-background-color: #dedfde;
-    -fx-text-fill: #606060;
     -fx-font: bold;
+}
+
+.button:default:hover {
+    -fx-text-fill: #193555
 }
 
 .button:pressed, .button:default:hover:pressed {
@@ -54,12 +64,9 @@
 
 .toggle-button {
     -fx-padding: 5 22 5 22;
-    -fx-border-style: null;
+    -fx-border-style: none;
     -fx-background-radius: 0;
-
     -fx-background-color: #cccccc;
-
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 11pt;
     -fx-text-fill: black;
 }
@@ -521,10 +528,6 @@
     -fx-scale-shape: false;
 }
 
-.list-spinner .text {
-    -fx-font-family: "Segoe UI"
-}
-
 .list-spinner:disabled {
     -fx-opacity: .4;
 }
@@ -570,7 +573,6 @@
 
 .menu-item .label {
     -fx-text-fill: #212121;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 12px;
 }
 

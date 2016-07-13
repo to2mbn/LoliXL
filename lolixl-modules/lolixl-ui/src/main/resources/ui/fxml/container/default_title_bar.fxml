@@ -8,8 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane fx:id="rootContainer" opacity="0.95" prefHeight="40.0" prefWidth="850.0" style="-fx-background-color: #3498db;" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView">
+<AnchorPane id="default_title_bar" fx:id="rootContainer" opacity="0.95" prefHeight="40.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView">
    <children>
       <Label fx:id="titleLabel" layoutX="14.0" layoutY="8.0" prefHeight="24.0" prefWidth="400.0" text="LoliXL" textFill="WHITE">
          <font>
@@ -18,12 +17,12 @@
       </Label>
       <HBox fx:id="buttonContainer" alignment="CENTER_RIGHT" layoutX="450.0" prefHeight="40.0" prefWidth="400.0" spacing="3.0">
          <children>
-            <ImageView id="minimize-window-button" fx:id="minimizeButton" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onMinimizeButtonClicked" pickOnBounds="true" preserveRatio="true">
+            <ImageView id="minimize-window-button" fx:id="minimizeButton" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/ui/img/minimize_window_button.png" />
                </image>
             </ImageView>
-            <ImageView id="close-window-button" fx:id="closeButton" fitHeight="35.0" fitWidth="35.0" onMouseClicked="#onCloseButtonClicked" pickOnBounds="true" preserveRatio="true">
+            <ImageView id="close-window-button" fx:id="closeButton" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/ui/img/close_window_button.png" />
                </image>

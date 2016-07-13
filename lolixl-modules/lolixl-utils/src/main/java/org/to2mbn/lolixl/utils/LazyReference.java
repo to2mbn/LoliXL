@@ -45,7 +45,6 @@ public class LazyReference<T> {
 		if (o == null || getClass() != o.getClass()) return false;
 		LazyReference<?> that = (LazyReference<?>) o;
 		return value != null ? value.equals(that.value) : that.value == null;
-
 	}
 
 	@Override
