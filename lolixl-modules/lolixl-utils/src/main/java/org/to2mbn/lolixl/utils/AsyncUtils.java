@@ -14,6 +14,13 @@ public final class AsyncUtils {
 				(ex instanceof CompletionException && exClass.isInstance(ex.getCause()));
 	}
 
+	public static CompletionException wrapWithCompletionException(Throwable e) {
+		if (e instanceof CompletionException)
+			return (CompletionException) e;
+		else
+			return new CompletionException(e);
+	}
+
 	public static <T> CompletableFuture<T> asyncRun(Callable<T> callable, Executor executor) {
 		CompletableFuture<T> future = new CompletableFuture<>();
 		executor.execute(() -> {

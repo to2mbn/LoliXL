@@ -53,15 +53,6 @@ public class ArtifactLoader {
 				.thenApply(dummy -> this);
 	}
 
-	/*
-	private CompletableFuture<byte[]> readSignedArtifact(String classifier, String type) {
-		return readArtifact(classifier, type)
-				.thenCombine(readArtifact(classifier, type + ".asc"),
-						(data, signature) -> verifier.verify(data, signature))
-				.thenCompose(f -> f);
-	}
-	*/
-
 	private CompletableFuture<byte[]> readArtifact(String classifier, String type) {
 		return new ReadToMemoryProcessor(output -> repository.getRepository().downloadArtifact(artifact, classifier, type, output))
 				.invoke();
