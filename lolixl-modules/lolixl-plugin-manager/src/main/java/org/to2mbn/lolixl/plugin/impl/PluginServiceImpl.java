@@ -50,6 +50,11 @@ public class PluginServiceImpl implements PluginService {
 
 	private static final Logger LOGGER = Logger.getLogger(PluginServiceImpl.class.getCanonicalName());
 
+	private static final String[][] PROTECTED_PLUGINS = {
+			{ "org.to2mbn.lolixl", "lolixl-plugin-manager" },
+			{ "org.to2mbn.lolixl", "lolixl-utils" }
+	};
+
 	private class PluginLoadingProcessor {
 
 		private PluginRepository repository;
@@ -57,7 +62,7 @@ public class PluginServiceImpl implements PluginService {
 
 		private Map<MavenArtifact, ArtifactLoader> queried = new ConcurrentHashMap<>();
 
-		public PluginLoadingProcessor(LocalPluginRepository repository, MavenArtifact artifact) {
+		public PluginLoadingProcessor(PluginRepository repository, MavenArtifact artifact) {
 			this.repository = repository;
 			this.artifact = artifact;
 		}
@@ -167,7 +172,7 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	@Override
-	public CompletableFuture<Plugin> loadPlugin(LocalPluginRepository repository, MavenArtifact artifact) {
+	public CompletableFuture<Plugin> loadPlugin(PluginRepository repository, MavenArtifact artifact) {
 		Objects.requireNonNull(repository);
 		Objects.requireNonNull(artifact);
 		return new PluginLoadingProcessor(repository, artifact).invoke();
@@ -294,8 +299,6 @@ public class PluginServiceImpl implements PluginService {
 		Objects.requireNonNull(src);
 		Objects.requireNonNull(dest);
 		Objects.requireNonNull(loader);
-		if (src.equals(dest))
-			throw new IllegalArgumentException("Version not changed: " + src);
 		if (!getBundle(src).isPresent())
 			throw new IllegalStateException(src + " is not installed");
 
@@ -304,15 +307,31 @@ public class PluginServiceImpl implements PluginService {
 		byte[] data = loader.getJar();
 		bundle.update(new ByteArrayInputStream(data));
 
+		PluginImpl oldPlugin = (PluginImpl) bundle2plugin.get(bundle);
+
 		removeBundle0(src);
 		addBundle0(bundle, dest, data);
-		loader.getDescription().ifPresent(description -> addPlugin0(bundle, description));
+		loader.getDescription().ifPresent(description -> {
+			PluginImpl plugin = oldPlugin == null ? new PluginImpl() : oldPlugin;
+			plugin.bundle = bundle;
+			plugin.container = this;
+			plugin.description = description;
+
+			bundle2plugin.put(bundle, plugin);
+			loadedPlugins.add(plugin);
+		});
 	}
 
 	private void performUninstall(MavenArtifact artifact) throws BundleException {
 		Objects.requireNonNull(artifact);
 		if (!getBundle(artifact).isPresent())
 			throw new IllegalStateException(artifact + " is not installed");
+		for (String[] protectedGa : PROTECTED_PLUGINS) {
+			if (protectedGa[0].equals(artifact.getGroupId()) &&
+					protectedGa[1].equals(artifact.getArtifactId())) {
+				throw new SecurityException("Protected plugin " + artifact + " couldn't be uninstalled");
+			}
+		}
 
 		LOGGER.info("Uninstalling " + artifact);
 		Bundle bundle = getBundle(artifact).get();
@@ -342,6 +361,17 @@ public class PluginServiceImpl implements PluginService {
 				.map(PluginDescription::getArtifact)
 				.forEach(newPlugins::remove);
 
+		Set<MavenArtifact> toUninstallArtifacts = toUninstall.stream()
+				.map(PluginDescription::getArtifact)
+				.collect(toSet());
+		newPlugins = newPlugins.stream()
+				.filter(artifact -> {
+					Set<MavenArtifact> dependenciesThatWillBeUninstalled = new HashSet<>(pluginArtifact2Description.get(artifact).getDependencies());
+					dependenciesThatWillBeUninstalled.retainAll(toUninstallArtifacts);
+					return dependenciesThatWillBeUninstalled.isEmpty();
+				})
+				.collect(toSet());
+
 		Set<MavenArtifact> newState = resolver.computeState(newPlugins.stream()
 				.map(pluginArtifact2Description::get)
 				.collect(toSet()));
@@ -365,33 +395,40 @@ public class PluginServiceImpl implements PluginService {
 
 		LOGGER.info(format("Update state: toInstall=%s, toUninstall=%s", toInstall, toUninstall));
 
-		try {
-			synchronized (lock) {
-				performActions(computeActions(toInstall, toUninstall), artifact2loader);
-				checkDependenciesState();
-			}
+		IllegalStateException startExCollection = null;
 
-			IllegalStateException startExCollection = null;
-			for (Bundle bundle : bundle2artifact.keySet()) {
-				if (bundle.getState() != Bundle.ACTIVE &&
-						bundle.getState() != Bundle.STARTING) {
-					try {
-						bundle.start();
-					} catch (Throwable exStart) {
-						LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
-						if (startExCollection == null)
-							startExCollection = new IllegalStateException("One or more bundles couldn't start");
-						startExCollection.addSuppressed(exStart);
+		try {
+			try {
+				synchronized (lock) {
+					performActions(computeActions(toInstall, toUninstall), artifact2loader);
+					checkDependenciesState();
+				}
+			} finally {
+				for (Bundle bundle : bundle2artifact.keySet()) {
+					if (bundle.getState() != Bundle.ACTIVE &&
+							bundle.getState() != Bundle.STARTING) {
+						try {
+							bundle.start();
+						} catch (Throwable exStart) {
+							LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
+							if (startExCollection == null)
+								startExCollection = new IllegalStateException("One or more bundles couldn't start");
+							startExCollection.addSuppressed(exStart);
+						}
+						LOGGER.info("Started " + bundle);
 					}
 				}
 			}
-			if (startExCollection!=null)
-				throw startExCollection;
-			
 		} catch (Throwable ex) {
 			LOGGER.log(Level.SEVERE, "Couldn't finish updating dependencies state", ex);
-			throw new IllegalStateException("Couldn't finish updating dependencies state", ex);
+			IllegalStateException exToThrow = new IllegalStateException("Couldn't finish updating dependencies state", ex);
+			if (startExCollection != null)
+				exToThrow.addSuppressed(startExCollection);
+			throw exToThrow;
 		}
+
+		if (startExCollection != null)
+			throw startExCollection;
 	}
 
 }
