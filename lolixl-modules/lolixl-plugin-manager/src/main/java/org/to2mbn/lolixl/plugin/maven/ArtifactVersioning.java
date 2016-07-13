@@ -2,7 +2,7 @@ package org.to2mbn.lolixl.plugin.maven;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
+import java.util.SortedSet;
 
 public class ArtifactVersioning implements Serializable {
 
@@ -10,9 +10,9 @@ public class ArtifactVersioning implements Serializable {
 
 	private String latest;
 	private String snapshot;
-	private Set<String> versions;
+	private SortedSet<String> versions;
 
-	public ArtifactVersioning(String latest, String snapshot, Set<String> versions) {
+	public ArtifactVersioning(String latest, String snapshot, SortedSet<String> versions) {
 		this.latest = latest;
 		this.snapshot = snapshot;
 		this.versions = versions;
@@ -26,7 +26,10 @@ public class ArtifactVersioning implements Serializable {
 		return snapshot;
 	}
 
-	public Set<String> getVersions() {
+	/**
+	 * @return 所有的版本，降序排列
+	 */
+	public SortedSet<String> getVersions() {
 		return versions;
 	}
 

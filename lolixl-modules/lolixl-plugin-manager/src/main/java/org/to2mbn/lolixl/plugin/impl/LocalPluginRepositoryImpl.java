@@ -8,9 +8,11 @@ import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.plugin.LocalPluginRepository;
+import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
+import org.to2mbn.lolixl.utils.AsyncUtils;
 
 @Component
 @Service({ LocalPluginRepository.class })
@@ -18,11 +20,6 @@ import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 		@Property(name = "pluginRepo.type", value = "local")
 })
 public class LocalPluginRepositoryImpl extends AbstractPluginRepository implements LocalPluginRepository {
-
-	private static final String[][] ARTIFACTS_TO_DOWNLOAD = new String[][] {
-			new String[] { null, "jar" },
-			new String[] { "lolixl-plugin", "xml" }
-	};
 
 	@Reference(target = "(m2repository.type=local)")
 	private LocalMavenRepository repository;
@@ -32,14 +29,14 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 		Objects.requireNonNull(from);
 		Objects.requireNonNull(artifact);
 
-		@SuppressWarnings("unchecked")
-		CompletableFuture<Void>[] futures = new CompletableFuture[ARTIFACTS_TO_DOWNLOAD.length];
-		for (int i = 0; i < ARTIFACTS_TO_DOWNLOAD.length; i++) {
-			String classifier = ARTIFACTS_TO_DOWNLOAD[i][0];
-			String type = ARTIFACTS_TO_DOWNLOAD[i][1];
-			futures[i] = Objects.requireNonNull(repository.install(from, artifact, classifier, type));
-		}
-		return CompletableFuture.allOf(futures);
+		return CompletableFuture.allOf(
+				repository.install(from, artifact, null, "jar"),
+				repository.install(from, artifact, "lolixl-plugin", "xml")
+						.exceptionally(ex -> {
+							if (AsyncUtils.exceptionInstanceof(ArtifactNotFoundException.class, ex))
+								return null;
+							throw AsyncUtils.wrapWithCompletionException(ex);
+						}));
 	}
 
 	@Override

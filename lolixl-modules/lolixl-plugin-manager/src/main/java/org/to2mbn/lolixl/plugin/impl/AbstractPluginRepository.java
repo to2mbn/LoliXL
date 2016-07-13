@@ -32,7 +32,7 @@ abstract public class AbstractPluginRepository implements PluginRepository {
 					} else if (AsyncUtils.exceptionInstanceof(ArtifactNotFoundException.class, exception)) {
 						return Optional.empty();
 					} else {
-						throw new RuntimeException(exception);
+						throw AsyncUtils.wrapWithCompletionException(exception);
 					}
 				});
 	}

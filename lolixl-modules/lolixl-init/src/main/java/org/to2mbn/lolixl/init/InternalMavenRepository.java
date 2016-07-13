@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -64,10 +66,17 @@ public class InternalMavenRepository implements MavenRepository {
 	public CompletableFuture<ArtifactVersioning> getVersioning(String groupId, String artifactId) {
 		return AsyncUtils.asyncRun(() -> {
 			String version = getVersion(groupId, artifactId);
+			if (version == null) {
+				throw new ArtifactNotFoundException(groupId + ":" + artifactId);
+			}
+
+			SortedSet<String> versions = new TreeSet<>();
+			versions.add(version);
+			versions = Collections.unmodifiableSortedSet(versions);
 			if (MavenUtils.isSnapshot(version)) {
-				return new ArtifactVersioning(version, version, Collections.singleton(version));
+				return new ArtifactVersioning(version, version, versions);
 			} else {
-				return new ArtifactVersioning(version, null, Collections.singleton(version));
+				return new ArtifactVersioning(version, null, versions);
 			}
 		}, cpuComputePool);
 	}
