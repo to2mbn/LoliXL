@@ -14,6 +14,10 @@ public interface LocalPluginRepository extends PluginRepository {
 
 	CompletableFuture<Void> downloadBundle(MavenRepository from, MavenArtifact artifact);
 
+	default CompletableFuture<Void> downloadBundle(PluginRepository from, MavenArtifact artifact) {
+		return downloadBundle(from.getRepository(), artifact);
+	}
+
 	@Override
 	LocalMavenRepository getRepository();
 

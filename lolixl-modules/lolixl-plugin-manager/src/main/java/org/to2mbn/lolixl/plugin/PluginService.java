@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import org.osgi.framework.Bundle;
-import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 /**
