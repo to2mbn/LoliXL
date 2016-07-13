@@ -1,0 +1,4 @@
+.close-window-button:hover .minimize-window-button:hover {
+    -fx-background-color: #d1d6e1;
+    -fx-tooltip-visible: false;
+}
