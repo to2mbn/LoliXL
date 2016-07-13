@@ -10,7 +10,7 @@
 	<packaging>bundle</packaging>
 	<name>lolixl-init</name>
 	<description>LoliXL initialization module</description>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
@@ -19,6 +19,12 @@
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.scr</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>animal-sniffer-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>

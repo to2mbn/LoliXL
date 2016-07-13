@@ -367,9 +367,8 @@ public class PluginServiceImpl implements PluginService {
 
 		try {
 			synchronized (lock) {
-				List<DependencyAction> actionsToPerform = computeActions(toInstall, toUninstall);
-				LOGGER.info("Actions: " + actionsToPerform);
-				performActions(actionsToPerform, artifact2loader);
+				performActions(computeActions(toInstall, toUninstall), artifact2loader);
+				checkDependenciesState();
 			}
 
 			IllegalStateException startExCollection = null;

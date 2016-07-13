@@ -21,9 +21,7 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 
 	private static final String[][] ARTIFACTS_TO_DOWNLOAD = new String[][] {
 			new String[] { null, "jar" },
-			new String[] { null, "jar.asc" },
-			new String[] { "lolixl-plugin", "xml" },
-			new String[] { "lolixl-plugin", "xml.asc" }
+			new String[] { "lolixl-plugin", "xml" }
 	};
 
 	@Reference(target = "(m2repository.type=local)")

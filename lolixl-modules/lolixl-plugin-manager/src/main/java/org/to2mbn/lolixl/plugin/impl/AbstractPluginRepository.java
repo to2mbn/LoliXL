@@ -6,11 +6,11 @@ import java.io.Reader;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import org.to2mbn.lolixl.plugin.PluginDescription;
 import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
+import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.xml.sax.InputSource;
 
 abstract public class AbstractPluginRepository implements PluginRepository {
@@ -29,8 +29,7 @@ abstract public class AbstractPluginRepository implements PluginRepository {
 						} catch (Exception e) {
 							throw new IllegalArgumentException("${org.to2mbn.lolixl.plugin.badDescription}", e);
 						}
-					} else if (exception instanceof ArtifactNotFoundException ||
-							(exception instanceof CompletionException && exception.getCause() instanceof ArtifactNotFoundException)) {
+					} else if (AsyncUtils.exceptionInstanceof(ArtifactNotFoundException.class, exception)) {
 						return Optional.empty();
 					} else {
 						throw new RuntimeException(exception);

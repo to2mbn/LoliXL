@@ -163,6 +163,7 @@ class InternalBundleRepository {
 		copyBootstrapArtifacts();
 		Set<Bundle> bundles = new LinkedHashSet<>();
 		gav2bootstrapBundles = new LinkedHashMap<>();
+		gav2bootstrapBundlesData = new LinkedHashMap<>();
 		for (String ga : bootstrapBundles) {
 			int idxMaohao = ga.indexOf(':');
 			String g = ga.substring(0, idxMaohao);
