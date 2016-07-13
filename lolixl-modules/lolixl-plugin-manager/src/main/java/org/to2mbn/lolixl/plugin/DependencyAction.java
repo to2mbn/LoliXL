@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.plugin.impl.resolver;
+package org.to2mbn.lolixl.plugin;
 
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 

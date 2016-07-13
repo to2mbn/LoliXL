@@ -28,16 +28,18 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.EventAdmin;
+import org.to2mbn.lolixl.plugin.DependencyAction;
 import org.to2mbn.lolixl.plugin.LocalPluginRepository;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginDescription;
 import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.PluginService;
+import org.to2mbn.lolixl.plugin.DependencyAction.InstallAction;
+import org.to2mbn.lolixl.plugin.DependencyAction.UninstallAction;
+import org.to2mbn.lolixl.plugin.DependencyAction.UpdateAction;
+import org.to2mbn.lolixl.plugin.DependencyActionEvent;
 import org.to2mbn.lolixl.plugin.gpg.GPGVerifier;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.InstallAction;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.UninstallAction;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.UpdateAction;
 import org.to2mbn.lolixl.plugin.impl.resolver.DependencyResolver;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
@@ -98,6 +100,9 @@ public class PluginServiceImpl implements PluginService {
 
 	@Reference
 	private GPGVerifier gpgVerifier;
+
+	@Reference
+	private EventAdmin eventAdmin;
 
 	private BundleContext bundleContext;
 
@@ -270,6 +275,10 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	private void performAction(DependencyAction action, Map<MavenArtifact, ArtifactLoader> artifact2loader) throws BundleException {
+		EventAdmin eventAdmin = this.eventAdmin;
+		if (eventAdmin != null)
+			eventAdmin.postEvent(new DependencyActionEvent(action));
+
 		if (action instanceof InstallAction) {
 			performInstall(action.artifact, artifact2loader.get(action.artifact));
 		} else if (action instanceof UpdateAction) {

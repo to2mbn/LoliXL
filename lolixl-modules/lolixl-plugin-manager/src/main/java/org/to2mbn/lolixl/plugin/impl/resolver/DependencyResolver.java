@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
+import org.to2mbn.lolixl.plugin.DependencyAction;
 import org.to2mbn.lolixl.plugin.PluginDescription;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.InstallAction;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.UpdateAction;
-import org.to2mbn.lolixl.plugin.impl.resolver.DependencyAction.UninstallAction;
+import org.to2mbn.lolixl.plugin.DependencyAction.InstallAction;
+import org.to2mbn.lolixl.plugin.DependencyAction.UninstallAction;
+import org.to2mbn.lolixl.plugin.DependencyAction.UpdateAction;
 import static java.util.stream.Collectors.*;
 
 public class DependencyResolver {
