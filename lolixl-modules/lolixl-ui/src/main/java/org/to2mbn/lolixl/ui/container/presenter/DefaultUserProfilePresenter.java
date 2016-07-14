@@ -1,14 +1,20 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
+import org.to2mbn.lolixl.ui.api.ViewInitializer;
+import org.to2mbn.lolixl.ui.container.view.DefaultUserProfileView;
+import org.to2mbn.lolixl.utils.LazyReference;
 
-@Component
-@Service({DefaultUserProfilePresenter.class})
-@Properties({
-		@Property(name = "presenter.name", value = "default_user_profile_presenter")
-})
-public class DefaultUserProfilePresenter extends Presenter {
+import java.net.URL;
+
+public class DefaultUserProfilePresenter implements ViewInitializer {
+	public final LazyReference<DefaultUserProfileView> view = new LazyReference<>();
+	public final LazyReference<BorderPane> root = new LazyReference<>();
+
+	@Override
+	public void initialize(URL fxmlLocation) {
+		view.set(new FXMLLoader(fxmlLocation).getController());
+		root.set(view.get().rootContainer);
+	}
 }
