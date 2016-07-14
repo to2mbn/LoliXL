@@ -30,14 +30,13 @@ public interface PluginService {
 	Optional<MavenArtifact> getArtifact(Bundle bundle);
 
 	/**
-	 * 从插件仓库加载一个插件。
+	 * 从本地插件仓库加载一个插件。
 	 * <p>
 	 * 加载过程中可能会出现异常，如插件不存在，则加载失败。
 	 * 
-	 * @param repository 插件仓库
 	 * @param artifact 插件的Maven信息
 	 * @return 插件
 	 */
-	CompletableFuture<Plugin> loadPlugin(PluginRepository repository, MavenArtifact artifact);
+	CompletableFuture<Plugin> loadPlugin(MavenArtifact artifact);
 
 }

@@ -177,10 +177,9 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	@Override
-	public CompletableFuture<Plugin> loadPlugin(PluginRepository repository, MavenArtifact artifact) {
-		Objects.requireNonNull(repository);
+	public CompletableFuture<Plugin> loadPlugin(MavenArtifact artifact) {
 		Objects.requireNonNull(artifact);
-		return new PluginLoadingProcessor(repository, artifact).invoke();
+		return new PluginLoadingProcessor(localPluginRepo, artifact).invoke();
 	}
 
 	CompletableFuture<Void> unloadPlugin(Plugin plugin) {
