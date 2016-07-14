@@ -1,17 +1,15 @@
 package org.to2mbn.lolixl.ui;
 
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
-import org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView;
-import org.to2mbn.lolixl.ui.container.view.DefaultUserProfileView;
 import org.to2mbn.lolixl.utils.LazyReference;
 
 import java.io.IOException;
@@ -28,11 +26,11 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
 
 	@Reference(target = "(presenter.name=default_frame_presenter)")
-	private Presenter<DefaultFrameView, Parent> framePresenter;
+	private Presenter framePresenter;
 	@Reference(target = "(presenter.name=default_title_bar_presenter)")
-	private Presenter<DefaultTitleBarView, Parent> titleBarPresenter;
+	private Presenter titleBarPresenter;
 	@Reference(target = "(presenter.name=default_user_profile_presenter)")
-	private Presenter<DefaultUserProfileView, Parent> userProfilePresenter;
+	private Presenter userProfilePresenter;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -40,7 +38,7 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 		mainStage.get().initStyle(StageStyle.UNDECORATED);
 
 		resolvePresenters();
-		mainScene.set(new Scene(framePresenter.content.get()));
+		mainScene.set(new Scene(framePresenter.view.get().getComponent(BorderPane.class, "containerPane")));
 		mainScene.get().getStylesheets().addAll("ui/css/metro.css", "ui/css/components.css");
 
 		initLayout();
@@ -55,8 +53,8 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	}
 
 	private void initLayout() {
-		framePresenter.view.get().setTitleBar(titleBarPresenter.content.get());
-		framePresenter.view.get().setWidget(userProfilePresenter.content.get());
+		framePresenter.view.get().getComponent(BorderPane.class, "titleBarPane").setCenter(titleBarPresenter.view.get().getComponent(AnchorPane.class, "rootContainer"));
+		framePresenter.view.get().getComponent(BorderPane.class, "widgetPane").setCenter(userProfilePresenter.view.get().getComponent(AnchorPane.class, "rootContainer"));
 	}
 
 	@Override
