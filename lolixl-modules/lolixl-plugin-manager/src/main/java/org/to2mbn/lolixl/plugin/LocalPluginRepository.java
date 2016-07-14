@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.plugin;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
@@ -17,6 +19,8 @@ public interface LocalPluginRepository extends PluginRepository {
 	default CompletableFuture<Void> downloadBundle(PluginRepository from, MavenArtifact artifact) {
 		return downloadBundle(from.getRepository(), artifact);
 	}
+
+	Stream<MavenArtifact> listPlugins() throws IOException;
 
 	@Override
 	LocalMavenRepository getRepository();

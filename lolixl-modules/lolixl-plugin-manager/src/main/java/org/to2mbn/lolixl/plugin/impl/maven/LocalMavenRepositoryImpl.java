@@ -12,6 +12,8 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -19,6 +21,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -198,6 +201,40 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	@Override
+	public Stream<MavenArtifact> listArtifacts() throws IOException {
+		/*
+		 * 列出所有artifact。
+		 * 办法：
+		 * 设一个artifact(groupId=G, artifactId=A, version=V)
+		 * 在 ${G.replace('.','/')} / ${A} / ${V} 下就有 ${A}-${V}.jar
+		 * 就是说
+		 * 找出所有jar再筛选即可
+		 */
+		return Files.walk(m2dir)
+				.filter(Files::isRegularFile)
+				.map(p -> {
+					List<String> elements = new ArrayList<>();
+					m2dir.relativize(p).iterator().forEachRemaining(name -> elements.add(name.toString()));
+					return elements;
+				})
+				.filter(l -> l.size() > 3)
+				.map(l -> {
+					String version = l.get(l.size() - 2);
+					String artifactId = l.get(l.size() - 3);
+					if (!l.get(l.size() - 1).equals(artifactId + "-" + version + ".jar"))
+						return null;
+					StringBuilder groupIdBuilder = new StringBuilder();
+					for (int i = 0; i < l.size() - 3; i++)
+						groupIdBuilder.append(l.get(i))
+								.append('.');
+					if (groupIdBuilder.length() > 0)
+						groupIdBuilder.deleteCharAt(groupIdBuilder.length() - 1);
+					return new MavenArtifact(groupIdBuilder.toString(), artifactId, version);
+				})
+				.filter(Objects::nonNull);
 	}
 
 }

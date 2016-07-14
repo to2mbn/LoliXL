@@ -1,7 +1,10 @@
 package org.to2mbn.lolixl.plugin.impl;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -37,6 +40,12 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 								return null;
 							throw AsyncUtils.wrapWithCompletionException(ex);
 						}));
+	}
+
+	@Override
+	public Stream<MavenArtifact> listPlugins() throws IOException {
+		return repository.listArtifacts()
+				.filter(artifact -> Files.isRegularFile(repository.getArtifactPath(artifact, "lolixl-plugin", "xml")));
 	}
 
 	@Override

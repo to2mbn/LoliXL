@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.plugin.maven;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public interface LocalMavenRepository extends MavenRepository {
 
@@ -31,5 +32,7 @@ public interface LocalMavenRepository extends MavenRepository {
 	CompletableFuture<Void> deleteArtifactAllVersions(String groupId, String artifactId);
 
 	CompletableFuture<Void> install(MavenRepository from, MavenArtifact artifact, String classifier, String type);
+	
+	Stream<MavenArtifact> listArtifacts() throws IOException;
 
 }
