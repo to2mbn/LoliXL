@@ -14,6 +14,16 @@ public class LazyReference<T> {
 		allowNullType = _allowNullType;
 	}
 
+	public LazyReference(T _value) {
+		this();
+		value = _value;
+	}
+
+	public LazyReference(T _value, boolean _allowNullType) {
+		value = _value;
+		allowNullType = _allowNullType;
+	}
+
 	public void set(T val) {
 		if (isInitialized()) {
 			throw new IllegalStateException("Can not evaluate a non-null lazy-reference");

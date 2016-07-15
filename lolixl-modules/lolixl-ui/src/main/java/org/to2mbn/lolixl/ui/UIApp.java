@@ -15,9 +15,9 @@ public class UIApp extends Application {
 	// TODO 这边的逗比设计以后一定改
 	public static final LazyReference<Stage> mainStage = new LazyReference<>();
 	public static final LazyReference<Scene> mainScene = new LazyReference<>();
-	public static final LazyReference<DefaultFramePresenter> framePresenter = new LazyReference<>();
-	public static final LazyReference<DefaultTitleBarPresenter> titleBarPresenter = new LazyReference<>();
-	public static final LazyReference<DefaultUserProfilePresenter> userProfilePresenter = new LazyReference<>();
+	public static final LazyReference<DefaultFramePresenter> framePresenter = new LazyReference<>(new DefaultFramePresenter());
+	public static final LazyReference<DefaultTitleBarPresenter> titleBarPresenter = new LazyReference<>(new DefaultTitleBarPresenter());
+	public static final LazyReference<DefaultUserProfilePresenter> userProfilePresenter = new LazyReference<>(new DefaultUserProfilePresenter());
 
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
