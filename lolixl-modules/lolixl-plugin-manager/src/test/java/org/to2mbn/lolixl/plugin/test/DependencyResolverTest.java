@@ -13,7 +13,7 @@ public class DependencyResolverTest {
 	@Test
 	public void testMerge() {
 		assertEquals(Collections.singleton(new MavenArtifact("org.to2mbn.lolixl", "test-artifact", "2.0")),
-				new DependencyResolver().merge(new HashSet<>(Arrays.asList(new MavenArtifact("org.to2mbn.lolixl", "test-artifact", "2.0"), new MavenArtifact("org.to2mbn.lolixl", "test-artifact", "1.0")))));
+				DependencyResolver.merge(new HashSet<>(Arrays.asList(new MavenArtifact("org.to2mbn.lolixl", "test-artifact", "2.0"), new MavenArtifact("org.to2mbn.lolixl", "test-artifact", "1.0")))));
 	}
 
 }

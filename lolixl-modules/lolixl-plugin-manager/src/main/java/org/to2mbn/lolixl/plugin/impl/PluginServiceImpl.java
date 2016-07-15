@@ -42,7 +42,6 @@ import org.to2mbn.lolixl.plugin.DependencyActionEvent;
 import org.to2mbn.lolixl.plugin.gpg.GPGVerifier;
 import org.to2mbn.lolixl.plugin.impl.resolver.DependencyResolver;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
-import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
@@ -89,9 +88,6 @@ public class PluginServiceImpl implements PluginService {
 
 	}
 
-	@Reference(target = "(m2repository.type=local)")
-	private LocalMavenRepository localM2Repo;
-
 	@Reference(target = "(pluginRepo.type=local)")
 	private LocalPluginRepository localPluginRepo;
 
@@ -113,7 +109,7 @@ public class PluginServiceImpl implements PluginService {
 	private Map<MavenArtifact, byte[]> artifact2data = new ConcurrentHashMap<>();
 
 	private Set<Plugin> loadedPluginsView = Collections.unmodifiableSet(loadedPlugins);
-	private DependencyResolver resolver = new DependencyResolver();
+	private Set<MavenArtifact> loadedArtifactsView = Collections.unmodifiableSet(artifact2bundle.keySet());
 	private final Object lock = new Object();
 
 	@Activate
@@ -151,6 +147,11 @@ public class PluginServiceImpl implements PluginService {
 	@Override
 	public Set<Plugin> getLoadedPlugins() {
 		return loadedPluginsView;
+	}
+
+	@Override
+	public Set<MavenArtifact> getLoadedArtifacts() {
+		return loadedArtifactsView;
 	}
 
 	@Override
@@ -241,7 +242,7 @@ public class PluginServiceImpl implements PluginService {
 
 		// prepare for rollback
 		Map<MavenArtifact, byte[]> oldArtifact2data = new HashMap<>(artifact2data);
-		Map<MavenArtifact, PluginDescription> oldArtifact2description = resolver.toArtifact2DescriptionMap(getCurrentPluginDescriptions());
+		Map<MavenArtifact, PluginDescription> oldArtifact2description = DependencyResolver.toArtifact2DescriptionMap(getCurrentPluginDescriptions());
 
 		LOGGER.info("Perform actions: " + actions);
 		try {
@@ -362,9 +363,9 @@ public class PluginServiceImpl implements PluginService {
 
 		checkDependenciesState();
 
-		Map<MavenArtifact, PluginDescription> pluginArtifact2Description = resolver.toArtifact2DescriptionMap(getCurrentPluginDescriptions());
-		pluginArtifact2Description.putAll(resolver.toArtifact2DescriptionMap(toInstall));
-		Set<MavenArtifact> newPlugins = resolver.merge(new HashSet<>(pluginArtifact2Description.keySet()));
+		Map<MavenArtifact, PluginDescription> pluginArtifact2Description = DependencyResolver.toArtifact2DescriptionMap(getCurrentPluginDescriptions());
+		pluginArtifact2Description.putAll(DependencyResolver.toArtifact2DescriptionMap(toInstall));
+		Set<MavenArtifact> newPlugins = DependencyResolver.merge(new HashSet<>(pluginArtifact2Description.keySet()));
 		toUninstall.stream()
 				.map(PluginDescription::getArtifact)
 				.forEach(newPlugins::remove);
@@ -380,14 +381,14 @@ public class PluginServiceImpl implements PluginService {
 				})
 				.collect(toSet());
 
-		Set<MavenArtifact> newState = resolver.computeState(newPlugins.stream()
+		Set<MavenArtifact> newState = DependencyResolver.computeState(newPlugins.stream()
 				.map(pluginArtifact2Description::get)
 				.collect(toSet()));
-		return resolver.transferState(computeCurrentExpectedState(), newState);
+		return DependencyResolver.transferState(computeCurrentExpectedState(), newState);
 	}
 
 	private Set<MavenArtifact> computeCurrentExpectedState() {
-		return resolver.computeState(getCurrentPluginDescriptions());
+		return DependencyResolver.computeState(getCurrentPluginDescriptions());
 	}
 
 	private Set<PluginDescription> getCurrentPluginDescriptions() {

@@ -17,7 +17,6 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.Constants;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
-import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
@@ -79,13 +78,6 @@ public class InternalMavenRepository implements MavenRepository {
 				return new ArtifactVersioning(version, null, versions);
 			}
 		}, cpuComputePool);
-	}
-
-	@Override
-	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) {
-		CompletableFuture<ArtifactSnapshot> future = new CompletableFuture<>();
-		future.completeExceptionally(new ArtifactNotFoundException("Internal repository doesn't support getSnapshot"));
-		return future;
 	}
 
 	private FileChannel openChannel(String groupId, String artifactId, String version, String classifier, String type) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {

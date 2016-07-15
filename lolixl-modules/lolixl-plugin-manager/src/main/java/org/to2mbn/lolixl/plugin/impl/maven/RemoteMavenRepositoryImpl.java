@@ -18,7 +18,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
-import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
@@ -60,13 +59,6 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 		Objects.requireNonNull(artifactId);
 
 		return asyncInvokeChain(repo -> repo.getVersioning(groupId, artifactId));
-	}
-
-	@Override
-	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) {
-		Objects.requireNonNull(artifact);
-
-		return asyncInvokeChain(repo -> repo.getSnapshot(artifact));
 	}
 
 	private <T> CompletableFuture<T> asyncInvokeChain(Function<MavenRepository, CompletableFuture<T>> operation) {

@@ -16,11 +16,13 @@ import org.to2mbn.lolixl.plugin.DependencyAction.UninstallAction;
 import org.to2mbn.lolixl.plugin.DependencyAction.UpdateAction;
 import static java.util.stream.Collectors.*;
 
-public class DependencyResolver {
+public final class DependencyResolver {
 
-	private Comparator<String> reversedVersionComparator = new VersionComparator().reversed();
+	private DependencyResolver() {}
 
-	public Map<MavenArtifact, PluginDescription> toArtifact2DescriptionMap(Set<PluginDescription> descriptions) {
+	private static Comparator<String> reversedVersionComparator = new VersionComparator().reversed();
+
+	public static Map<MavenArtifact, PluginDescription> toArtifact2DescriptionMap(Set<PluginDescription> descriptions) {
 		return descriptions.stream()
 				.collect(groupingBy(PluginDescription::getArtifact, collectingAndThen(toList(), (List<PluginDescription> set) -> {
 					if (set.size() == 1)
@@ -30,7 +32,7 @@ public class DependencyResolver {
 				})));
 	}
 
-	public Set<MavenArtifact> computeState(Set<PluginDescription> plugins) {
+	public static Set<MavenArtifact> computeState(Set<PluginDescription> plugins) {
 		Set<MavenArtifact> artifacts = new HashSet<>();
 		plugins.forEach(description -> {
 			artifacts.add(description.getArtifact());
@@ -39,7 +41,7 @@ public class DependencyResolver {
 		return merge(artifacts);
 	}
 
-	public Set<MavenArtifact> merge(Set<MavenArtifact> artifacts) {
+	public static Set<MavenArtifact> merge(Set<MavenArtifact> artifacts) {
 		return artifacts.stream()
 				.collect(groupingBy(artifact -> artifact.getGroupId() + ":" + artifact.getArtifactId(),
 						mapping(artifact -> artifact.getVersion(),
@@ -53,11 +55,11 @@ public class DependencyResolver {
 				.collect(toSet());
 	}
 
-	public List<DependencyAction> transferState(Set<MavenArtifact> from, Set<MavenArtifact> to) {
+	public static List<DependencyAction> transferState(Set<MavenArtifact> from, Set<MavenArtifact> to) {
 		Map<String, MavenArtifact> gaMappingFrom = toGAMapping(from);
 		Map<String, MavenArtifact> gaMappingTo = toGAMapping(to);
 		List<DependencyAction> actions = new ArrayList<>();
-		
+
 		// Install
 		Set<String> gaToInstall = new HashSet<>(gaMappingTo.keySet());
 		gaToInstall.removeAll(gaMappingFrom.keySet());
@@ -84,7 +86,7 @@ public class DependencyResolver {
 		return actions;
 	}
 
-	private Map<String, MavenArtifact> toGAMapping(Set<MavenArtifact> artifacts) {
+	public static Map<String, MavenArtifact> toGAMapping(Set<MavenArtifact> artifacts) {
 		Map<String, MavenArtifact> gaMapping = new HashMap<>();
 		for (MavenArtifact artifact : artifacts)
 			gaMapping.put(artifact.getGroupId() + ":" + artifact.getArtifactId(), artifact);

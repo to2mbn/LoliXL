@@ -36,14 +36,4 @@ public interface MavenRepository {
 	 */
 	CompletableFuture<ArtifactVersioning> getVersioning(String groupId, String artifactId);
 
-	/**
-	 * 尝试下载所给构件的snapshot信息。
-	 * <p>
-	 * 大部分要求同{@link #getVersioning(String, String)}。
-	 * 
-	 * @param artifact 构件信息
-	 * @return snapshot信息
-	 */
-	CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact);
-
 }

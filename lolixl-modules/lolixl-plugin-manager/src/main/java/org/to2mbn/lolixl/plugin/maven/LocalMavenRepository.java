@@ -10,6 +10,8 @@ public interface LocalMavenRepository extends MavenRepository {
 	// Notice: Do not write to these files directly
 	Path getArtifactPath(MavenArtifact artifact, String classifier, String type);
 	
+	Path getRootDir();
+
 	/**
 	 * 删除给定构件。
 	 * <p>

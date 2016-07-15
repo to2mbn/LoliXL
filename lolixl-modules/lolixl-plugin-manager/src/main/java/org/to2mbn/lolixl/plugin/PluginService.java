@@ -17,6 +17,7 @@ public interface PluginService {
 	 * @return 所有已载入内存的插件
 	 */
 	Set<Plugin> getLoadedPlugins();
+	Set<MavenArtifact> getLoadedArtifacts();
 
 	/**
 	 * 获取一个已载入内存的插件。
@@ -38,5 +39,4 @@ public interface PluginService {
 	 * @return 插件
 	 */
 	CompletableFuture<Plugin> loadPlugin(MavenArtifact artifact);
-
 }

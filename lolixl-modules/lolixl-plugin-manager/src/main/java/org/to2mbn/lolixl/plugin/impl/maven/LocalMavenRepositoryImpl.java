@@ -19,8 +19,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -29,7 +27,6 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.plugin.impl.ReadToFileProcessor;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
-import org.to2mbn.lolixl.plugin.maven.ArtifactSnapshot;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
@@ -38,7 +35,6 @@ import org.to2mbn.lolixl.plugin.util.MavenUtils;
 import org.to2mbn.lolixl.plugin.util.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import com.google.gson.Gson;
-import static java.lang.String.format;
 
 @Component
 @Service({ LocalMavenRepository.class })
@@ -46,8 +42,6 @@ import static java.lang.String.format;
 		@Property(name = "m2repository.type", value = "local")
 })
 public class LocalMavenRepositoryImpl implements LocalMavenRepository {
-
-	private static final Logger LOGGER = Logger.getLogger(LocalMavenRepositoryImpl.class.getCanonicalName());
 
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
@@ -71,13 +65,6 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(artifactId);
 
 		return asyncReadMetadataJson(ArtifactVersioning.class, getVersioningMetadataPath(groupId, artifactId));
-	}
-
-	@Override
-	public CompletableFuture<ArtifactSnapshot> getSnapshot(MavenArtifact artifact) {
-		Objects.requireNonNull(artifact);
-
-		return asyncReadMetadataJson(ArtifactSnapshot.class, getSnapshotMetadataPath(artifact));
 	}
 
 	@Override
@@ -115,11 +102,6 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 		return CompletableFuture.allOf(
 				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
-				updateSnapshot(from, artifact).handle((result, ex) -> {
-					if (ex != null && !AsyncUtils.exceptionInstanceof(ArtifactNotFoundException.class, ex))
-						LOGGER.log(Level.WARNING, ex, () -> format("Couldn't download snapshot metadata %s from %s, skipping", artifact, from));
-					return null;
-				}),
 				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));
 	}
 
@@ -168,10 +150,6 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		return getArtifactDir(groupId, artifactId).resolve("maven-metadata.json");
 	}
 
-	private Path getSnapshotMetadataPath(MavenArtifact artifact) {
-		return getVersionDir(artifact).resolve("maven-metadata.json");
-	}
-
 	private CompletableFuture<Void> processDownloading(Path to, Function<Supplier<WritableByteChannel>, CompletableFuture<Void>> operation) {
 		return new ReadToFileProcessor(to, operation).invoke();
 	}
@@ -182,14 +160,6 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 					writeMetadataJson(getVersioningMetadataPath(groupId, artifactId), versioning);
 					return versioning;
 				}, localIOPool);
-	}
-
-	private CompletableFuture<ArtifactSnapshot> updateSnapshot(MavenRepository from, MavenArtifact artifact) {
-		return from.getSnapshot(artifact)
-				.thenApplyAsync(snapshot -> {
-					writeMetadataJson(getSnapshotMetadataPath(artifact), snapshot);
-					return snapshot;
-				});
 	}
 
 	private void writeMetadataJson(Path path, Object metadata) throws UncheckedIOException {
@@ -237,4 +207,8 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 				.filter(Objects::nonNull);
 	}
 
+	@Override
+	public Path getRootDir() {
+		return m2dir;
+	}
 }
