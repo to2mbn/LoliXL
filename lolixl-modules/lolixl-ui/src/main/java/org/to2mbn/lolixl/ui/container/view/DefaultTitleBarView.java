@@ -28,8 +28,8 @@ public class DefaultTitleBarView {
 
 	@FXML
 	public void initialize() {
-		rootContainer.setLeftAnchor(titleLabel, 0D);
-		rootContainer.setRightAnchor(buttonContainer, 0D);
+		AnchorPane.setLeftAnchor(titleLabel, 0D);
+		AnchorPane.setRightAnchor(buttonContainer, 0D);
 
 		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
 			titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));

@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.Channels;
@@ -155,12 +154,8 @@ class InternalBundleRepository {
 				target = target.resolve(a)
 						.resolve(v)
 						.resolve(name);
-				try {
-					Files.createDirectories(target.getParent());
-					Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
-				} catch (IOException e) {
-					throw new UncheckedIOException(e);
-				}
+				Files.createDirectories(target.getParent());
+				Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
 	}
