@@ -7,11 +7,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
+import org.to2mbn.lolixl.ui.UIApp;
 
 @Component
-public class DefaultTitleBarView extends View {
+public class DefaultTitleBarView {
 	@FXML
 	public AnchorPane rootContainer;
 
@@ -37,11 +36,8 @@ public class DefaultTitleBarView extends View {
 		}
 
 		rootContainer.idProperty().bind(Bindings
-				.when(mainStageProvider.getMainStage().focusedProperty())
+				.when(UIApp.mainStage.get().focusedProperty())
 				.then(rootContainer.idProperty().get().replace("_unfocused", ""))
 				.otherwise(rootContainer.idProperty().get().concat("_unfocused")));
 	}
-
-	@Reference
-	private UIPrimaryReferenceProvider mainStageProvider;
 }

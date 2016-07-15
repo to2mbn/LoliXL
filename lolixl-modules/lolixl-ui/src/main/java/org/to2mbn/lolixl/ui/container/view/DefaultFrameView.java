@@ -6,18 +6,18 @@ import javafx.scene.layout.BorderPane;
 
 import java.util.Objects;
 
-public class DefaultFrameView extends View {
+public class DefaultFrameView {
 	@FXML
-	private BorderPane containerPane;
+	public BorderPane containerPane;
 
 	@FXML
-	private BorderPane titleBarPane;
+	public BorderPane titleBarPane;
 
 	@FXML
-	private BorderPane widgetPane;
+	public BorderPane widgetPane;
 
 	@FXML
-	private BorderPane contentPane;
+	public BorderPane contentPane;
 
 	public void setTitleBar(Parent titleBar) {
 		Objects.requireNonNull(titleBar);
