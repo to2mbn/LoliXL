@@ -80,7 +80,7 @@ public class DisplayServiceImpl implements DisplayService {
 
 		Lock lock = rwLock.writeLock();
 		try {
-			wrappers.retainAll(wrappers);
+			wrappers.removeAll(wrappers);
 		} finally {
 			lock.unlock();
 		}
@@ -105,8 +105,8 @@ public class DisplayServiceImpl implements DisplayService {
 			previous = wrappersInOrder.get(wrappersInOrder.size() - 2).getPane();
 		}
 
-		final Pane _pervious = previous; // :(
-		listeners.forEach(listener -> listener.onPaneRemoved(last.getPane(), _pervious));
+		final Pane _previous = previous; // :(
+		listeners.forEach(listener -> listener.onPaneRemoved(last.getPane(), _previous));
 		return true;
 	}
 
