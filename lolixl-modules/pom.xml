@@ -15,6 +15,7 @@
 		<module>lolixl-utils</module>
 		<module>lolixl-plugin-manager</module>
 		<module>lolixl-i18n</module>
+		<module>lolixl-core</module>
 		<module>lolixl-ui</module>
 		<module>lolixl-init</module>
 	</modules>
