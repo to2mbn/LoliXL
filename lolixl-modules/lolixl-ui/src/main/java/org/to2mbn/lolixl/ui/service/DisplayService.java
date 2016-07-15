@@ -11,7 +11,7 @@ public interface DisplayService {
 
 	boolean closeCurrentPane();
 
-	void addListener(ContentPaneListener listener);
+	void addListener(DisplayPanesListener listener);
 
-	void removeListener(ContentPaneListener listener);
+	void removeListener(DisplayPanesListener listener);
 }

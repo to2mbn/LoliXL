@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Service;
-import org.to2mbn.lolixl.ui.service.ContentPaneListener;
+import org.to2mbn.lolixl.ui.service.DisplayPanesListener;
 import org.to2mbn.lolixl.ui.service.DisplayService;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class DisplayServiceImpl implements DisplayService {
 	private static final Comparator<ContentPaneWrapper> ORDERED_COMPARATOR = (pre, next) -> pre.getId() - next.getId();
 
 	private final ObservableList<ContentPaneWrapper> wrappers = FXCollections.observableArrayList();
-	private final List<ContentPaneListener> listeners = Collections.synchronizedList(new ArrayList<>());
+	private final List<DisplayPanesListener> listeners = Collections.synchronizedList(new ArrayList<>());
 	private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
 	@Override
@@ -63,13 +63,13 @@ public class DisplayServiceImpl implements DisplayService {
 	}
 
 	@Override
-	public void addListener(ContentPaneListener listener) {
+	public void addListener(DisplayPanesListener listener) {
 		Objects.requireNonNull(listener);
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(ContentPaneListener listener) {
+	public void removeListener(DisplayPanesListener listener) {
 		Objects.requireNonNull(listener);
 		listeners.remove(listener);
 	}

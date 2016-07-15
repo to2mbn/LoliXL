@@ -15,12 +15,12 @@ public class LazyReference<T> {
 	}
 
 	public LazyReference(T _value) {
-		this();
+		this(false);
 		value = _value;
 	}
 
 	public LazyReference(T _value, boolean _allowNullType) {
-		value = _value;
+		value = _allowNullType ? _value : Objects.requireNonNull(_value);
 		allowNullType = _allowNullType;
 	}
 
