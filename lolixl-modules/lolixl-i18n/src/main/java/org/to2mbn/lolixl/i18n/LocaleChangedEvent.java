@@ -7,7 +7,7 @@ import org.osgi.service.event.Event;
 
 public class LocaleChangedEvent extends Event {
 
-	public static final String TOPIC_LOCALE_CHANGED = "org.to2mbn.lolixl.i18n.localeChanged";
+	public static final String TOPIC_LOCALE_CHANGED = "org/to2mbn/lolixl/i18n/localeChanged";
 	public static final String KEY_NEW_LOCALE = "org.to2mbn.lolixl.i18n.newLocale";
 
 	private static Map<String, Object> createProperties(Locale newLocale) {

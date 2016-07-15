@@ -16,6 +16,7 @@ import org.apache.felix.framework.util.FelixConstants;
 
 class Main {
 
+	private static final Logger LOGGER = Logger.getLogger(Main.class.getCanonicalName());
 	private static final String RESOURCE_FELIX_CONFIGURATION = "/org.to2mbn.lolixl.felix.properties";
 
 	private static FileHandler loggingHandler;
@@ -92,6 +93,7 @@ class Main {
 
 	private static void processConfiguration(Properties configuration) {
 		configuration.put(FelixConstants.LOG_LOGGER_PROP, new FelixLoggerAdapter());
+		LOGGER.fine("Felix configuration: " + configuration);
 	}
 
 	public static void main(String[] args) {

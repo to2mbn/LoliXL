@@ -5,18 +5,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.security.CodeSource;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,6 +43,7 @@ class InternalBundleRepository {
 	private static final String PATH_BOOTSTRAP_ARTIFACTS_LIST = "org.to2mbn.lolixl.bootstrapBundles.list";
 	private static final String PATH_BUNDLES_ROOT = "bundles";
 
+	private Path jarRoot;
 	private Path repoRoot;
 	private Set<String> artifacts;
 	private Set<String> bootstrapBundles;
@@ -51,19 +54,23 @@ class InternalBundleRepository {
 	private Map<String, byte[]> gav2bootstrapBundlesData;
 
 	public InternalBundleRepository() throws URISyntaxException, IOException {
-		CodeSource codeSource = InternalBundleRepository.class.getProtectionDomain().getCodeSource();
-		if (codeSource == null) {
-			throw new IllegalStateException("codeSource is null");
+		URI uriToLookup = InternalBundleRepository.class.getResource("/" + PATH_BOOTSTRAP_ARTIFACTS_LIST).toURI();
+		try {
+			trySetupZipFileSystem(uriToLookup);
+		} catch (FileSystemNotFoundException ex) {
+			String[] splited = uriToLookup.toString().split("!", 2);
+			jarRoot = FileSystems.newFileSystem(new URI(splited[0]), Collections.emptyMap()).getPath("/");
 		}
-		URL url = codeSource.getLocation();
-		if (url == null) {
-			throw new IllegalStateException("codeSource.url is null");
-		}
-		Path jarRoot = Paths.get(url.toURI());
+
 		repoRoot = jarRoot.resolve(PATH_BUNDLES_ROOT);
 		artifacts = readArtifacts(jarRoot.resolve(PATH_ARTIFACTS_LIST));
 		bootstrapBundles = readArtifacts(jarRoot.resolve(PATH_BOOTSTRAP_ARTIFACTS_LIST));
 		resolveGA2V();
+	}
+
+	private void trySetupZipFileSystem(URI uriToLookup) throws URISyntaxException {
+		LOGGER.fine("Try locating " + uriToLookup);
+		jarRoot = Paths.get(uriToLookup).getParent();
 	}
 
 	private Set<String> readArtifacts(Path listFile) throws IOException {

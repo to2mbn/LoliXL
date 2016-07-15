@@ -200,6 +200,11 @@
 					<artifactId>maven-bundle-plugin</artifactId>
 					<version>3.0.1</version>
 					<extensions>true</extensions>
+					<configuration>
+						<instructions>
+							<Import-Package>!javafx.*,!com.sun.javafx.*,*</Import-Package>
+						</instructions>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
@@ -340,7 +345,12 @@
 			<dependency>
 				<groupId>org.to2mbn.lolixl</groupId>
 				<artifactId>lolixl-init</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-ui</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 
 			<!-- Maven -->

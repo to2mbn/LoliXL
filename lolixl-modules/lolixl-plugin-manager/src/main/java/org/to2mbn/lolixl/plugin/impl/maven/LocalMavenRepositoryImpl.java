@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.plugin.impl.maven;
 
+import static java.lang.String.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -42,6 +44,8 @@ import com.google.gson.Gson;
 		@Property(name = "m2repository.type", value = "local")
 })
 public class LocalMavenRepositoryImpl implements LocalMavenRepository {
+	
+	private static final Logger LOGGER = Logger.getLogger(LocalMavenRepositoryImpl.class.getCanonicalName());
 
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
@@ -100,6 +104,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(from);
 		Objects.requireNonNull(artifact);
 
+		LOGGER.fine(format("Installing %s classifier=%s type=%s from %s", artifact, classifier, type, from));
 		return CompletableFuture.allOf(
 				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
 				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));

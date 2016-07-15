@@ -6,7 +6,7 @@ import org.osgi.service.event.Event;
 
 public class DependencyActionEvent extends Event {
 
-	public static final String TOPIC_DEPENDENCY_ACTION = "org.to2mbn.lolixl.plugin.dependencyAction";
+	public static final String TOPIC_DEPENDENCY_ACTION = "org/to2mbn/lolixl/plugin/dependencyAction";
 	public static final String KEY_DEPENDENCY_ACTION = "org.to2mbn.lolixl.plugin.action";
 
 	private static Map<String, Object> createProperties(DependencyAction action) {

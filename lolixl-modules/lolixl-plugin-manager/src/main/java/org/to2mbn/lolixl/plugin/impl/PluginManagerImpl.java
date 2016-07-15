@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
+import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.plugin.LocalPluginRepository;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginManager;
@@ -21,6 +23,8 @@ import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
+@Service({ PluginManager.class })
+@Component
 public class PluginManagerImpl implements PluginManager {
 
 	private static final Logger LOGGER = Logger.getLogger(PluginManagerImpl.class.getCanonicalName());
@@ -63,7 +67,12 @@ public class PluginManagerImpl implements PluginManager {
 						return CompletableFuture.completedFuture(description.get());
 					else
 						return remotePluginRepo.getPluginDescription(artifact)
-								.thenApply(description2 -> description2.orElseThrow(() -> AsyncUtils.wrapWithCompletionException(new ArtifactNotFoundException(artifact.toString()))));
+								.thenApply(description2 -> {
+									if (description2.isPresent())
+										return description2.get();
+									else
+										throw AsyncUtils.wrapWithCompletionException(new ArtifactNotFoundException(artifact.toString()));
+								});
 				})
 				.thenCompose(description -> {
 					Set<MavenArtifact> artifacts = new HashSet<>(description.getDependencies());
@@ -73,12 +82,6 @@ public class PluginManagerImpl implements PluginManager {
 							.toArray(CompletableFuture[]::new));
 				})
 				.thenCompose(dummy -> pluginService.loadPlugin(artifact));
-	}
-
-	@Override
-	public CompletableFuture<Void> uninstall(Plugin plugin) {
-		return plugin.unload()
-				.thenCompose(dummy -> cleanup());
 	}
 
 	@Override

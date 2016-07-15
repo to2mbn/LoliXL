@@ -3,28 +3,26 @@ package org.to2mbn.lolixl.init;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.plugin.LocalPluginRepository;
-import org.to2mbn.lolixl.plugin.PluginRepository;
-import org.to2mbn.lolixl.plugin.PluginService;
+import org.to2mbn.lolixl.plugin.PluginManager;
+import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 
 @Component
 public class FelixInit {
 
 	@Reference
-	private PluginService pluginService;
-
-	@Reference(target = "(pluginRepo.type=local)")
-	private LocalPluginRepository localPluginRepo;
-
-	@Reference(target = "(pluginRepo.type=remote)")
-	private PluginRepository remotePluginRepo;
+	private PluginManager pluginManager;
 
 	@Activate
 	public void active(ComponentContext compCtx) throws IOException {
+		List<CompletableFuture<?>> futures = new ArrayList<>();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/org.to2mbn.lolixl.init.plugins.list"), "UTF-8"))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -34,10 +32,16 @@ public class FelixInit {
 				String[] splited = line.split(":", 2);
 				String groupId = splited[0];
 				String artifactId = splited[1];
-				// TODO
+				futures.add(pluginManager.getRemoteRepository().getRepository().getVersioning(groupId, artifactId)
+						.thenCompose(versioning -> pluginManager.install(new MavenArtifact(groupId, artifactId, versioning.getLatest()))));
 			}
 		}
-
+		CompletableFuture<?> installPluginFuture = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
+		try {
+			installPluginFuture.get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

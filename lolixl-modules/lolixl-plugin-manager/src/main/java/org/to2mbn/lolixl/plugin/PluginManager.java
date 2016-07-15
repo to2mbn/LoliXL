@@ -16,7 +16,6 @@ public interface PluginManager {
 	PluginRepository getRemoteRepository();
 
 	CompletableFuture<Plugin> install(MavenArtifact artifact);
-	CompletableFuture<Void> uninstall(Plugin plugin);
 	CompletableFuture<Optional<MavenArtifact>> checkForUpdate(MavenArtifact artifact);
 	CompletableFuture<Void> cleanup();
 

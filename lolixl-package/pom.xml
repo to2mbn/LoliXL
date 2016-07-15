@@ -80,48 +80,11 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-init</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-ui</artifactId>
+								</artifactItem>
 
-								<!-- jar.asc --><!--
-								<artifactItem>
-									<groupId>org.apache.felix</groupId>
-									<artifactId>org.apache.felix.scr</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.apache.felix</groupId>
-									<artifactId>org.apache.felix.eventadmin</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.apache.felix</groupId>
-									<artifactId>org.apache.felix.configadmin</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>com.google.code.gson</groupId>
-									<artifactId>gson</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-utils</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-plugin-manager</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-i18n</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-init</artifactId>
-									<type>jar.asc</type>
-								</artifactItem>-->
 
 								<!-- lolixl-plugin xml -->
 								<artifactItem>
@@ -148,32 +111,12 @@
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>
-
-								<!-- lolixl-plugin xml.asc --><!--
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-utils</artifactId>
+									<artifactId>lolixl-ui</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml.asc</type>
+									<type>xml</type>
 								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-plugin-manager</artifactId>
-									<classifier>lolixl-plugin</classifier>
-									<type>xml.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-i18n</artifactId>
-									<classifier>lolixl-plugin</classifier>
-									<type>xml.asc</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-init</artifactId>
-									<classifier>lolixl-plugin</classifier>
-									<type>xml.asc</type>
-								</artifactItem>-->
 
 							</artifactItems>
 						</configuration>

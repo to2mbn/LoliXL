@@ -24,6 +24,7 @@ import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
+import org.to2mbn.lolixl.plugin.util.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
 @Component
@@ -42,11 +43,16 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 	@Activate
 	public void active() throws IOException {
 		gav2isPluginFile = repository.getRootDir().resolve("gav2isPlugin.properties");
-		java.util.Properties properties = new java.util.Properties();
-		try (Reader reader = new InputStreamReader(Files.newInputStream(gav2isPluginFile), "UTF-8")) {
-			properties.load(reader);
+		if (Files.exists(gav2isPluginFile)) {
+			java.util.Properties properties = new java.util.Properties();
+			try (Reader reader = new InputStreamReader(Files.newInputStream(gav2isPluginFile), "UTF-8")) {
+				properties.load(reader);
+			}
+			properties.forEach((k, v) -> gav2isPlugin.put(String.valueOf(k), Boolean.valueOf(String.valueOf(v))));
+		} else {
+			PathUtils.tryMkdirsParent(gav2isPluginFile);
+			saveGav2isPlugin();
 		}
-		properties.forEach((k, v) -> gav2isPlugin.put(String.valueOf(k), Boolean.valueOf(String.valueOf(v))));
 	}
 
 	@Override
@@ -92,9 +98,13 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 
 	private void updateGav2isPlugin(MavenArtifact artifact, boolean isPlugin) {
 		gav2isPlugin.put(artifact.toString(), isPlugin);
+		saveGav2isPlugin();
+	}
+
+	private void saveGav2isPlugin() {
 		synchronized (gav2isPluginFile) {
 			java.util.Properties properties = new java.util.Properties();
-			properties.putAll(gav2isPlugin);
+			gav2isPlugin.forEach((k, v) -> properties.put(k, String.valueOf(v)));
 			try (Writer writer = new OutputStreamWriter(Files.newOutputStream(gav2isPluginFile), "UTF-8")) {
 				properties.store(writer, "org.to2mbn.lolixl.plugin.impl.gav2isPlugin");
 			} catch (IOException e) {
