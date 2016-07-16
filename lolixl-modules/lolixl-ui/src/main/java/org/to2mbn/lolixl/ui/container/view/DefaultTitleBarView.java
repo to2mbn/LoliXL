@@ -1,16 +1,12 @@
 package org.to2mbn.lolixl.ui.container.view;
 
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import org.apache.felix.scr.annotations.Component;
-import org.to2mbn.lolixl.ui.UIApp;
 
-@Component
-public class DefaultTitleBarView {
+public class DefaultTitleBarView extends View {
 	@FXML
 	public AnchorPane rootContainer;
 
@@ -34,10 +30,5 @@ public class DefaultTitleBarView {
 		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
 			titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
 		}
-
-		rootContainer.idProperty().bind(Bindings
-				.when(UIApp.mainStage.get().focusedProperty())
-				.then(rootContainer.idProperty().get().replace("_unfocused", ""))
-				.otherwise(rootContainer.idProperty().get().concat("_unfocused")));
 	}
 }
