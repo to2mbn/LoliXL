@@ -5,8 +5,10 @@
 
 #default_title_bar {
     -fx-background-color: #3498db;
+    -fx-text-fill: white;
 }
 
 #default_title_bar_unfocused {
     -fx-background-color: #a5a5a5;
+    -fx-text-fill: #cdcdcd;
 }

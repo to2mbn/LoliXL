@@ -28,32 +28,38 @@
 }
 
 .button {
-    -fx-background-color: white;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: #cccccc;
     -fx-text-fill: #193555;
     -fx-font-weight: bold;
     -fx-font-size: 14;
     -fx-opacity: 0.9;
-    -fx-border-width: 2;
-    -fx-border-color: #193555;
-}
-
-.button:default {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
 }
 
 .button:hover {
-    -fx-background-color: #dedfde;
-    -fx-font: bold;
+    -fx-border-style: none;
+    -fx-border-width: 2.5;
+    -fx-border-color: #7a7a7a;
+}
+
+.button:pressed {
+    -fx-background-color: #7a7a7a;
+}
+
+.button:default {
+    -fx-background-color: #0085d7;
+    -fx-text-fill: white;
 }
 
 .button:default:hover {
-    -fx-text-fill: #193555
+    -fx-border-style: none;
+    -fx-border-width: 2.5;
+    -fx-border-color: #75b2e6;
 }
 
-.button:pressed, .button:default:hover:pressed {
-    -fx-background-color: #193555;
-    -fx-text-fill: white;
+.button:default:hover:pressed {
+    -fx-background-color: #75b2e6;
 }
 
 .button:disabled, .button:default:disabled {
@@ -63,18 +69,16 @@
 }
 
 .toggle-button {
-    -fx-padding: 5 22 5 22;
     -fx-border-style: none;
     -fx-background-radius: 0;
     -fx-background-color: #cccccc;
-    -fx-font-size: 11pt;
+    -fx-font-size: 12pt;
     -fx-text-fill: black;
 }
 
 .toggle-button:focused {
     -fx-border-color: black;
     -fx-border-width: 1;
-    -fx-border-style: segments(1, 1);
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
 }
 
@@ -105,7 +109,7 @@
     -fx-background-color: white;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-border-color: #bababa;
+    -fx-border-color: #818181;
     -fx-border-width: 2px;
     -fx-border-style: solid;
     -fx-padding: 1;
@@ -119,23 +123,23 @@
     -fx-shape: "M1,10L3,8L7,12L14,5L16,7L7,16Z"
 }
 
-.check-box:focused .box {
-    /* Removed because it was too ugly */
+.check-box:hover .box {
+    -fx-border-color: #666666;
 }
 
 .check-box:selected .mark {
-    -fx-background-color: black;
+    -fx-background-color: #0085d7;
 }
 
 .check-box:indeterminate .mark {
-    -fx-background-color: #3498db;
+    -fx-background-color: #0085d7;
     -fx-background-insets: 2.8;
     -fx-padding: 7px;
     -fx-shape: null;
 }
 
 .check-box:disabled {
-    -fx-opacity: 0.4;
+    -fx-opacity: 0.5;
 }
 
 .check-box:disabled .box {
@@ -186,7 +190,7 @@
 }
 
 .radio-button:selected .dot {
-    -fx-background-color: #212121;
+    -fx-background-color: #0085d7;
 }
 
 .radio-button:disabled {
@@ -202,46 +206,30 @@
     -fx-background-color: white;
     -fx-background-radius: 1.0em; /* large value to make sure this remains circular */
     -fx-background-insets: 0;
-
-    -fx-border-style: solid, segments(1, 1);
-    -fx-border-radius: 1.0em, 0;
-    -fx-border-color: #bababa, black;
-    -fx-border-insets: 0px, -2px;
-    -fx-border-width: 1px, 1px;
-
     -fx-padding: 4px; /* 4 -- padding from outside edge to the inner black dot */
 }
 
 .radio-button:armed .radio {
-    -fx-background-color: #212121;
-    -fx-border-color: #212121;
+    -fx-border-style: hidden;
 }
 
 .radio-button:pressed .radio {
-    -fx-background-color: #212121;
-    -fx-border-color: #212121;
+    -fx-border-style: hidden;
 }
 
 .radio-button:pressed:selected .dot {
-    -fx-background-color: white;
+    -fx-background-color: #0085d7;
 }
 
 .radio-button:armed .dot {
-    -fx-background-color: black;
+    -fx-background-color: #0085d7;
 }
 
 .radio-button:focused:armed .radio {
-    -fx-background-color: #212121;
+    -fx-background-color: #0085d7;
     -fx-background-radius: 1.0em; /* large value to make sure this remains circular */
     -fx-background-insets: 0;
-
-    -fx-border-style: solid, segments(1, 1);
-    -fx-border-radius: 1.0em, 0;
-    -fx-border-color: #212121, #212121;
-    -fx-border-insets: 0px, -2px;
-    -fx-border-width: 1px, 1px;
-
-    -fx-padding: 4px; /* 4 -- padding from outside edge to the inner black dot */
+    -fx-padding: 5px; /* 4 -- padding from outside edge to the inner black dot */
 }
 
 /*******************************************************************************
@@ -403,16 +391,17 @@
     -fx-background-color: transparent, #bababa, transparent, white;
     -fx-background-radius: 0, 0, 0, 0;
     -fx-padding: 0.166667em; /* 2 */
-
-    -fx-border-color: #193555;
+    -fx-border-color: #818181;
+    -fx-border-width: 2;
 }
 
 .combo-box-base:hover {
     -fx-background-color: transparent, #909090, transparent, white;
+    -fx-border-color: #666666;
 }
 
 .combo-box-base:disabled {
-    -fx-opacity: .4;
+    -fx-opacity: 0.5;
 }
 
 /* ------- OPEN BUTTON ------- */
@@ -422,8 +411,8 @@
 
 /* ------- ARROW* ------- */
 .combo-box-base .arrow {
-    -fx-padding: 0.333333em 0.333333em 0.333333em 0.333333em; /* 4 4 4 4 */
-    -fx-shape: "M8.124,13.625l4.125-3.375v2.889l-4.125,3.86L4,13.139V10.25L8.124,13.625z";
+    -fx-padding: 3 4 3 4;
+    -fx-shape: "M1012.1 247.7c-15.8-15.8-41.4-15.8-57.2 0L512 690.6 69.1 247.7c-15.8-15.8-41.4-15.8-57.2 0-15.8 15.8-15.8 41.4 0 57.2l471.5 471.5c7.9 7.9 18.2 11.8 28.6 11.8s20.7-3.9 28.6-11.8l471.5-471.5C1027.8 289.1 1027.8 263.5 1012.1 247.7z";
 }
 
 .combo-box-popup .list-view {
