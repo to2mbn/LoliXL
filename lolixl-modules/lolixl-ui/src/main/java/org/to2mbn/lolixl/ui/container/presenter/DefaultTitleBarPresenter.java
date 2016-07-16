@@ -5,31 +5,41 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.ui.UIApp;
-import org.to2mbn.lolixl.ui.api.ViewInitializer;
+import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
 import org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView;
-import org.to2mbn.lolixl.utils.LazyReference;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
 import java.io.IOException;
 import java.net.URL;
 
 @Component
+@Service({DefaultTitleBarPresenter.class})
 public class DefaultTitleBarPresenter implements ViewInitializer {
 	@Reference
 	private EventAdmin eventAdmin;
 
-	public final LazyReference<DefaultTitleBarView> view = new LazyReference<>();
-	public final LazyReference<AnchorPane> root = new LazyReference<>();
+	@Reference
+	private UIPrimaryReferenceProvider mainStageProvider;
+
+	private DefaultTitleBarView view;
+	private AnchorPane root;
 
 	@Override
-
 	public void initialize(URL fxmlLocation) throws IOException {
-		view.set(new FXMLLoader(fxmlLocation).getController());
-		root.set(view.get().rootContainer);
-		view.get().minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
-		view.get().closeButton.setOnMouseClicked(this::onCloseButtonClicked);
+		view = new FXMLLoader(fxmlLocation).getController();
+		root = view.rootContainer;
+		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
+		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
+	}
+
+	public DefaultTitleBarView getView() {
+		return view;
+	}
+
+	public AnchorPane getRoot() {
+		return root;
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
@@ -37,6 +47,6 @@ public class DefaultTitleBarPresenter implements ViewInitializer {
 	}
 
 	private void onMinimizeButtonClicked(MouseEvent event) {
-		UIApp.mainStage.get().hide();
+		mainStageProvider.getMainStage().hide();
 	}
 }

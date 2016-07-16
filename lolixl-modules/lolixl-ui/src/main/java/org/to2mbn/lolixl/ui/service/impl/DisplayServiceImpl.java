@@ -79,6 +79,7 @@ public class DisplayServiceImpl implements DisplayService {
 		listeners.removeAll(listeners);
 
 		Lock lock = rwLock.writeLock();
+		lock.lock();
 		try {
 			wrappers.removeAll(wrappers);
 		} finally {

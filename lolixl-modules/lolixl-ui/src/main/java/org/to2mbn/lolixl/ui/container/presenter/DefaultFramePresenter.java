@@ -2,20 +2,30 @@ package org.to2mbn.lolixl.ui.container.presenter;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
-import org.to2mbn.lolixl.ui.api.ViewInitializer;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
-import org.to2mbn.lolixl.utils.LazyReference;
 
 import java.io.IOException;
 import java.net.URL;
 
+@Component
+@Service({DefaultFramePresenter.class})
 public class DefaultFramePresenter implements ViewInitializer {
-	public final LazyReference<DefaultFrameView> view = new LazyReference<>();
-	public final LazyReference<BorderPane> root = new LazyReference<>();
+	private DefaultFrameView view;
+	private BorderPane root;
 
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
-		view.set(new FXMLLoader(fxmlLocation).getController());
-		root.set(view.get().containerPane);
+		view = new FXMLLoader(fxmlLocation).getController();
+		root = view.containerPane;
+	}
+
+	public DefaultFrameView getView() {
+		return view;
+	}
+
+	public BorderPane getRoot() {
+		return root;
 	}
 }

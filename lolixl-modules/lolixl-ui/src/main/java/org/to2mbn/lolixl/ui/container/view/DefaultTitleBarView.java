@@ -7,7 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import org.apache.felix.scr.annotations.Component;
-import org.to2mbn.lolixl.ui.UIApp;
+import org.apache.felix.scr.annotations.Reference;
+import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
 
 @Component
 public class DefaultTitleBarView {
@@ -26,6 +27,9 @@ public class DefaultTitleBarView {
 	@FXML
 	public ImageView closeButton;
 
+	@Reference
+	private UIPrimaryReferenceProvider mainStageProvider;
+
 	@FXML
 	public void initialize() {
 		AnchorPane.setLeftAnchor(titleLabel, 0D);
@@ -36,7 +40,7 @@ public class DefaultTitleBarView {
 		}
 
 		rootContainer.idProperty().bind(Bindings
-				.when(UIApp.mainStage.get().focusedProperty())
+				.when(mainStageProvider.getMainStage().focusedProperty())
 				.then(rootContainer.idProperty().get().replace("_unfocused", ""))
 				.otherwise(rootContainer.idProperty().get().concat("_unfocused")));
 	}
