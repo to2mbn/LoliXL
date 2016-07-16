@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
+import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -26,6 +27,10 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 		super.initialize(fxmlLocation);
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
+		view.rootContainer.idProperty().bind(Bindings
+				.when(mainStageProvider.getMainStage().focusedProperty())
+				.then(view.rootContainer.idProperty().get().replace("-unfocused", ""))
+				.otherwise(view.rootContainer.idProperty().get().concat("-unfocused")));
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
