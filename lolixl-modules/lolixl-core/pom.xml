@@ -12,6 +12,14 @@
 	<description>LoliXL Core module</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-yggdrasil-authenticator</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
