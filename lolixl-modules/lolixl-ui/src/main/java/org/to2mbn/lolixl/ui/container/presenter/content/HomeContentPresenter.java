@@ -19,6 +19,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
 		super.initialize(fxmlLocation);
-		view.homeTile.setOnAction(action -> displayService.displayPane(view.rootContainer));
+		view.homeTile.setOnAction(event -> displayService.displayPane(view.rootContainer));
 	}
 }
