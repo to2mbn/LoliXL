@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -74,12 +75,12 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private ParallelTransition generateAnimation(Pane pane, boolean reverse) {
 		BorderPane content = view.contentPane;
 		TranslateTransition tran = new TranslateTransition(Duration.seconds(1), pane);
-		tran.setCycleCount(TranslateTransition.INDEFINITE);
+		tran.setCycleCount(Animation.INDEFINITE);
 		tran.setFromX(content.getLayoutX() + content.getWidth() / 5);
 		tran.setToX(content.getLayoutX());
 
 		FadeTransition fade = new FadeTransition(Duration.seconds(1), pane);
-		fade.setCycleCount(FadeTransition.INDEFINITE);
+		fade.setCycleCount(Animation.INDEFINITE);
 		fade.setFromValue(0.5);
 		fade.setToValue(1.0);
 

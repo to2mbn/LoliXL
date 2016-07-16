@@ -364,6 +364,11 @@
 				<artifactId>lolixl-ui</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- Maven -->
 			<dependency>

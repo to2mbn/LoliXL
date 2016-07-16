@@ -8,11 +8,11 @@ public final class I18N {
 
 	private I18N() {}
 
-	public String localize(String key, Object... arguments) {
+	public static String localize(String key, Object... arguments) {
 		return localize(getLocalizationService().getCurrentLocale(), key, arguments);
 	}
 
-	public String localize(Locale locale, String key, Object... arguments) {
+	public static String localize(Locale locale, String key, Object... arguments) {
 		String result = getLocalizationService().getLocalizedString(locale, key);
 		if (result != null) {
 			return String.format(result, arguments);

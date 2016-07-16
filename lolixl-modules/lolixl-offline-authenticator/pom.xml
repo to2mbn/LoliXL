@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.to2mbn.lolixl</groupId>
+		<artifactId>lolixl-modules</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>lolixl-offline-authenticator</artifactId>
+	<packaging>bundle</packaging>
+	<name>lolixl-offline-authenticator</name>
+	<description>LoliXL offline authenticator module</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.to2mbn.lolixl</groupId>
+			<artifactId>lolixl-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn.lolixl</groupId>
+			<artifactId>lolixl-i18n</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>
+
