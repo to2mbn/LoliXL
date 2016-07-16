@@ -61,13 +61,8 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	public void onPaneRemoved(Pane paneRemoved, Pane previousPane) {
 		Platform.runLater(() -> {
 			ParallelTransition animation = generateAnimation(paneRemoved, true);
-			animation.setOnFinished(event -> {
-				if (previousPane == null) {
-					view.setContent(homeContentPresenter.getView().rootContainer);
-				} else {
-					view.setContent(previousPane);
-				}
-			});
+			animation.setOnFinished(event ->
+					view.setContent(previousPane != null ? previousPane : homeContentPresenter.getView().rootContainer));
 			animation.play();
 		});
 	}
