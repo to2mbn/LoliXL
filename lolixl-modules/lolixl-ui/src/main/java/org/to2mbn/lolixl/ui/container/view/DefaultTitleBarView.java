@@ -11,7 +11,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
 
 @Component
-public class DefaultTitleBarView {
+public class DefaultTitleBarView extends View {
 	@FXML
 	public AnchorPane rootContainer;
 
@@ -41,7 +41,7 @@ public class DefaultTitleBarView {
 
 		rootContainer.idProperty().bind(Bindings
 				.when(mainStageProvider.getMainStage().focusedProperty())
-				.then(rootContainer.idProperty().get().replace("_unfocused", ""))
-				.otherwise(rootContainer.idProperty().get().concat("_unfocused")));
+				.then(rootContainer.idProperty().get().replace("-unfocused", ""))
+				.otherwise(rootContainer.idProperty().get().concat("-unfocused")));
 	}
 }

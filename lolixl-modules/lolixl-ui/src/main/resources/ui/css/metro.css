@@ -34,7 +34,7 @@
     -fx-text-fill: #193555;
     -fx-font-weight: bold;
     -fx-font-size: 14;
-    -fx-opacity: 0.9;
+    -fx-opacity: 0.8;
 }
 
 .button:hover {
@@ -550,7 +550,6 @@
     -fx-background: -fx-accent;
     -fx-background-color: #f0f0f0;
     -fx-text-fill: #212121;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     -fx-font-size: 12px;
     -fx-border-color: #f0f0f0;
 }

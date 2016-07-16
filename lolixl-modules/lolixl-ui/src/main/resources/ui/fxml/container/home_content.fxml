@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.container.view.content.HomeContentView">
+   <bottom>
+      <AnchorPane fx:id="bottomContainer" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="startGameButton" defaultButton="true" layoutX="495.0" layoutY="5.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Start Game" textAlignment="CENTER" />
+         </children>
+      </AnchorPane>
+   </bottom>
+   <right>
+      <VBox fx:id="tileContainer" prefHeight="350.0" prefWidth="60.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets top="5.0" />
+         </padding>
+         <children>
+            <Button id="tile-button-home" fx:id="homeTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+            <Button id="tile-button-settings" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

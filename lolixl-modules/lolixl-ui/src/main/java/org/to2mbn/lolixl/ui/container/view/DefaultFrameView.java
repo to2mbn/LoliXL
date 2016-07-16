@@ -6,9 +6,9 @@ import javafx.scene.layout.BorderPane;
 
 import java.util.Objects;
 
-public class DefaultFrameView {
+public class DefaultFrameView extends View {
 	@FXML
-	public BorderPane containerPane;
+	public BorderPane rootPane;
 
 	@FXML
 	public BorderPane titleBarPane;

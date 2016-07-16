@@ -1,31 +1,21 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Background;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
-
-import java.io.IOException;
-import java.net.URL;
+import org.to2mbn.lolixl.ui.service.BackgroundManagingService;
 
 @Component
-@Service({DefaultFramePresenter.class})
-public class DefaultFramePresenter implements ViewInitializer {
-	private DefaultFrameView view;
-	private BorderPane root;
+@Service({DefaultFramePresenter.class, BackgroundManagingService.class})
+public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundManagingService {
+	@Override
+	public void changeBackground(Background background) {
+		view.rootPane.setBackground(background);
+	}
 
 	@Override
-	public void initialize(URL fxmlLocation) throws IOException {
-		view = new FXMLLoader(fxmlLocation).getController();
-		root = view.containerPane;
-	}
-
-	public DefaultFrameView getView() {
-		return view;
-	}
-
-	public BorderPane getRoot() {
-		return root;
+	public Background getCurrentBackground() {
+		return view.rootPane.getBackground();
 	}
 }

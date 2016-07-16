@@ -10,6 +10,8 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
+import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
+import org.to2mbn.lolixl.ui.service.DisplayService;
 
 import java.io.IOException;
 
@@ -19,7 +21,8 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"ui/css/metro.css", "ui/css/components.css"};
+	private static final String LOCATION_OF_HOME_CONTENT = "/ui/fxml/container/home_content.fxml";
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
 
 	private Stage mainStage;
 	private Scene mainScene;
@@ -33,19 +36,27 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	@Reference
 	private DefaultUserProfilePresenter userProfilePresenter;
 
+	@Reference
+	private HomeContentPresenter homeContentPresenter;
+
+	@Reference
+	private DisplayService displayService;
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		mainStage = primaryStage;
 		mainStage.initStyle(StageStyle.UNDECORATED);
 
-		resolvePresenters();
+		initPresenters();
 		initLayout();
 
-		mainScene = new Scene(framePresenter.getRoot());
+		mainScene = new Scene(framePresenter.getView().rootPane);
 		mainScene.getStylesheets().addAll(LOCATIONS_OF_DEFAULT_CSS);
 
 		mainStage.setScene(mainScene);
 		mainStage.show();
+
+		displayService.displayPane(homeContentPresenter.getView().rootContainer);
 	}
 
 	@Override
@@ -63,14 +74,16 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 		return mainScene;
 	}
 
-	private void resolvePresenters() throws IOException {
+	private void initPresenters() throws IOException {
 		framePresenter.initialize(getClass().getResource(LOCATION_OF_FRAME));
 		titleBarPresenter.initialize(getClass().getResource(LOCATION_OF_TITLE_BAR));
 		userProfilePresenter.initialize(getClass().getResource(LOCATION_OF_USER_PROFILE));
+		homeContentPresenter.initialize(getClass().getResource(LOCATION_OF_HOME_CONTENT));
 	}
 
 	private void initLayout() {
-		framePresenter.getView().setTitleBar(titleBarPresenter.getRoot());
-		framePresenter.getView().setWidget(userProfilePresenter.getRoot());
+		framePresenter.getView().setTitleBar(titleBarPresenter.getView().rootContainer);
+		framePresenter.getView().setWidget(userProfilePresenter.getView().rootContainer);
+		framePresenter.getView().setContent(homeContentPresenter.getView().rootContainer);
 	}
 }
