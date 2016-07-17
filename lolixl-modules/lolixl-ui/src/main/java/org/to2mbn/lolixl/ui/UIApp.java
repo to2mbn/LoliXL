@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui;
 
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -14,15 +15,17 @@ import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.service.ContentDisplayService;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 @Component
-@Service({UIPrimaryReferenceProvider.class})
+@Service({ UIPrimaryReferenceProvider.class })
 public class UIApp implements UIPrimaryReferenceProvider {
+
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
 	private static final String LOCATION_OF_HOME_CONTENT = "/ui/fxml/container/home_content.fxml";
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = { "/ui/css/metro.css", "/ui/css/components.css" };
 
 	private Stage mainStage;
 	private Scene mainScene;
@@ -43,12 +46,12 @@ public class UIApp implements UIPrimaryReferenceProvider {
 	private ContentDisplayService displayService;
 
 	@Activate
-	public void active() throws Exception {
+	public void active() {
 		new JFXPanel(); // init JavaFX
-		start(new Stage());
+		Platform.runLater(() -> start(new Stage()));
 	}
 
-	private void start(Stage primaryStage) throws Exception {
+	private void start(Stage primaryStage) {
 		mainStage = primaryStage;
 		mainStage.initStyle(StageStyle.UNDECORATED);
 		initPresenters();
@@ -60,7 +63,7 @@ public class UIApp implements UIPrimaryReferenceProvider {
 		displayService.displayContent(homeContentPresenter.getView().rootContainer);
 	}
 
-	private void stop() throws Exception {
+	private void stop() {
 		// TODO
 	}
 
@@ -74,11 +77,15 @@ public class UIApp implements UIPrimaryReferenceProvider {
 		return mainScene;
 	}
 
-	private void initPresenters() throws IOException {
-		framePresenter.initialize(getClass().getResource(LOCATION_OF_FRAME));
-		titleBarPresenter.initialize(getClass().getResource(LOCATION_OF_TITLE_BAR));
-		userProfilePresenter.initialize(getClass().getResource(LOCATION_OF_USER_PROFILE));
-		homeContentPresenter.initialize(getClass().getResource(LOCATION_OF_HOME_CONTENT));
+	private void initPresenters() {
+		try {
+			framePresenter.initialize(getClass().getResource(LOCATION_OF_FRAME));
+			titleBarPresenter.initialize(getClass().getResource(LOCATION_OF_TITLE_BAR));
+			userProfilePresenter.initialize(getClass().getResource(LOCATION_OF_USER_PROFILE));
+			homeContentPresenter.initialize(getClass().getResource(LOCATION_OF_HOME_CONTENT));
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	private void initLayout() {
