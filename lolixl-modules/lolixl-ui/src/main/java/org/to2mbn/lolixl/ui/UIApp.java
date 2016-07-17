@@ -1,9 +1,10 @@
 package org.to2mbn.lolixl.ui;
 
-import javafx.application.Application;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -12,12 +13,11 @@ import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.service.ContentDisplayService;
-
 import java.io.IOException;
 
 @Component
 @Service({UIPrimaryReferenceProvider.class})
-public class UIApp extends Application implements UIPrimaryReferenceProvider {
+public class UIApp implements UIPrimaryReferenceProvider {
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
@@ -42,8 +42,13 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	@Reference
 	private ContentDisplayService displayService;
 
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+	@Activate
+	public void active() throws Exception {
+		new JFXPanel(); // init JavaFX
+		start(new Stage());
+	}
+
+	private void start(Stage primaryStage) throws Exception {
 		mainStage = primaryStage;
 		mainStage.initStyle(StageStyle.UNDECORATED);
 		initPresenters();
@@ -55,8 +60,7 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 		displayService.displayContent(homeContentPresenter.getView().rootContainer);
 	}
 
-	@Override
-	public void stop() throws Exception {
+	private void stop() throws Exception {
 		// TODO
 	}
 
