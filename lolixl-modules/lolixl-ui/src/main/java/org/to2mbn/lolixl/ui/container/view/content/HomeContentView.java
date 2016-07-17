@@ -27,7 +27,5 @@ public class HomeContentView extends View {
 	public Button settingsTile;
 
 	@FXML
-	public void initialize() {
-		AnchorPane.setRightAnchor(startGameButton, 0D);
-	}
+	public Button moreTile;
 }

@@ -14,7 +14,7 @@ public class DefaultFrameView extends View {
 	public BorderPane titleBarPane;
 
 	@FXML
-	public BorderPane widgetPane;
+	public BorderPane sidebarPane;
 
 	@FXML
 	public BorderPane contentPane;
@@ -26,10 +26,10 @@ public class DefaultFrameView extends View {
 		}
 	}
 
-	public void setWidget(Parent widget) {
-		Objects.requireNonNull(widget);
-		if (widgetPane != null) {
-			widgetPane.setCenter(widget);
+	public void setSidebar(Parent sidebar) {
+		Objects.requireNonNull(sidebar);
+		if (sidebarPane != null) {
+			sidebarPane.setCenter(sidebar);
 		}
 	}
 

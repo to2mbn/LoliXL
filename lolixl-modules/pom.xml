@@ -19,6 +19,7 @@
 		<module>lolixl-offline-authenticator</module>
 		<module>lolixl-ui</module>
 		<module>lolixl-init</module>
+		<module>lolixl-ui-bootstrap</module>
 	</modules>
 
 	<build>

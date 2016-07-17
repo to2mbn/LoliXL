@@ -22,6 +22,7 @@
          <children>
             <Button id="tile-button-home" fx:id="homeTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
             <Button id="tile-button-settings" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+            <Button id="tile-button-settings" fx:id="moreTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
          </children>
       </VBox>
    </right>

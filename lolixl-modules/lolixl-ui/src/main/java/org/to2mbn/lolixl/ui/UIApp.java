@@ -1,7 +1,5 @@
 package org.to2mbn.lolixl.ui;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -9,26 +7,30 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.to2mbn.lolixl.ui.bootstrap.UIBootstrapStageService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.service.ContentDisplayService;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
 @Component
-@Service({ UIPrimaryReferenceProvider.class })
+@Service({UIPrimaryReferenceProvider.class})
 public class UIApp implements UIPrimaryReferenceProvider {
-
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
 	private static final String LOCATION_OF_HOME_CONTENT = "/ui/fxml/container/home_content.fxml";
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = { "/ui/css/metro.css", "/ui/css/components.css" };
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
 
 	private Stage mainStage;
 	private Scene mainScene;
+
+	@Reference
+	private UIBootstrapStageService stageService;
 
 	@Reference
 	private DefaultFramePresenter framePresenter;
@@ -47,8 +49,7 @@ public class UIApp implements UIPrimaryReferenceProvider {
 
 	@Activate
 	public void active() {
-		new JFXPanel(); // init JavaFX
-		Platform.runLater(() -> start(new Stage()));
+		start(stageService.getPrimaryStage());
 	}
 
 	private void start(Stage primaryStage) {
@@ -61,10 +62,6 @@ public class UIApp implements UIPrimaryReferenceProvider {
 		mainStage.setScene(mainScene);
 		mainStage.show();
 		displayService.displayContent(homeContentPresenter.getView().rootContainer);
-	}
-
-	private void stop() {
-		// TODO
 	}
 
 	@Override
@@ -90,7 +87,7 @@ public class UIApp implements UIPrimaryReferenceProvider {
 
 	private void initLayout() {
 		framePresenter.getView().setTitleBar(titleBarPresenter.getView().rootContainer);
-		framePresenter.getView().setWidget(userProfilePresenter.getView().rootContainer);
+		framePresenter.getView().setSidebar(userProfilePresenter.getView().rootContainer);
 		framePresenter.getView().setContent(homeContentPresenter.getView().rootContainer);
 	}
 }

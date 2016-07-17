@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui.container.presenter;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -25,6 +26,11 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
 		super.initialize(fxmlLocation);
+		AnchorPane.setLeftAnchor(view.titleLabel, 0D);
+		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
+		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
+			view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
+		}
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings
