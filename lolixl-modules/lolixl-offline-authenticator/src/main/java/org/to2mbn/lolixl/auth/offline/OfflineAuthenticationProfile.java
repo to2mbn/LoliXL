@@ -5,23 +5,25 @@ import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
 import org.to2mbn.lolixl.core.auth.AuthenticationProfile;
 
-public class OfflineAuthenticationProfile implements AuthenticationProfile<String> {
+public class OfflineAuthenticationProfile implements AuthenticationProfile<OfflineAuthenticationMemento> {
 
 	private String username;
 
 	@Override
-	public String store() {
-		return username;
+	public OfflineAuthenticationMemento store() {
+		OfflineAuthenticationMemento memento = new OfflineAuthenticationMemento();
+		memento.username = username;
+		return memento;
 	}
 
 	@Override
-	public void restore(String memento) {
-		username = memento;
+	public void restore(OfflineAuthenticationMemento memento) {
+		username = memento.username;
 	}
 
 	@Override
-	public Class<? extends String> getMementoType() {
-		return String.class;
+	public Class<? extends OfflineAuthenticationMemento> getMementoType() {
+		return OfflineAuthenticationMemento.class;
 	}
 
 	@Override
