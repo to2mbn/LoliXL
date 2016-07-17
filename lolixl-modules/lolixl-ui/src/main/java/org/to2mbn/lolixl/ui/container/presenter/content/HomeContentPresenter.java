@@ -5,7 +5,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.container.view.content.HomeContentView;
-import org.to2mbn.lolixl.ui.service.DisplayService;
+import org.to2mbn.lolixl.ui.service.ContentDisplayService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,11 +14,11 @@ import java.net.URL;
 @Service({HomeContentPresenter.class})
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 	@Reference
-	private DisplayService displayService;
+	private ContentDisplayService displayService;
 
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
 		super.initialize(fxmlLocation);
-		view.homeTile.setOnAction(event -> displayService.displayPane(view.rootContainer));
+		view.homeTile.setOnAction(event -> displayService.displayContent(view.rootContainer));
 	}
 }

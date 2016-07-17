@@ -11,7 +11,7 @@ import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.service.DisplayService;
+import org.to2mbn.lolixl.ui.service.ContentDisplayService;
 
 import java.io.IOException;
 
@@ -40,23 +40,19 @@ public class UIApp extends Application implements UIPrimaryReferenceProvider {
 	private HomeContentPresenter homeContentPresenter;
 
 	@Reference
-	private DisplayService displayService;
+	private ContentDisplayService displayService;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		mainStage = primaryStage;
 		mainStage.initStyle(StageStyle.UNDECORATED);
-
 		initPresenters();
 		initLayout();
-
 		mainScene = new Scene(framePresenter.getView().rootPane);
 		mainScene.getStylesheets().addAll(LOCATIONS_OF_DEFAULT_CSS);
-
 		mainStage.setScene(mainScene);
 		mainStage.show();
-
-		displayService.displayPane(homeContentPresenter.getView().rootContainer);
+		displayService.displayContent(homeContentPresenter.getView().rootContainer);
 	}
 
 	@Override
