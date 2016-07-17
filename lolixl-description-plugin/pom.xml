@@ -10,6 +10,16 @@
 	<name>lolixl-description-plugin</name>
 	<description>Maven plugin for developing LoliXL plugins</description>
 	<packaging>maven-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

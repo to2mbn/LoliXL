@@ -159,6 +159,11 @@
 					<locale>zh_CN</locale>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>3.4</version>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
