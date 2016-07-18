@@ -61,11 +61,11 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		}
 
 		Platform.runLater(() -> {
-			double plus = hideSidebar ? view.widgetPane.getWidth() : 0;
+			double plus = hideSidebar ? view.sidebarPane.getWidth() : 0;
 			pane.resize(view.contentPane.getWidth() + plus, view.contentPane.getHeight());
 			if (hideSidebar) {
-				sidebar = view.widgetPane.getCenter();
-				view.widgetPane.setCenter(null);
+				sidebar = view.sidebarPane.getCenter();
+				view.sidebarPane.setCenter(null);
 			}
 
 			ParallelTransition animation = generateAnimation(pane, false, hideSidebar);
@@ -92,7 +92,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 				ParallelTransition animation = generateAnimation(last, true, hidedSidebar);
 				animation.setOnFinished(event -> {
 					if (hidedSidebar) {
-						view.widgetPane.setCenter(sidebar);
+						view.sidebarPane.setCenter(sidebar);
 					}
 					view.setContent(previous);
 				});
@@ -111,9 +111,9 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private ParallelTransition generateAnimation(Pane pane, boolean reverse, boolean hidedSidebar) {
 		TranslateTransition tran = new TranslateTransition(Duration.seconds(1), pane);
-		double plus = hidedSidebar ? view.widgetPane.getWidth() : 0;
+		double plus = hidedSidebar ? view.sidebarPane.getWidth() : 0;
 		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + plus) / 5;
-		double toX = hidedSidebar ? view.widgetPane.getLayoutX() : view.contentPane.getLayoutX();
+		double toX = hidedSidebar ? view.sidebarPane.getLayoutX() : view.contentPane.getLayoutX();
 		tran.setFromX(reverse ? toX : fromX);
 		tran.setToX(reverse ? fromX : toX);
 
