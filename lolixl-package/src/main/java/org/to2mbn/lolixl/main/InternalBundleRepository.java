@@ -172,7 +172,7 @@ class InternalBundleRepository {
 			String a = ga.substring(idxMaohao + 1);
 			String v = ga2v.get(ga);
 			String gav = g + ":" + a + ":" + v;
-			String uri = "lolixl:///bundles/" + gav;
+			String uri = "lolixl:bundles/" + gav;
 			LOGGER.info("Installing bootstrap bundle " + uri);
 			ByteArrayOutputStream buf;
 			try (FileChannel channel = openChannel(g, a, v, null, "jar")) {

@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.service;
+package org.to2mbn.lolixl.ui;
 
 import javafx.scene.layout.Pane;
 

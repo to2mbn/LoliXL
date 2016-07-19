@@ -1,55 +1,71 @@
-package org.to2mbn.lolixl.ui;
+package org.to2mbn.lolixl.ui.impl;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
-import org.to2mbn.lolixl.ui.bootstrap.UIBootstrapStageService;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.EventAdmin;
+import org.to2mbn.lolixl.ui.BackgroundManagingService;
+import org.to2mbn.lolixl.ui.ContentDisplayService;
+import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.service.ContentDisplayService;
-
+import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.logging.Logger;
 
 @Component
-@Service({UIPrimaryReferenceProvider.class})
-public class UIApp implements UIPrimaryReferenceProvider {
+public class UIApp {
+
+	private static final Logger LOGGER = Logger.getLogger(UIApp.class.getCanonicalName());
+
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
 	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
 	private static final String LOCATION_OF_HOME_CONTENT = "/ui/fxml/container/home_content.fxml";
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = { "/ui/css/metro.css", "/ui/css/components.css" };
+
+	private EventAdmin eventAdmin;
 
 	private Stage mainStage;
 	private Scene mainScene;
 
-	@Reference
-	private UIBootstrapStageService stageService;
-
-	@Reference
 	private DefaultFramePresenter framePresenter;
-
-	@Reference
 	private DefaultTitleBarPresenter titleBarPresenter;
-
-	@Reference
 	private DefaultUserProfilePresenter userProfilePresenter;
-
-	@Reference
 	private HomeContentPresenter homeContentPresenter;
-
-	@Reference
 	private ContentDisplayService displayService;
 
 	@Activate
-	public void active() {
-		start(stageService.getPrimaryStage());
+	public void active(ComponentContext compCtx) {
+		// Create presenters
+		framePresenter = new DefaultFramePresenter();
+		titleBarPresenter = new DefaultTitleBarPresenter();
+		userProfilePresenter = new DefaultUserProfilePresenter();
+		homeContentPresenter = new HomeContentPresenter();
+		displayService = framePresenter;
+
+		// Setup presenters
+		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
+		titleBarPresenter.setParentStage(mainStage);
+
+		// Register services
+		BundleContext ctx = compCtx.getBundleContext();
+		ctx.registerService(BackgroundManagingService.class, framePresenter, null);
+		ctx.registerService(ContentDisplayService.class, framePresenter, null);
+		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
+
+		LOGGER.info("Init JavaFX");
+		new JFXPanel(); // init JavaFX
+		Platform.runLater(() -> start(new Stage()));
 	}
 
 	private void start(Stage primaryStage) {
@@ -62,16 +78,6 @@ public class UIApp implements UIPrimaryReferenceProvider {
 		mainStage.setScene(mainScene);
 		mainStage.show();
 		displayService.displayContent(homeContentPresenter.getView().rootContainer);
-	}
-
-	@Override
-	public Stage getMainStage() {
-		return mainStage;
-	}
-
-	@Override
-	public Scene getMainScene() {
-		return mainScene;
 	}
 
 	private void initPresenters() {

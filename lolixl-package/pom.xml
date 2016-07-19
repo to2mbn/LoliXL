@@ -84,10 +84,6 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui</artifactId>
 								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-ui-bootstrap</artifactId>
-								</artifactItem>
 
 
 								<!-- lolixl-plugin xml -->
@@ -118,12 +114,6 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui</artifactId>
-									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.to2mbn.lolixl</groupId>
-									<artifactId>lolixl-ui-bootstrap</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>

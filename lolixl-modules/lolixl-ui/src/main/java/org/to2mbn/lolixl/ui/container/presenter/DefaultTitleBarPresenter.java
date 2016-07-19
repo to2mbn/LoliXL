@@ -3,25 +3,16 @@ package org.to2mbn.lolixl.ui.container.presenter;
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
-import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.ui.UIPrimaryReferenceProvider;
+import javafx.stage.Stage;
 import org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView;
-import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
-
 import java.io.IOException;
 import java.net.URL;
+import java.util.function.Consumer;
 
-@Component
-@Service({DefaultTitleBarPresenter.class})
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
-	@Reference
-	private EventAdmin eventAdmin;
 
-	@Reference
-	private UIPrimaryReferenceProvider mainStageProvider;
+	private Consumer<MouseEvent> closeButtonListener;
+	private Stage parentStage;
 
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
@@ -34,16 +25,25 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings
-				.when(mainStageProvider.getMainStage().focusedProperty())
+				.when(parentStage.focusedProperty())
 				.then(view.rootContainer.idProperty().get().replace("-unfocused", ""))
 				.otherwise(view.rootContainer.idProperty().get().concat("-unfocused")));
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
-		eventAdmin.postEvent(new ApplicationExitEvent());
+		closeButtonListener.accept(event);
 	}
 
 	private void onMinimizeButtonClicked(MouseEvent event) {
-		mainStageProvider.getMainStage().hide();
+		parentStage.hide();
 	}
+
+	public void setCloseButtonListener(Consumer<MouseEvent> closeButtonListener) {
+		this.closeButtonListener = closeButtonListener;
+	}
+
+	public void setParentStage(Stage parentStage) {
+		this.parentStage = parentStage;
+	}
+
 }

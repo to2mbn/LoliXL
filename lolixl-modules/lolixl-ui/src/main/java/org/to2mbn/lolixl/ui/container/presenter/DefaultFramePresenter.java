@@ -9,12 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import org.to2mbn.lolixl.ui.BackgroundManagingService;
+import org.to2mbn.lolixl.ui.ContentDisplayService;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
-import org.to2mbn.lolixl.ui.service.BackgroundManagingService;
-import org.to2mbn.lolixl.ui.service.ContentDisplayService;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -25,9 +22,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-@Component
-@Service({DefaultFramePresenter.class, BackgroundManagingService.class, ContentDisplayService.class})
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundManagingService, ContentDisplayService {
+
 	private final ConcurrentLinkedQueue<Pane> contents = new ConcurrentLinkedQueue<>();
 	private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 

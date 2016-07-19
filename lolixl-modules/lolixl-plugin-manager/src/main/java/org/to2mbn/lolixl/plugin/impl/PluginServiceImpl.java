@@ -349,7 +349,7 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	private String getBundleURI(MavenArtifact artifact) {
-		return "lolixl:///bundles/" + artifact;
+		return "lolixl:bundles/" + artifact;
 	}
 
 	private List<DependencyAction> computeActions(Set<PluginDescription> toInstall, Set<PluginDescription> toUninstall) {
