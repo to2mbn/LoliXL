@@ -88,7 +88,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 		currentLocale = Locale.getDefault();
 		LOGGER.info("Using locale " + currentLocale);
 		tracker = new ServiceTracker<>(compCtx.getBundleContext(), LocalizationProvider.class, this);
-		tracker.open();
+		tracker.open(true);
 	}
 
 	@Modified
