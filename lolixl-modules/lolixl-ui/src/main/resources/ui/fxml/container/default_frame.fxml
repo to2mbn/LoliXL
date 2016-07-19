@@ -7,7 +7,7 @@
         <BorderPane fx:id="sidebarPane" prefHeight="440.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
     </left>
     <top>
-        <BorderPane fx:id="titleBarPane" prefHeight="40.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+        <BorderPane fx:id="titleBarPane" prefHeight="30.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
     </top>
     <center>
         <BorderPane fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />

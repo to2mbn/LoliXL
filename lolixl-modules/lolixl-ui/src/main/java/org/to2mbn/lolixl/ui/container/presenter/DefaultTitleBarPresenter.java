@@ -20,9 +20,7 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 		super.initialize(fxml);
 		AnchorPane.setLeftAnchor(view.titleLabel, 10D);
 		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
-		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
-			view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
-		}
+		view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version", ""));
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings
