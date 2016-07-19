@@ -1,3 +1,7 @@
+#frameRootPane {
+    -fx-effect: dropshadow(three-pass-box, derive(cadetblue, -20%), 10, 0, 4, 4);
+}
+
 #close-window-button:hover, #minimize-window-button:hover {
     -fx-background-color: #d1d6e1;
     -fx-tooltip-visible: false;

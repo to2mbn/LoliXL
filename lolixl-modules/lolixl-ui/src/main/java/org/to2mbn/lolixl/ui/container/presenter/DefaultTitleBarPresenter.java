@@ -18,7 +18,7 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	@Override
 	public void initialize(InputStream fxml) throws IOException {
 		super.initialize(fxml);
-		AnchorPane.setLeftAnchor(view.titleLabel, 0D);
+		AnchorPane.setLeftAnchor(view.titleLabel, 10D);
 		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
 		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
 			view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
