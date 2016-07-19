@@ -37,7 +37,7 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 	@Activate
 	public void active(ComponentContext compCtx) throws InvalidSyntaxException {
 		tracker = new ServiceTracker<>(compCtx.getBundleContext(), FrameworkUtil.createFilter("(m2repository.chain=remote)"), null);
-		tracker.open();
+		tracker.open(true);
 	}
 
 	@Deactivate
