@@ -7,18 +7,22 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
+import org.to2mbn.lolixl.ui.container.presenter.DefaultSidebarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
-import org.to2mbn.lolixl.ui.container.presenter.DefaultUserProfilePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.logging.Logger;
 
@@ -29,10 +33,11 @@ public class UIApp {
 
 	private static final String LOCATION_OF_FRAME = "/ui/fxml/container/default_frame.fxml";
 	private static final String LOCATION_OF_TITLE_BAR = "/ui/fxml/container/default_title_bar.fxml";
-	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_user_profile.fxml";
+	private static final String LOCATION_OF_USER_PROFILE = "/ui/fxml/container/default_side_bar.fxml";
 	private static final String LOCATION_OF_HOME_CONTENT = "/ui/fxml/container/home_content.fxml";
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = { "/ui/css/metro.css", "/ui/css/components.css" };
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
 
+	@Reference
 	private EventAdmin eventAdmin;
 
 	private Stage mainStage;
@@ -40,7 +45,7 @@ public class UIApp {
 
 	private DefaultFramePresenter framePresenter;
 	private DefaultTitleBarPresenter titleBarPresenter;
-	private DefaultUserProfilePresenter userProfilePresenter;
+	private DefaultSidebarPresenter userProfilePresenter;
 	private HomeContentPresenter homeContentPresenter;
 	private PanelDisplayService displayService;
 
@@ -49,13 +54,9 @@ public class UIApp {
 		// Create presenters
 		framePresenter = new DefaultFramePresenter();
 		titleBarPresenter = new DefaultTitleBarPresenter();
-		userProfilePresenter = new DefaultUserProfilePresenter();
+		userProfilePresenter = new DefaultSidebarPresenter();
 		homeContentPresenter = new HomeContentPresenter();
 		displayService = framePresenter;
-
-		// Setup presenters
-		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
-		titleBarPresenter.setParentStage(mainStage);
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
@@ -69,6 +70,7 @@ public class UIApp {
 	}
 
 	private void start(Stage primaryStage) {
+		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		mainStage = primaryStage;
 		mainStage.initStyle(StageStyle.UNDECORATED);
 		initPresenters();
@@ -81,11 +83,15 @@ public class UIApp {
 	}
 
 	private void initPresenters() {
+		// Setup presenters
+		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
+		titleBarPresenter.setParentStage(mainStage);
+
 		try {
-			framePresenter.initialize(getClass().getResource(LOCATION_OF_FRAME));
-			titleBarPresenter.initialize(getClass().getResource(LOCATION_OF_TITLE_BAR));
-			userProfilePresenter.initialize(getClass().getResource(LOCATION_OF_USER_PROFILE));
-			homeContentPresenter.initialize(getClass().getResource(LOCATION_OF_HOME_CONTENT));
+			framePresenter.initialize(getResource(LOCATION_OF_FRAME));
+			titleBarPresenter.initialize(getResource(LOCATION_OF_TITLE_BAR));
+			userProfilePresenter.initialize(getResource(LOCATION_OF_USER_PROFILE));
+			homeContentPresenter.initialize(getResource(LOCATION_OF_HOME_CONTENT));
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -95,5 +101,9 @@ public class UIApp {
 		framePresenter.getView().setTitleBar(titleBarPresenter.getView().rootContainer);
 		framePresenter.getView().setSidebar(userProfilePresenter.getView().rootContainer);
 		framePresenter.getView().setContent(homeContentPresenter.getView().rootContainer);
+	}
+
+	private InputStream getResource(String location) throws IOException {
+		return FrameworkUtil.getBundle(getClass()).getResource(location).openStream();
 	}
 }
