@@ -25,6 +25,10 @@
 			<artifactId>jmccc-yggdrasil-authenticator</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-mcdownloader</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
 			<artifactId>lolixl-i18n</artifactId>
 		</dependency>

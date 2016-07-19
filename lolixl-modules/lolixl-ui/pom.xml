@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
-			<artifactId>lolixl-utils</artifactId>
+			<artifactId>lolixl-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

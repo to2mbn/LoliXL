@@ -130,14 +130,18 @@ public class PluginServiceImpl implements PluginService {
 						.invoke(null, gav);
 				descriptionFutures.put(bundle, localPluginRepo.getPluginDescription(artifact));
 				addBundle0(bundle, artifact, data);
+				LOGGER.fine(format("Found bootstrap bundle mapping bundle=[%s], artifact=[%s], data=[%s]", bundle, artifact, data));
 			}
 			for (Entry<Bundle, CompletableFuture<Optional<PluginDescription>>> entry : descriptionFutures.entrySet()) {
 				Bundle bundle = entry.getKey();
 				Optional<PluginDescription> optionalDescription = entry.getValue().get();
-				if (!optionalDescription.isPresent())
+				if (!optionalDescription.isPresent()) {
+					LOGGER.fine("No PluginDescription found for " + bundle);
 					continue;
+				}
 				PluginDescription description = optionalDescription.get();
 				addPlugin0(bundle, description);
+				LOGGER.fine(format("PluginDescription found for [%s]: %s", bundle, description));
 			}
 			checkDependenciesState();
 		}
@@ -217,23 +221,33 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	private void checkDependenciesState() throws IllegalStateException {
-		if (artifact2bundle.size() != bundle2artifact.size())
-			throw new IllegalStateException(format("artifact2bundle(%d) & bundle2artifact(%d) sizes mismatch", artifact2bundle.size(), bundle2artifact.size()));
-		artifact2bundle.forEach((artifact, bundle) -> {
-			if (bundle2artifact.get(bundle) != artifact)
-				throw new IllegalStateException(format("Missing/wrong bundle2artifact mapping: %s -> %s", bundle, artifact));
-		});
-		if (!new HashSet<>(bundle2plugin.values()).equals(loadedPlugins))
-			throw new IllegalStateException(format("bundle2plugin & loadedPlugins mismatch\nbundle2plugin: %s\nloadedPlugins: %s", bundle2plugin, loadedPlugins));
-		Set<Bundle> pluginBundleCheck = new HashSet<>(bundle2plugin.keySet());
-		pluginBundleCheck.removeAll(bundle2artifact.keySet());
-		if (!pluginBundleCheck.isEmpty())
-			throw new IllegalStateException(format("%s are in bundle2plugin, but not in bundle2artifact", pluginBundleCheck));
+		try {
+			if (artifact2bundle.size() != bundle2artifact.size())
+				throw new IllegalStateException(format("artifact2bundle(%d) & bundle2artifact(%d) sizes mismatch", artifact2bundle.size(), bundle2artifact.size()));
+			artifact2bundle.forEach((artifact, bundle) -> {
+				if (bundle2artifact.get(bundle) != artifact)
+					throw new IllegalStateException(format("Missing/wrong bundle2artifact mapping: %s -> %s", bundle, artifact));
+			});
+			if (!new HashSet<>(bundle2plugin.values()).equals(loadedPlugins))
+				throw new IllegalStateException(format("bundle2plugin & loadedPlugins mismatch\nbundle2plugin: %s\nloadedPlugins: %s", bundle2plugin, loadedPlugins));
+			Set<Bundle> pluginBundleCheck = new HashSet<>(bundle2plugin.keySet());
+			pluginBundleCheck.removeAll(bundle2artifact.keySet());
+			if (!pluginBundleCheck.isEmpty())
+				throw new IllegalStateException(format("%s are in bundle2plugin, but not in bundle2artifact", pluginBundleCheck));
 
-		Set<MavenArtifact> current = artifact2bundle.keySet();
-		Set<MavenArtifact> expected = computeCurrentExpectedState();
-		if (!current.equals(expected))
-			throw new IllegalStateException(format("Illegal dependencies state\ncurrent: %s\nexpected:%s", current, expected));
+			Set<MavenArtifact> current = artifact2bundle.keySet();
+			Set<MavenArtifact> expected = computeCurrentExpectedState();
+			if (!current.equals(expected))
+				throw new IllegalStateException(format("Illegal dependencies state\ncurrent: %s\nexpected:%s", current, expected));
+		} catch (Throwable e) {
+			LOGGER.log(Level.SEVERE, "checkDependenciesState failed\n" +
+					"artifact2bundle=" + artifact2bundle + "\n" +
+					"bundle2artifact=" + bundle2artifact + "\n" +
+					"bundle2plugin=" + bundle2plugin + "\n" +
+					"loadedPlugins=" + loadedPlugins + "\n" +
+					"artifact2data.keys=" + artifact2data.keySet() + "", e);
+			throw e;
+		}
 	}
 
 	private void performActions(List<DependencyAction> actions, Map<MavenArtifact, ArtifactLoader> artifact2loader) throws BundleException {

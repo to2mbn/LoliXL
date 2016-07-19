@@ -1,5 +1,7 @@
 package org.to2mbn.lolixl.main;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -76,7 +77,7 @@ class InternalBundleRepository {
 		return Files.lines(listFile, Charset.forName("UTF-8"))
 				.filter(s -> !s.trim().isEmpty())
 				.filter(s -> !s.startsWith("#"))
-				.collect(Collectors.toCollection(LinkedHashSet::new));
+				.collect(toCollection(LinkedHashSet::new));
 	}
 
 	private void resolveGA2V() throws IOException {
@@ -85,7 +86,7 @@ class InternalBundleRepository {
 			String[] ga = gastr.split(":");
 			if (ga.length != 2)
 				throw new IllegalArgumentException("Illegal GA: " + gastr);
-			prefix2ga.put(ga[1], gastr);
+			prefix2ga.put(ga[0] + "." + ga[1], gastr);
 		});
 		ga2names = Files.list(repoRoot)
 				.map(src -> {
@@ -104,7 +105,7 @@ class InternalBundleRepository {
 					return o;
 				})
 				.filter(Objects::nonNull)
-				.collect(Collectors.groupingBy(o -> o[0], Collectors.mapping(o -> o[1], Collectors.toCollection(TreeSet::new))));
+				.collect(groupingBy(o -> o[0], mapping(o -> o[1], toCollection(TreeSet::new))));
 		ga2v = new HashMap<>();
 		ga2names.forEach((ga, names) -> {
 			String artifactNameToInfer = names.stream()
@@ -112,16 +113,18 @@ class InternalBundleRepository {
 							.thenComparing(s -> s))
 					.findFirst()
 					.get();
-			String version = artifactNameToInfer.substring(ga.length() - ga.indexOf(':'), artifactNameToInfer.lastIndexOf('.'));
+			String version = artifactNameToInfer.substring(ga.length() + 1, artifactNameToInfer.lastIndexOf('.'));
 			ga2v.put(ga, version);
+			LOGGER.fine(format("Found GAV mapping: %s -> %s", ga, version));
 		});
 	}
 
 	public FileChannel openChannel(String groupId, String artifactId, String version, String classifier, String type) throws IOException {
+		LOGGER.fine(format("Try opening channel groupId=[%s], artifactId=[%s], version=[%s], classifier=[%s], type=[%s]", groupId, artifactId, version, classifier, type));
 		if (!artifacts.contains(groupId + ":" + artifactId)) {
 			return null;
 		}
-		Path p = repoRoot.resolve(artifactId + "-" + version + (classifier == null ? "" : "-" + classifier) + "." + type);
+		Path p = repoRoot.resolve(groupId + "." + artifactId + "-" + version + (classifier == null ? "" : "-" + classifier) + "." + type);
 		if (!Files.exists(p)) {
 			return null;
 		}
@@ -153,7 +156,7 @@ class InternalBundleRepository {
 					target = target.resolve(sg);
 				target = target.resolve(a)
 						.resolve(v)
-						.resolve(name);
+						.resolve(name.substring(g.length() + 1));
 				Files.createDirectories(target.getParent());
 				Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
 			}

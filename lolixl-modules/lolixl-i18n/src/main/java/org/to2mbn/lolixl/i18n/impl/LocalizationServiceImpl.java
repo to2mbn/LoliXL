@@ -31,7 +31,7 @@ import org.to2mbn.lolixl.i18n.LocaleChangedEvent;
 import org.to2mbn.lolixl.i18n.LocalizationService;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
 
-@Component
+@Component(immediate = true)
 @Service({ LocalizationService.class })
 public class LocalizationServiceImpl implements LocalizationService, ServiceTrackerCustomizer<LocalizationProvider, LocalizationProvider> {
 

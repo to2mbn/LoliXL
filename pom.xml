@@ -128,6 +128,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -142,6 +143,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -153,31 +155,31 @@
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<locale>zh_CN</locale>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-plugin-plugin</artifactId>
-				<version>3.4</version>
-			</plugin>
 		</plugins>
 
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>3.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10.4</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<locale>zh_CN</locale>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
@@ -192,6 +194,7 @@
 									<exclude>META-INF/*.RSA</exclude>
 									<exclude>META-INF/NOTICE</exclude>
 									<exclude>META-INF/LICENSE</exclude>
+									<exclude>META-INF/DEPENDENCIES</exclude>
 								</excludes>
 							</filter>
 						</filters>
@@ -331,14 +334,9 @@
 				<version>2.7</version>
 			</dependency>
 			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcpg-jdk15on</artifactId>
-				<version>1.54</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcprov-jdk15on</artifactId>
-				<version>1.54</version>
+				<groupId>org.tukaani</groupId>
+				<artifactId>xz</artifactId>
+				<version>1.5</version>
 			</dependency>
 
 			<!-- JMCCC -->
@@ -350,6 +348,11 @@
 			<dependency>
 				<groupId>org.to2mbn</groupId>
 				<artifactId>jmccc-yggdrasil-authenticator</artifactId>
+				<version>2.5-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn</groupId>
+				<artifactId>jmccc-mcdownloader</artifactId>
 				<version>2.5-SNAPSHOT</version>
 			</dependency>
 

@@ -124,6 +124,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 	private CompletableFuture<Void> asyncReadArtifact(Path path, Supplier<WritableByteChannel> output) {
 		return AsyncUtils.asyncRun(() -> {
+			LOGGER.finer(format("Try reading [%s] to [%s]", path, output));
 			checkArtifactExisting(path);
 
 			try (FileChannel in = FileChannel.open(path, StandardOpenOption.READ);

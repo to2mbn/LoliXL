@@ -46,6 +46,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.outputDirectory}/bundles</outputDirectory>
+							<prependGroupId>true</prependGroupId>
 							<artifactItems>
 								<!-- jar -->
 								<artifactItem>
@@ -63,6 +64,22 @@
 								<artifactItem>
 									<groupId>com.google.code.gson</groupId>
 									<artifactId>gson</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.tukaani</groupId>
+									<artifactId>xz</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn</groupId>
+									<artifactId>jmccc</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn</groupId>
+									<artifactId>jmccc-yggdrasil-authenticator</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn</groupId>
+									<artifactId>jmccc-mcdownloader</artifactId>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
@@ -83,6 +100,10 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-core</artifactId>
 								</artifactItem>
 
 
@@ -114,6 +135,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-core</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>
