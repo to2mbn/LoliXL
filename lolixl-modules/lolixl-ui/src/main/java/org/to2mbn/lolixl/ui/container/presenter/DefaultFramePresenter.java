@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -10,25 +11,25 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.to2mbn.lolixl.ui.BackgroundManagingService;
-import org.to2mbn.lolixl.ui.ContentDisplayService;
+import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
+import org.to2mbn.lolixl.ui.model.Panel;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
+import java.util.Deque;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundManagingService, ContentDisplayService {
+public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundManagingService, PanelDisplayService {
 
-	private final ConcurrentLinkedQueue<Pane> contents = new ConcurrentLinkedQueue<>();
-	private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
+	private static class PanelEntry {
+		Panel model;
+		Pane view;
+	}
 
-	private boolean hidedSidebar = false;
-	private Node sidebar = null;
+	private Deque<PanelEntry> panels = new ConcurrentLinkedDeque<>();
+
+	private Node sidebar;
 
 	@Override
 	public void initialize(URL fxmlLocation) throws IOException {
@@ -45,64 +46,76 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		return view.rootPane.getBackground();
 	}
 
+	/*
+	 * 面板指的是叠加在界面上的内容，并且占据整个界面。
+	 * 比如我打开设置，这时候设置会占据整个界面，它就是个面板。
+	 * 背景、侧边栏等等都不算面板。
+	 * 当有面板显示的时候，侧边栏是不显示的。
+	 * 如果打开了多个面板，它们会一层层的叠放（逻辑上的叠放，不是指JavaFX组件叠放在一起）。
+	 * 如果我打开顺序是A->B->C，那么关闭顺序就是C->B->A，是FIFO的，所以这里用了Deque。
+	 */
+
 	@Override
-	public void displayContent(Pane pane, boolean hideSidebar) {
-		Objects.requireNonNull(pane);
-		Lock lock = rwLock.writeLock();
-		lock.lock();
-		try {
-			contents.offer(pane);
-		} finally {
-			lock.unlock();
+	public void display(Panel model) {
+		checkFxThread();
+
+		boolean hideSidebar = panels.isEmpty(); // 空deque代表这个Panel是第一个Panel，得隐藏sidebar
+		PanelEntry panel = createPanelEntry(model);
+		panels.push(panel);
+
+		double plus = hideSidebar ? view.sidebarPane.getWidth() : 0;
+		panel.view.resize(view.contentPane.getWidth() + plus, view.contentPane.getHeight());
+		if (hideSidebar) {
+			sidebar = view.sidebarPane.getCenter();
+			view.sidebarPane.setCenter(null);
 		}
 
-		Platform.runLater(() -> {
-			double plus = hideSidebar ? view.sidebarPane.getWidth() : 0;
-			pane.resize(view.contentPane.getWidth() + plus, view.contentPane.getHeight());
-			if (hideSidebar) {
-				sidebar = view.sidebarPane.getCenter();
-				view.sidebarPane.setCenter(null);
-			}
-
-			ParallelTransition animation = generateAnimation(pane, false, hideSidebar);
-			animation.setOnFinished(event -> {
-				view.setContent(pane);
-				hidedSidebar = hideSidebar;
-			});
-			animation.play();
+		ParallelTransition animation = generateAnimation(panel.view, false, hideSidebar);
+		animation.setOnFinished(event -> {
+			view.setContent(panel.view);
 		});
+		animation.play();
 	}
 
 	@Override
-	public boolean closeCurrentContent() {
-		if (contents.size() <= 1) {
+	public boolean closeCurrent() {
+		checkFxThread();
+
+		if (panels.isEmpty()) {
 			return false;
-		}
-		Lock lock = rwLock.writeLock();
-		lock.lock();
-		try {
+		} else {
+			panels.pop();
+			boolean showSidebar = panels.isEmpty(); // 空deque代表这个Panel是最后一个Panel，得显示sidebar
+
+			/*
+			// TODO: 不知道怎么写
+			
 			Pane last = contents.poll();
 			Pane previous = contents.poll();
-
-			Platform.runLater(() -> {
-				ParallelTransition animation = generateAnimation(last, true, hidedSidebar);
-				animation.setOnFinished(event -> {
-					if (hidedSidebar) {
-						view.sidebarPane.setCenter(sidebar);
-					}
-					view.setContent(previous);
-				});
-				animation.play();
+			
+			ParallelTransition animation = generateAnimation(last, true, hidedSidebar);
+			animation.setOnFinished(event -> {
+				if (hidedSidebar) {
+					view.sidebarPane.setCenter(sidebar);
+				}
+				view.setContent(previous);
 			});
-		} finally {
-			lock.unlock();
+			animation.play();
+			*/
+			return true;
 		}
-		return true;
 	}
 
 	@Override
-	public List<Pane> getAvailableContents() {
-		return contents.stream().collect(Collectors.toList());
+	public Optional<Panel> getCurrent() {
+		return Optional.ofNullable(panels.peek().model);
+	}
+
+	@Override
+	public Panel[] getOpenedPanels() {
+		return panels.stream()
+				.map(entry -> entry.model)
+				.toArray(Panel[]::new);
 	}
 
 	private ParallelTransition generateAnimation(Pane pane, boolean reverse, boolean hidedSidebar) {
@@ -120,5 +133,14 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		ParallelTransition parallel = new ParallelTransition(tran, fade);
 		parallel.setCycleCount(Animation.INDEFINITE);
 		return parallel;
+	}
+
+	private PanelEntry createPanelEntry(Panel model) {
+		PanelEntry entry = new PanelEntry();
+		entry.model = model;
+		// TODO: 根据要显示的面板的逻辑模型
+		//       创建出一个JavaFX的Pane对象
+		//       entry.view=...;
+		return entry;
 	}
 }
