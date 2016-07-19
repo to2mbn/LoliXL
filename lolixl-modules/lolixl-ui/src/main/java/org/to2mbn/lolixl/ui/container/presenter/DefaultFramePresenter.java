@@ -10,7 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.to2mbn.lolixl.ui.BackgroundManagingService;
+import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
 import org.to2mbn.lolixl.ui.model.Panel;
@@ -20,7 +20,7 @@ import java.util.Deque;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundManagingService, PanelDisplayService {
+public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
 
 	private static class PanelEntry {
 		Panel model;
@@ -37,12 +37,12 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	}
 
 	@Override
-	public void changeBackground(Background background) {
+	public void setBackground(Background background) {
 		Platform.runLater(() -> view.rootPane.setBackground(background));
 	}
 
 	@Override
-	public Background getCurrentBackground() {
+	public Background getBackground() {
 		return view.rootPane.getBackground();
 	}
 

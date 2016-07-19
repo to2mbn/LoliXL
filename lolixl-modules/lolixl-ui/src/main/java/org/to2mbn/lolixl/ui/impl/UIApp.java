@@ -10,7 +10,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.ui.BackgroundManagingService;
+import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
@@ -59,7 +59,7 @@ public class UIApp {
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
-		ctx.registerService(BackgroundManagingService.class, framePresenter, null);
+		ctx.registerService(BackgroundService.class, framePresenter, null);
 		ctx.registerService(PanelDisplayService.class, framePresenter, null);
 		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
 

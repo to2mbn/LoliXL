@@ -7,5 +7,5 @@ public interface TileManagingService {
 
 	void removeTile(Button tileButton);
 
-	void changeSize(int size);
+	void setSize(int size);
 }

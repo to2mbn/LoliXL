@@ -33,7 +33,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	}
 
 	@Override
-	public void changeSize(int size) {
+	public void setSize(int size) {
 
 	}
 }
