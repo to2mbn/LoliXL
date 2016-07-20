@@ -1,25 +1,34 @@
 package org.to2mbn.lolixl.ui.model;
 
-import java.util.Objects;
-import java.util.Optional;
+import javax.swing.Icon;
 import javafx.scene.layout.Pane;
 
-public class Panel {
+public interface Panel {
 
-	private Optional<PanelHeader> header;
-	private Pane content;
+	/*
+	 * 图标为null则不显示图标
+	 * 设置图标/标题的时候使用渐变特效
+	 * CloseOperation的默认动作是关闭当前面板，即this.close()
+	 * 打开/关闭 时使用 滑入/滑出 特效
+	 */
 
-	public Panel(Optional<PanelHeader> header, Pane content) {
-		this.header = Objects.requireNonNull(header);
-		this.content = Objects.requireNonNull(content);
-	}
+	Icon getIcon();
+	void setIcon(Icon icon);
 
-	public Optional<PanelHeader> getHeader() {
-		return header;
-	}
+	String getTitle();
+	void setTitle(String title);
 
-	public Pane getContent() {
-		return content;
-	}
+	Runnable getCloseOperation();
+	/**
+	 * 设置将关闭面板时的动作。
+	 * 
+	 * @param onClose 将关闭面板时的动作，null代表使用默认动作
+	 */
+	void setCloseOperation(Runnable onClose);
 
+	Pane getContent();
+	void setContent(Pane content);
+
+	void open();
+	void close();
 }

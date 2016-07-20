@@ -4,20 +4,13 @@ import java.util.Optional;
 import org.to2mbn.lolixl.ui.model.Panel;
 
 /**
- * 提供对应用中打开的面板的管理。
- * <p>
- * 该接口<b>不是</b>线程安全的。
+ * 提供对应用中面板的管理。
  * 
  * @author yushijinhun
  */
-public interface PanelDisplayService {
+public interface PanelService {
 
-	void display(Panel panel);
-
-	/**
-	 * @return 如果目前没有打开的Panel（即没有Panel可以关闭）则返回{@code true}，反之{@code false}
-	 */
-	boolean closeCurrent();
+	Panel newPanel();
 
 	/**
 	 * 获取当前打开的Panel。

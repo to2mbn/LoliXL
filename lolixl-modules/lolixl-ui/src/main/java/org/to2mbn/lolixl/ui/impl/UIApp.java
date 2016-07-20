@@ -13,7 +13,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.ui.BackgroundService;
-import org.to2mbn.lolixl.ui.PanelDisplayService;
+import org.to2mbn.lolixl.ui.PanelService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultSideBarPresenter;
@@ -48,7 +48,7 @@ public class UIApp {
 	private DefaultTitleBarPresenter titleBarPresenter;
 	private DefaultSideBarPresenter userProfilePresenter;
 	private HomeContentPresenter homeContentPresenter;
-	private PanelDisplayService displayService;
+	private PanelService displayService;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -57,12 +57,12 @@ public class UIApp {
 		titleBarPresenter = new DefaultTitleBarPresenter();
 		userProfilePresenter = new DefaultSideBarPresenter();
 		homeContentPresenter = new HomeContentPresenter();
-		displayService = framePresenter;
+		// TODO: displayService = framePresenter;
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
 		ctx.registerService(BackgroundService.class, framePresenter, null);
-		ctx.registerService(PanelDisplayService.class, framePresenter, null);
+		// TODO: ctx.registerService(PanelService.class, framePresenter, null);
 		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
 
 		LOGGER.info("Init JavaFX");
