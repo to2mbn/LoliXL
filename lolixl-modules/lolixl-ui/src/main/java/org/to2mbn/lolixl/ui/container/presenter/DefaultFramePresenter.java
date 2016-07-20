@@ -1,26 +1,16 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
-import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
 import org.to2mbn.lolixl.ui.BackgroundService;
-import org.to2mbn.lolixl.ui.PanelService;
+import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
-import org.to2mbn.lolixl.ui.model.Panel;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Deque;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService {
 

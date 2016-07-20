@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui;
 
 import java.util.Optional;
-import org.to2mbn.lolixl.ui.model.Panel;
 
 /**
  * 提供对应用中面板的管理。

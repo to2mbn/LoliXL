@@ -7,6 +7,7 @@ import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.version.GameVersion;
+import javafx.scene.control.Button;
 
 public class McdirGameVersion implements GameVersion {
 
@@ -35,6 +36,12 @@ public class McdirGameVersion implements GameVersion {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	@Override
+	public Button createTile() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

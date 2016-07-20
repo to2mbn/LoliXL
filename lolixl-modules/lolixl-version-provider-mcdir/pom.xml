@@ -6,13 +6,13 @@
 		<artifactId>lolixl-modules</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lolixl-offline-authenticator</artifactId>
+	<artifactId>lolixl-version-provider-mcdir</artifactId>
 	<packaging>bundle</packaging>
-	<name>lolixl-offline-authenticator</name>
-	<description>LoliXL offline authenticator module</description>
+	<name>lolixl-version-provider-mcdir</name>
+	<description>LoliXL mcdir version provider module</description>
 
 	<dependencies>
-		<dependency>
+		<dependency> 
 			<groupId>org.to2mbn.lolixl</groupId>
 			<artifactId>lolixl-core</artifactId>
 		</dependency>

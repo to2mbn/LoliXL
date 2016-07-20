@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.model;
+package org.to2mbn.lolixl.ui;
 
 import javax.swing.Icon;
 import javafx.scene.layout.Pane;

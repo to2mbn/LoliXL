@@ -15,10 +15,12 @@
 		<module>lolixl-utils</module>
 		<module>lolixl-plugin-manager</module>
 		<module>lolixl-i18n</module>
-		<module>lolixl-core</module>
-		<module>lolixl-offline-authenticator</module>
 		<module>lolixl-ui</module>
+		<module>lolixl-core</module>
 		<module>lolixl-init</module>
+		<module>lolixl-offline-authenticator</module>
+		<module>lolixl-version-provider-mcdir</module>
+		<module>lolixl-ui-impl</module>
 	</modules>
 
 	<build>

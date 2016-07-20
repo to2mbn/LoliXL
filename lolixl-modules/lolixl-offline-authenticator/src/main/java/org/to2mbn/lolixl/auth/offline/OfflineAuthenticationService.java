@@ -7,6 +7,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.core.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.auth.AuthenticationService;
 import org.to2mbn.lolixl.i18n.I18N;
+import javafx.scene.image.Image;
 
 @Service({ AuthenticationService.class })
 @Component
@@ -23,6 +24,12 @@ public class OfflineAuthenticationService implements AuthenticationService {
 	@Override
 	public AuthenticationProfile<?> createProfile() {
 		return new OfflineAuthenticationProfile();
+	}
+
+	@Override
+	public Image getIcon() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

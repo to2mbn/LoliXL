@@ -6,15 +6,20 @@
 		<artifactId>lolixl-modules</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lolixl-offline-authenticator</artifactId>
+	<artifactId>lolixl-ui-impl</artifactId>
 	<packaging>bundle</packaging>
-	<name>lolixl-offline-authenticator</name>
-	<description>LoliXL offline authenticator module</description>
+	<name>lolixl-ui-impl</name>
+	<description>LoliXL UI implementation module</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
 			<artifactId>lolixl-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.service.event</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

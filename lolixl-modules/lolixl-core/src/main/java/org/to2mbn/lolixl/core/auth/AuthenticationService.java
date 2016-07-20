@@ -1,5 +1,7 @@
 package org.to2mbn.lolixl.core.auth;
 
+import javafx.scene.image.Image;
+
 /**
  * OSGi的一个服务，代表了一种验证方法。
  * <p>
@@ -13,7 +15,9 @@ public interface AuthenticationService {
 
 	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.auth.method";
 
+	// TODO: 也许抽取这两个方法为超接口？
 	String getLocalizedName();
+	Image getIcon();
 
 	AuthenticationProfile<?> createProfile();
 

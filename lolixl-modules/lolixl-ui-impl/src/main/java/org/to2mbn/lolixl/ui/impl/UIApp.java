@@ -17,7 +17,6 @@ import org.to2mbn.lolixl.ui.PanelService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultSideBarPresenter;
-import org.to2mbn.lolixl.ui.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
