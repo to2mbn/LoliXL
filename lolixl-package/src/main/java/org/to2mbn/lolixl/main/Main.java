@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
+import org.osgi.framework.FrameworkEvent;
 
 class Main {
 
@@ -109,8 +110,21 @@ class Main {
 
 			felix = new Felix(felixConfiguration);
 			felix.start();
+			OSGiListener osgiListener = new OSGiListener();
+			felix.getBundleContext().addBundleListener(osgiListener);
+			felix.getBundleContext().addServiceListener(osgiListener);
+			felix.getBundleContext().addFrameworkListener(osgiListener);
 			setupFelix(felix);
-			felix.waitForStop(Long.MAX_VALUE);
+
+			FrameworkEvent event;
+			do {
+				event = felix.waitForStop(Long.MAX_VALUE);
+				if ((event.getType() & FrameworkEvent.ERROR) == FrameworkEvent.ERROR) {
+					throw new IllegalStateException("Felix stopped because of an error: " + event, event.getThrowable());
+				}
+			} while (event.getType() == FrameworkEvent.WAIT_TIMEDOUT ||
+					event.getType() == FrameworkEvent.STOPPED_UPDATE);
+
 		} catch (Throwable e) {
 			if (felix != null) {
 				try {
