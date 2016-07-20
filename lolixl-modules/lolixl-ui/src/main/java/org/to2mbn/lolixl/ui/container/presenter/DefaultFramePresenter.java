@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.ui.container.presenter;
 
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -14,11 +13,14 @@ import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.view.DefaultFrameView;
 import org.to2mbn.lolixl.ui.model.Panel;
+
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Deque;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
 
@@ -32,8 +34,8 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private Node sidebar;
 
 	@Override
-	public void initialize(URL fxmlLocation) throws IOException {
-		super.initialize(fxmlLocation);
+	public void initialize(InputStream fxml) throws IOException {
+		super.initialize(fxml);
 	}
 
 	@Override

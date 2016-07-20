@@ -5,8 +5,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView;
+
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.function.Consumer;
 
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
@@ -15,13 +16,11 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	private Stage parentStage;
 
 	@Override
-	public void initialize(URL fxmlLocation) throws IOException {
-		super.initialize(fxmlLocation);
-		AnchorPane.setLeftAnchor(view.titleLabel, 0D);
+	public void initialize(InputStream fxml) throws IOException {
+		super.initialize(fxml);
+		AnchorPane.setLeftAnchor(view.titleLabel, 10D);
 		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
-		if (System.getProperties().containsKey("org.to2mbn.lolixl.version")) {
-			view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version"));
-		}
+		view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version", ""));
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings
