@@ -16,7 +16,8 @@ import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultFramePresenter;
-import org.to2mbn.lolixl.ui.container.presenter.DefaultSidebarPresenter;
+import org.to2mbn.lolixl.ui.container.presenter.DefaultSideBarPresenter;
+import org.to2mbn.lolixl.ui.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
@@ -45,7 +46,7 @@ public class UIApp {
 
 	private DefaultFramePresenter framePresenter;
 	private DefaultTitleBarPresenter titleBarPresenter;
-	private DefaultSidebarPresenter userProfilePresenter;
+	private DefaultSideBarPresenter userProfilePresenter;
 	private HomeContentPresenter homeContentPresenter;
 	private PanelDisplayService displayService;
 
@@ -54,7 +55,7 @@ public class UIApp {
 		// Create presenters
 		framePresenter = new DefaultFramePresenter();
 		titleBarPresenter = new DefaultTitleBarPresenter();
-		userProfilePresenter = new DefaultSidebarPresenter();
+		userProfilePresenter = new DefaultSideBarPresenter();
 		homeContentPresenter = new HomeContentPresenter();
 		displayService = framePresenter;
 
