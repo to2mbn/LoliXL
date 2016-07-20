@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import org.apache.felix.framework.Felix;
@@ -81,7 +82,10 @@ class InternalBundleRepository {
 	}
 
 	private void resolveGA2V() throws IOException {
-		Map<String, String> prefix2ga = new HashMap<>();
+		Map<String, String> prefix2ga = new TreeMap<>(
+				Comparator.comparing(String::length)
+						.reversed()
+						.thenComparing(s -> s));
 		artifacts.forEach(gastr -> {
 			String[] ga = gastr.split(":");
 			if (ga.length != 2)

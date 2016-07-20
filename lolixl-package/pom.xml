@@ -105,6 +105,18 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-core</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-ui-impl</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-version-provider-mcdir</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-offline-authenticator</artifactId>
+								</artifactItem>
 
 
 								<!-- lolixl-plugin xml -->
@@ -141,6 +153,24 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-core</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-ui-impl</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-version-provider-mcdir</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-offline-authenticator</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>

@@ -387,6 +387,21 @@
 				<artifactId>lolixl-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-ui-impl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-version-provider-mcdir</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-offline-authenticator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- Maven -->
 			<dependency>

@@ -12,4 +12,7 @@ org.to2mbn.lolixl:lolixl-i18n
 org.to2mbn.lolixl:lolixl-init
 org.to2mbn.lolixl:lolixl-core
 org.to2mbn.lolixl:lolixl-ui
+org.to2mbn.lolixl:lolixl-ui-impl
+org.to2mbn.lolixl:lolixl-version-provider-mcdir
+org.to2mbn.lolixl:lolixl-offline-authenticator
 
