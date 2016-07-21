@@ -1,11 +1,17 @@
 package org.to2mbn.lolixl.auth.offline;
 
-import java.util.concurrent.CompletableFuture;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
+import org.to2mbn.jmccc.auth.yggdrasil.core.texture.Texture;
+import org.to2mbn.jmccc.auth.yggdrasil.core.texture.TextureType;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
-import javafx.scene.control.Button;
-import javafx.scene.layout.Region;
+import org.to2mbn.lolixl.utils.ObservableContext;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class OfflineAuthenticationProfile implements AuthenticationProfile<OfflineAuthenticationMemento> {
 
@@ -55,9 +61,31 @@ public class OfflineAuthenticationProfile implements AuthenticationProfile<Offli
 	}
 
 	@Override
+	public CompletableFuture<String> getEmail() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CompletableFuture<Map<TextureType, Texture>> getTextures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public String getLocalizedName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public Image getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setObservableContext(ObservableContext ctx) {
+		// TODO Auto-generated method stub
+	}
 }

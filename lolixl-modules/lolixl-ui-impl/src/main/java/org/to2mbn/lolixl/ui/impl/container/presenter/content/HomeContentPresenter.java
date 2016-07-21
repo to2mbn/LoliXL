@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.content;
 
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.to2mbn.lolixl.ui.Panel;
@@ -23,12 +22,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		super.initialize(LOCATION_OF_FXML);
 		AnchorPane.setRightAnchor(view.startGameButton, 0D);
 		// TODO: Start game button & 'More' tile
-		view.settingsTile.setOnAction(event -> {
-			Panel panel = displayService.newPanel();
-			panel.setTitle("设置");
-			panel.setContent(new Pane());
-			panel.show();
-		});
 	}
 
 	@Override
@@ -41,8 +34,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 
 	}
 
-	@Override
-	public void setSize(int size) {
-
+	public void onWindowSizeChanged() {
+		// TODO
 	}
 }

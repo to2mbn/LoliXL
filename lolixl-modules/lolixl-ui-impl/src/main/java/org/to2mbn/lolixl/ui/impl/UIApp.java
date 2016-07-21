@@ -77,13 +77,14 @@ public class UIApp {
 		mainScene.getStylesheets().addAll(LOCATIONS_OF_DEFAULT_CSS);
 		mainStage.setScene(mainScene);
 		mainStage.show();
-		// TODO: displayService.displayContent(homeContentPresenter.getView().rootContainer);
 	}
 
 	private void initPresenters() {
 		// Setup presenters
 		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
 		titleBarPresenter.setParentStage(mainStage);
+
+		// TODO window drag
 
 		try {
 			framePresenter.initialize();

@@ -26,7 +26,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
-@Service({BackgroundService.class, PanelDisplayService.class})
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_frame.fxml";
 

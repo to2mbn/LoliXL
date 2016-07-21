@@ -49,11 +49,16 @@
 /*
  * Panel
  */
-#panelPreviousButton {
-    -fx-text-fill: transparent;
-}
-
-#panelTitleLabel {
+#content_panel_title_label {
     -fx-text-fill: white;
     -fx-font-size: 26;
+}
+
+#content_panel_previous_button {
+    -fx-text-fill: transparent;
+    -fx-background-image: "@ui/img/previous_button.png";
+}
+
+#content_panel_previous_button:hover {
+    -fx-background-image: "@ui/img/previous_button_hover.png";
 }
