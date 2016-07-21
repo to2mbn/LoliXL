@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.core.game.auth;
 
-import org.to2mbn.lolixl.core.ui.DisplayableItem;
+import org.to2mbn.lolixl.core.ui.DisplayableTile;
 
 /**
  * OSGi的一个服务，代表了一种验证方法。
@@ -11,11 +11,9 @@ import org.to2mbn.lolixl.core.ui.DisplayableItem;
  * 
  * @author yushijinhun
  */
-public interface AuthenticationService extends DisplayableItem {
+public interface AuthenticationService extends DisplayableTile {
 
 	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.game.auth.method";
-
-	// TODO: 也许抽取这两个方法为超接口？
 
 	AuthenticationProfile<?> createProfile();
 

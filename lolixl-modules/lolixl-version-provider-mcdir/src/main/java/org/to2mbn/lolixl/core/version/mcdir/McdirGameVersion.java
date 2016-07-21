@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 
 public class McdirGameVersion implements GameVersion {
 
+	private String alias;
 	private String version;
 	private Path mcdir;
 
@@ -42,6 +43,22 @@ public class McdirGameVersion implements GameVersion {
 	public Button createTile() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getLocalizedName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

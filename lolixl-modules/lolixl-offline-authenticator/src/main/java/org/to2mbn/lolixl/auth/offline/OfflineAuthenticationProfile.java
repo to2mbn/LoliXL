@@ -54,4 +54,10 @@ public class OfflineAuthenticationProfile implements AuthenticationProfile<Offli
 		return null;
 	}
 
+	@Override
+	public String getLocalizedName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

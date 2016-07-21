@@ -25,6 +25,8 @@ public class SimpleGameConfiguration implements GameConfiguration {
 	private static final Logger LOGGER = Logger.getLogger(SimpleGameConfiguration.class.getCanonicalName());
 	private static final long serialVersionUID = 1L;
 
+	private String alias;
+
 	public RuntimeDirectoryStrategy runtimeDirStrategy = RuntimeDirectoryStrategy.DEFAULT;
 	public String customizedRuntimeDir;
 
@@ -195,6 +197,16 @@ public class SimpleGameConfiguration implements GameConfiguration {
 		}
 
 		return option;
+	}
+
+	@Override
+	public String getAlias() {
+		return alias;
+	}
+
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

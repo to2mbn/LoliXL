@@ -10,6 +10,4 @@ public interface VersionTypeProvider<VER extends DownloadableVersion> extends Di
 
 	CompletableFuture<List<VersionsGroup<VER>>> getVersionList();
 
-	VersionDescription getDescription(VER version);
-
 }
