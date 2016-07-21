@@ -13,7 +13,7 @@ import org.to2mbn.lolixl.core.ui.DisplayableItem;
  */
 public interface AuthenticationService extends DisplayableItem {
 
-	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.auth.method";
+	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.game.auth.method";
 
 	// TODO: 也许抽取这两个方法为超接口？
 

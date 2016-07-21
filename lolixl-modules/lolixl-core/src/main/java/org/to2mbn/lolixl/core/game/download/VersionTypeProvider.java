@@ -6,7 +6,7 @@ import org.to2mbn.lolixl.core.ui.DisplayableItem;
 
 public interface VersionTypeProvider<VER extends DownloadableVersion> extends DisplayableItem {
 
-	String PROPERTY_VERSION_TYPE = "org.to2mbn.lolixl.core.download.game.type";
+	String PROPERTY_VERSION_TYPE = "org.to2mbn.lolixl.core.game.download.type";
 
 	CompletableFuture<List<VersionsGroup<VER>>> getVersionList();
 

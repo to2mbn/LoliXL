@@ -6,7 +6,7 @@ import org.to2mbn.lolixl.core.ui.DisplayableTile;
 
 public interface GameVersion extends DisplayableTile {
 
-	String getName();
+	String getVersionNumber();
 
 	Path getMinecraftDirectory();
 	Version getLaunchableVersion();

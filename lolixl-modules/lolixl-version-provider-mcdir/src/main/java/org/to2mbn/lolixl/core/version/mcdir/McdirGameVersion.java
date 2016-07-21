@@ -20,7 +20,7 @@ public class McdirGameVersion implements GameVersion {
 	}
 
 	@Override
-	public String getName() {
+	public String getVersionNumber() {
 		return version;
 	}
 
