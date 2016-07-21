@@ -6,13 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.ResourceBundle.Control;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -77,9 +72,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	private Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 	private BundleContext bundleContext;
 
-	private Set<LocalizationProvider> providers = new CopyOnWriteArraySet<>();
 	private Map<LocalizationCacheKey, Optional<String>> caches = new ConcurrentHashMap<>();
-	private ReadWriteLock providersLock = new ReentrantReadWriteLock();
 	private ServiceTracker<LocalizationProvider, LocalizationProvider> tracker;
 
 	@Activate
@@ -125,16 +118,10 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 		Optional<String> cache;
 
-		Lock rlock = providersLock.readLock();
-		rlock.lock();
-		try {
-			cache = caches.get(cacheKey);
-			if (cache == null) {
-				cache = lookupLocalizedString(locale, key);
-				caches.put(cacheKey, cache);
-			}
-		} finally {
-			rlock.unlock();
+		cache = caches.get(cacheKey);
+		if (cache == null) {
+			cache = lookupLocalizedString(locale, key);
+			caches.put(cacheKey, cache);
 		}
 
 		return cache.orElse(null);
@@ -143,7 +130,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	private Optional<String> lookupLocalizedString(Locale idealLocale, String key) {
 		List<Locale> locales = control.getCandidateLocales("org.to2mbn.lolixl.i18n", idealLocale);
 		for (Locale locale : locales) {
-			for (LocalizationProvider provider : providers) {
+			for (LocalizationProvider provider : tracker.getServices(new LocalizationProvider[0])) {
 				String result = provider.getLocalizedString(locale, key);
 				if (result != null) {
 					return Optional.of(result);
@@ -155,47 +142,23 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 	@Override
 	public LocalizationProvider addingService(ServiceReference<LocalizationProvider> reference) {
-		LocalizationProvider provider = bundleContext.getService(reference);
-
-		Lock wlock = providersLock.writeLock();
-		wlock.lock();
-		try {
-			providers.add(provider);
-			caches.clear();
-		} finally {
-			wlock.unlock();
-		}
-
-		refresh();
-		return provider;
+		clearCache();
+		return bundleContext.getService(reference);
 	}
 
 	@Override
 	public void modifiedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
-		Lock wlock = providersLock.writeLock();
-		wlock.lock();
-		try {
-			caches.clear();
-		} finally {
-			wlock.unlock();
-		}
-
-		refresh();
+		clearCache();
 	}
 
 	@Override
 	public void removedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
 		bundleContext.ungetService(reference);
+		clearCache();
+	}
 
-		Lock wlock = providersLock.writeLock();
-		wlock.lock();
-		try {
-			providers.remove(service);
-			caches.clear();
-		} finally {
-			wlock.unlock();
-		}
-
+	private void clearCache() {
+		caches.clear();
 		refresh();
 	}
 

@@ -28,7 +28,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.Configuration;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.core.config.ConfigurationContext;
 import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.core.config.ConfigurationManager;
 import org.to2mbn.lolixl.utils.PathUtils;
@@ -82,13 +81,9 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 					}
 				}
 
-				service.setConfigurationContext(new ConfigurationContext() {
-
-					@Override
-					public void updated() {
-						updateConfiguration(reference, service);
-						localIOPool.submit(() -> trySaveConfiguration(reference, service));
-					}
+				service.setObservableContext(() -> {
+					updateConfiguration(reference, service);
+					localIOPool.submit(() -> trySaveConfiguration(reference, service));
 				});
 
 				updateConfiguration(reference, service);
@@ -113,7 +108,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 				return null;
 			}
 
-			Class<?> clazz = service.getMementoType();
+			Class<? extends Configuration> clazz = service.getMementoType();
 			LOGGER.fine(format("Loading configuration from [%s], class=[%s]", location, clazz));
 			try (Reader reader = new InputStreamReader(Files.newInputStream(location), "UTF-8")) {
 				return gson.fromJson(reader, clazz);
@@ -158,7 +153,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 		try {
 			Configuration configuration = service.store();
 			String category = getCategoryName(reference, service);
-			Event event = new ConfigurationEvent(configuration, ConfigurationEvent.TYPE_UPDATE, category);
+			Event event = new ConfigurationEvent(configuration, category);
 			eventAdmin.postEvent(event);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, format("Couldn't post configuration update event for %s", reference), e);
