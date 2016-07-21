@@ -17,13 +17,11 @@ import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Modified;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -92,14 +90,6 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 		LOGGER.info("Using locale " + currentLocale);
 		tracker = new ServiceTracker<>(bundleContext, LocalizationProvider.class, this);
 		tracker.open(true);
-	}
-
-	@Modified
-	public void modified(Map<String, Object> properties) throws ConfigurationException {
-		Locale newLocale = (Locale) properties.get(CONFIG_LOCALE);
-		if (newLocale != null) {
-			setCurrentLocale(newLocale);
-		}
 	}
 
 	@Deactivate

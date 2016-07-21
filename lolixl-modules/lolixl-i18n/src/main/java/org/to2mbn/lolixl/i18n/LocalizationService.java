@@ -4,9 +4,6 @@ import java.util.Locale;
 
 public interface LocalizationService {
 
-	String CONFIG_LOCALE = "org.to2mbn.lolixl.i18n.locale";
-
-
 	Locale getCurrentLocale();
 
 	void setCurrentLocale(Locale locale);

@@ -58,10 +58,6 @@
 									<artifactId>org.apache.felix.eventadmin</artifactId>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.apache.felix</groupId>
-									<artifactId>org.apache.felix.configadmin</artifactId>
-								</artifactItem>
-								<artifactItem>
 									<groupId>com.google.code.gson</groupId>
 									<artifactId>gson</artifactId>
 								</artifactItem>
