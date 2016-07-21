@@ -16,6 +16,10 @@
 			<groupId>org.to2mbn.lolixl</groupId>
 			<artifactId>lolixl-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.to2mbn.lolixl</groupId>
+			<artifactId>lolixl-i18n</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>

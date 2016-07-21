@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.internal;
+package org.to2mbn.lolixl.core.impl.download;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;

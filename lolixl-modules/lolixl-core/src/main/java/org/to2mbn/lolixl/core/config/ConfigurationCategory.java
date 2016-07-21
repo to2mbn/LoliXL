@@ -6,7 +6,7 @@ import javafx.scene.layout.Region;
 
 public interface ConfigurationCategory<CONF extends Configuration> extends Storable<CONF>, DisplayableItem {
 
-	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.config.category";
+	String PROPERTY_CATEGORY = "org.to2mbn.lolixl.core.config.category";
 
 	void setConfigurationContext(ConfigurationContext ctx);
 

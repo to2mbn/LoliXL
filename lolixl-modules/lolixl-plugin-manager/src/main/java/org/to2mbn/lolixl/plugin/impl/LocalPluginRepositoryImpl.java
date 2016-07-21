@@ -24,7 +24,7 @@ import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.LocalMavenRepository;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
-import org.to2mbn.lolixl.plugin.util.PathUtils;
+import org.to2mbn.lolixl.utils.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
 @Component

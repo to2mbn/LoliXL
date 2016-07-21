@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.internal;
+package org.to2mbn.lolixl.core.impl.download;
 
 import java.util.Objects;
 import java.util.concurrent.Future;

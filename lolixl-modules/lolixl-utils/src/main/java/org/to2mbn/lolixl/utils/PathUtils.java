@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.plugin.util;
+package org.to2mbn.lolixl.utils;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

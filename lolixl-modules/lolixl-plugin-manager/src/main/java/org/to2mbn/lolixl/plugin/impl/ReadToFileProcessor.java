@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.to2mbn.lolixl.plugin.util.PathUtils;
+import org.to2mbn.lolixl.utils.PathUtils;
 
 public class ReadToFileProcessor implements Supplier<WritableByteChannel> {
 

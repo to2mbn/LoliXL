@@ -21,6 +21,7 @@ import org.apache.felix.scr.annotations.Modified;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.ComponentContext;
@@ -76,6 +77,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	private volatile Locale currentLocale;
 
 	private Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
+	private BundleContext bundleContext;
 
 	private Set<LocalizationProvider> providers = new CopyOnWriteArraySet<>();
 	private Map<LocalizationCacheKey, Optional<String>> caches = new ConcurrentHashMap<>();
@@ -85,9 +87,10 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	@Activate
 	public void active(ComponentContext compCtx) {
 		public_instance = this;
+		bundleContext = compCtx.getBundleContext();
 		currentLocale = Locale.getDefault();
 		LOGGER.info("Using locale " + currentLocale);
-		tracker = new ServiceTracker<>(compCtx.getBundleContext(), LocalizationProvider.class, this);
+		tracker = new ServiceTracker<>(bundleContext, LocalizationProvider.class, this);
 		tracker.open(true);
 	}
 
@@ -162,7 +165,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 	@Override
 	public LocalizationProvider addingService(ServiceReference<LocalizationProvider> reference) {
-		LocalizationProvider provider = reference.getBundle().getBundleContext().getService(reference);
+		LocalizationProvider provider = bundleContext.getService(reference);
 
 		Lock wlock = providersLock.writeLock();
 		wlock.lock();
@@ -192,6 +195,8 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 	@Override
 	public void removedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
+		bundleContext.ungetService(reference);
+
 		Lock wlock = providersLock.writeLock();
 		wlock.lock();
 		try {

@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.internal;
+package org.to2mbn.lolixl.core.impl.download;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -30,7 +30,7 @@ public class OSGiDownloadProviderAdapter {
 
 			@Override
 			public MinecraftDownloadProvider addingService(ServiceReference<MinecraftDownloadProvider> reference) {
-				MinecraftDownloadProvider service = reference.getBundle().getBundleContext().getService(reference);
+				MinecraftDownloadProvider service = ctx.getService(reference);
 				initProvider(reference, service);
 				return service;
 			}
@@ -41,7 +41,9 @@ public class OSGiDownloadProviderAdapter {
 			}
 
 			@Override
-			public void removedService(ServiceReference<MinecraftDownloadProvider> reference, MinecraftDownloadProvider service) {}
+			public void removedService(ServiceReference<MinecraftDownloadProvider> reference, MinecraftDownloadProvider service) {
+				ctx.ungetService(reference);
+			}
 		});
 		serviceTracker.open(true);
 
