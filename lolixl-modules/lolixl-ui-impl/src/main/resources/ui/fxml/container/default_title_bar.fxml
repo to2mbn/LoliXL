@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="default-title-bar" fx:id="rootContainer" prefHeight="30.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView">
+<AnchorPane id="default-title-bar" fx:id="rootContainer" prefHeight="30.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView">
    <children>
-      <Label fx:id="titleLabel" layoutY="5.0" prefHeight="30.0" prefWidth="400.0" text="LoliXL" textFill="WHITE">
+      <Label fx:id="titleLabel" layoutY="0.0" prefHeight="30.0" prefWidth="400.0" text="LoliXL" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>

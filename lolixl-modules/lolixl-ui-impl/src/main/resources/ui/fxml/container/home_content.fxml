@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.container.view.content.HomeContentView">
+<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.contentmeContentView">
    <bottom>
       <AnchorPane fx:id="bottomContainer" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -20,7 +20,6 @@
             <Insets top="5.0" />
          </padding>
          <children>
-            <Button id="tile-button-home" fx:id="homeTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
             <Button id="tile-button-settings" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
             <Button id="tile-button-settings" fx:id="moreTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
          </children>

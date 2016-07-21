@@ -1,23 +1,7 @@
 package org.to2mbn.lolixl.core.impl.config;
 
-import static java.lang.String.format;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import com.google.gson.Gson;
+import org.apache.felix.scr.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -26,13 +10,19 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
-import org.to2mbn.lolixl.core.config.Configuration;
-import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.core.config.ConfigurationContext;
-import org.to2mbn.lolixl.core.config.ConfigurationEvent;
-import org.to2mbn.lolixl.core.config.ConfigurationManager;
+import org.to2mbn.lolixl.core.config.*;
 import org.to2mbn.lolixl.utils.PathUtils;
-import com.google.gson.Gson;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 
@@ -116,7 +106,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 			Class<?> clazz = service.getMementoType();
 			LOGGER.fine(format("Loading configuration from [%s], class=[%s]", location, clazz));
 			try (Reader reader = new InputStreamReader(Files.newInputStream(location), "UTF-8")) {
-				return gson.fromJson(reader, clazz);
+				return null;
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, format("Couldn't read configuration for [%s]", service), e);

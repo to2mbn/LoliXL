@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.container.view.content;
+package org.to2mbn.lolixl.ui.impl.container.view.content;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,11 +21,8 @@ public class HomeContentView extends View {
 	public Button startGameButton;
 
 	@FXML
-	public Button homeTile;
-
-	@FXML
 	public Button settingsTile;
 
 	@FXML
-	public Button moreTile;
+	public Button setTileSizeTile;
 }

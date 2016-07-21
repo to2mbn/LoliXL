@@ -1,23 +1,24 @@
-package org.to2mbn.lolixl.ui.container.presenter;
+package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.to2mbn.lolixl.ui.container.view.DefaultTitleBarView;
+import org.to2mbn.lolixl.ui.container.presenter.Presenter;
+import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.function.Consumer;
 
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 
+	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_title_bar.fxml";
+
 	private Consumer<MouseEvent> closeButtonListener;
 	private Stage parentStage;
 
-	@Override
-	public void initialize(InputStream fxml) throws IOException {
-		super.initialize(fxml);
+	public void initialize() throws IOException {
+		super.initialize(LOCATION_OF_FXML);
 		AnchorPane.setLeftAnchor(view.titleLabel, 10D);
 		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
 		view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version", ""));

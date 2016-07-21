@@ -1,11 +1,9 @@
 package org.to2mbn.lolixl.ui;
 
-import javafx.scene.control.Button;
-
 public interface TileManagingService {
-	void addTile(Button tileButton);
+	void addTileForPanel(Panel panel);
 
-	void removeTile(Button tileButton);
+	void removeTile(Panel panel);
 
 	void setSize(int size);
 }

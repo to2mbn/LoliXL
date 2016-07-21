@@ -7,7 +7,7 @@ import java.util.Optional;
  * 
  * @author yushijinhun
  */
-public interface PanelService {
+public interface PanelDisplayService {
 
 	Panel newPanel();
 

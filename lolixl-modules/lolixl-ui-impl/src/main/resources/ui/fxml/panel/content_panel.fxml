@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<fx:root fx:id="rootContainer" prefHeight="440.0" prefWidth="850.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.component.view.ContentPanelView">
+   <top>
+      <HBox fx:id="headerContainer" prefHeight="50.0" prefWidth="850.0" spacing="2.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" />
+            <ImageView fx:id="iconView" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
+            <Label id="panelTitleLabel" fx:id="titleLabel" prefHeight="45.0" prefWidth="750.0" />
+         </children>
+         <padding>
+            <Insets left="2.0" top="2.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <BorderPane fx:id="paneContainer" prefHeight="390.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+   </center>
+</fx:root>
