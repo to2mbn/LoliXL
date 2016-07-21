@@ -7,7 +7,7 @@ import org.to2mbn.jmccc.mcdownloader.download.Downloader;
 import org.to2mbn.jmccc.mcdownloader.download.concurrent.DownloadCallback;
 import org.to2mbn.jmccc.mcdownloader.download.concurrent.DownloadCallbacks;
 import org.to2mbn.jmccc.mcdownloader.download.tasks.DownloadTask;
-import org.to2mbn.lolixl.core.event.DownloadStartEvent;
+import org.to2mbn.lolixl.core.download.DownloadStartEvent;
 
 public class DownloaderWrapper implements Downloader {
 

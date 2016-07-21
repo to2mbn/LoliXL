@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.event;
+package org.to2mbn.lolixl.core.download;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,8 @@ import org.to2mbn.jmccc.mcdownloader.download.tasks.DownloadTask;
 
 public class DownloadStartEvent extends Event {
 
-	public static final String TOPIC_DOWNLOAD_START = "org/to2mbn/lolixl/core/event/downloadStart";
-	public static final String KEY_TASK = "org.to2mbn.lolixl.core.event.downloadStart.task";
+	public static final String TOPIC_DOWNLOAD_START = "org/to2mbn/lolixl/core/download/downloadStart";
+	public static final String KEY_TASK = "org.to2mbn.lolixl.core.download.downloadStart.task";
 
 	private static Map<String, Object> createProperties(DownloadTask<?> task) {
 		Map<String, Object> properties = new HashMap<>();
