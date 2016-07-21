@@ -4,8 +4,8 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
-import org.to2mbn.lolixl.core.auth.AuthenticationProfile;
-import org.to2mbn.lolixl.core.auth.AuthenticationService;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.i18n.I18N;
 import javafx.scene.image.Image;
 

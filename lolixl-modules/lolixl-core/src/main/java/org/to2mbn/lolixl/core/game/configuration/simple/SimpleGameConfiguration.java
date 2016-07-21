@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.configuration.simple;
+package org.to2mbn.lolixl.core.game.configuration.simple;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +15,9 @@ import org.to2mbn.jmccc.option.ServerInfo;
 import org.to2mbn.jmccc.option.WindowSize;
 import org.to2mbn.jmccc.util.ExtraArgumentsTemplates;
 import org.to2mbn.jmccc.util.Platform;
-import org.to2mbn.lolixl.core.auth.AuthenticationProfile;
-import org.to2mbn.lolixl.core.configuration.GameConfiguration;
-import org.to2mbn.lolixl.core.version.GameVersion;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
+import org.to2mbn.lolixl.core.game.configuration.GameConfiguration;
+import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.utils.MemoryTools;
 
 public class SimpleGameConfiguration implements GameConfiguration {

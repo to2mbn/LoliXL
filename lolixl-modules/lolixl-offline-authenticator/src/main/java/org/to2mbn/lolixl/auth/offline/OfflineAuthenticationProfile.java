@@ -3,7 +3,7 @@ package org.to2mbn.lolixl.auth.offline;
 import java.util.concurrent.CompletableFuture;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
-import org.to2mbn.lolixl.core.auth.AuthenticationProfile;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 

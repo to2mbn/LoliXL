@@ -1,22 +1,19 @@
-package org.to2mbn.lolixl.core.auth;
+package org.to2mbn.lolixl.core.game.auth;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.Texture;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.TextureType;
+import org.to2mbn.lolixl.core.ui.DisplayableTile;
 import org.to2mbn.lolixl.utils.Storable;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 
-public interface AuthenticationProfile<MEMO extends java.io.Serializable> extends Storable<MEMO> {
+public interface AuthenticationProfile<MEMO extends java.io.Serializable> extends Storable<MEMO>, DisplayableTile {
 
 	Authenticator getAuthenticator();
 
 	CompletableFuture<String> getUsername();
-
-	// TODO: Change to our Tile class?
-	Button createTile();
 
 	Region createConfiguringPanel();
 

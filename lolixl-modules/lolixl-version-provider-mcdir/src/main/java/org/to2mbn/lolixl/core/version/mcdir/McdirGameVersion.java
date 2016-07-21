@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
-import org.to2mbn.lolixl.core.version.GameVersion;
+import org.to2mbn.lolixl.core.game.version.GameVersion;
 import javafx.scene.control.Button;
 
 public class McdirGameVersion implements GameVersion {

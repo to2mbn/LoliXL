@@ -1,6 +1,6 @@
-package org.to2mbn.lolixl.core.auth;
+package org.to2mbn.lolixl.core.game.auth;
 
-import javafx.scene.image.Image;
+import org.to2mbn.lolixl.core.ui.DisplayableItem;
 
 /**
  * OSGi的一个服务，代表了一种验证方法。
@@ -11,13 +11,11 @@ import javafx.scene.image.Image;
  * 
  * @author yushijinhun
  */
-public interface AuthenticationService {
+public interface AuthenticationService extends DisplayableItem {
 
 	String PROPERTY_AUTH_METHOD = "org.to2mbn.lolixl.core.auth.method";
 
 	// TODO: 也许抽取这两个方法为超接口？
-	String getLocalizedName();
-	Image getIcon();
 
 	AuthenticationProfile<?> createProfile();
 
