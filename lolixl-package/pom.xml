@@ -50,6 +50,10 @@
 							<artifactItems>
 								<!-- jar -->
 								<artifactItem>
+									<groupId>org.osgi</groupId>
+									<artifactId>org.osgi.service.cm</artifactId>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.apache.felix</groupId>
 									<artifactId>org.apache.felix.scr</artifactId>
 								</artifactItem>

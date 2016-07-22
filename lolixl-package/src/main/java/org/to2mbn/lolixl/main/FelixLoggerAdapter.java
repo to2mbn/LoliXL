@@ -43,9 +43,9 @@ public class FelixLoggerAdapter extends org.apache.felix.framework.Logger {
 					.append(bundle)
 					.append("] ");
 		if (sr != null)
-			sb.append("SvcRef=[")
+			sb.append("SvcRef=")
 					.append(sr)
-					.append("] ");
+					.append(' ');
 		sb.append(msg);
 		LOGGER.log(julLevel, sb.toString(), throwable);
 	}

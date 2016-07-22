@@ -100,9 +100,8 @@ public class OSGiListener implements BundleListener, ServiceListener, FrameworkL
 		StringBuilder sb = new StringBuilder();
 		sb.append(type);
 		if (event.getServiceReference() != null) {
-			sb.append(" serviceRef=[")
-					.append(event.getServiceReference())
-					.append("]");
+			sb.append(" serviceRef=")
+					.append(event.getServiceReference());
 		}
 		LOGGER_SERVICE.log(level, sb.toString());
 	}

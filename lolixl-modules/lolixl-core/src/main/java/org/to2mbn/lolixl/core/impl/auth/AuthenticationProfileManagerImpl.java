@@ -16,8 +16,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
@@ -31,6 +33,8 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import com.google.gson.JsonSyntaxException;
 
+@Service({ AuthenticationProfileManager.class })
+@Component(immediate = true)
 public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager {
 
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationProfileManagerImpl.class.getCanonicalName());
