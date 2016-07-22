@@ -3,11 +3,6 @@ package org.to2mbn.lolixl.plugin.impl.maven;
 import static java.lang.String.format;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.UncheckedIOException;
-import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
@@ -36,7 +31,7 @@ import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 import org.to2mbn.lolixl.plugin.util.MavenUtils;
 import org.to2mbn.lolixl.utils.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
-import com.google.gson.Gson;
+import org.to2mbn.lolixl.utils.GsonUtils;
 
 @Component
 @Service({ LocalMavenRepository.class })
@@ -44,14 +39,11 @@ import com.google.gson.Gson;
 		@Property(name = "m2repository.type", value = "local")
 })
 public class LocalMavenRepositoryImpl implements LocalMavenRepository {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(LocalMavenRepositoryImpl.class.getCanonicalName());
 
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
-
-	@Reference
-	private Gson gson;
 
 	private Path m2dir = new File(".lolixl/m2/repo").toPath();
 
@@ -68,7 +60,11 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(groupId);
 		Objects.requireNonNull(artifactId);
 
-		return asyncReadMetadataJson(ArtifactVersioning.class, getVersioningMetadataPath(groupId, artifactId));
+		return AsyncUtils.asyncRun(() -> {
+			Path path = getVersioningMetadataPath(groupId, artifactId);
+			checkArtifactExisting(path);
+			return GsonUtils.fromJson(path, ArtifactVersioning.class);
+		}, localIOPool);
 	}
 
 	@Override
@@ -136,16 +132,6 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		}, localIOPool);
 	}
 
-	private <T> CompletableFuture<T> asyncReadMetadataJson(Class<T> clazz, Path path) {
-		return AsyncUtils.asyncRun(() -> {
-			checkArtifactExisting(path);
-
-			try (Reader reader = new InputStreamReader(Files.newInputStream(path), "UTF-8")) {
-				return gson.fromJson(reader, clazz);
-			}
-		}, localIOPool);
-	}
-
 	private void checkArtifactExisting(Path path) throws ArtifactNotFoundException {
 		if (!Files.exists(path)) {
 			throw new ArtifactNotFoundException("Artifact file not found: " + path);
@@ -162,21 +148,10 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 	private CompletableFuture<ArtifactVersioning> updateVersioning(MavenRepository from, String groupId, String artifactId) {
 		return from.getVersioning(groupId, artifactId)
-				.thenApplyAsync(versioning -> {
-					writeMetadataJson(getVersioningMetadataPath(groupId, artifactId), versioning);
+				.thenCompose(versioning -> AsyncUtils.asyncRun(() -> {
+					GsonUtils.toJson(getVersioningMetadataPath(groupId, artifactId), versioning);
 					return versioning;
-				}, localIOPool);
-	}
-
-	private void writeMetadataJson(Path path, Object metadata) throws UncheckedIOException {
-		try {
-			PathUtils.tryMkdirsParent(path);
-			try (Writer writer = new OutputStreamWriter(Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE), "UTF-8")) {
-				gson.toJson(metadata, writer);
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+				}, localIOPool));
 	}
 
 	@Override

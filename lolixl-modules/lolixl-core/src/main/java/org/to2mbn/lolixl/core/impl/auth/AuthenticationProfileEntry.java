@@ -12,7 +12,12 @@ public class AuthenticationProfileEntry implements Serializable {
 
 	public String method;
 	public UUID uuid;
-	public transient AuthenticationProfile<?> profile;
-	public transient ServiceReference<AuthenticationService> serviceRef;
+	public volatile transient AuthenticationProfile<?> profile;
+	public volatile transient ServiceReference<AuthenticationService> serviceRef;
+
+	@Override
+	public String toString() {
+		return String.format("[method=%s, uuid=%s]", method, uuid);
+	}
 
 }

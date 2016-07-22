@@ -2,10 +2,6 @@ package org.to2mbn.lolixl.core.impl.config;
 
 import static java.lang.String.format;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -30,8 +26,7 @@ import org.to2mbn.lolixl.core.config.Configuration;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.core.config.ConfigurationManager;
-import org.to2mbn.lolixl.utils.PathUtils;
-import com.google.gson.Gson;
+import org.to2mbn.lolixl.utils.GsonUtils;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 
@@ -43,9 +38,6 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
-
-	@Reference
-	private Gson gson;
 
 	@Reference
 	private EventAdmin eventAdmin;
@@ -110,9 +102,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 
 			Class<? extends Configuration> clazz = service.getMementoType();
 			LOGGER.fine(format("Loading configuration from [%s], class=[%s]", location, clazz));
-			try (Reader reader = new InputStreamReader(Files.newInputStream(location), "UTF-8")) {
-				return gson.fromJson(reader, clazz);
-			}
+			return GsonUtils.fromJson(location, clazz);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, format("Couldn't read configuration for [%s]", service), e);
 			return null;
@@ -124,11 +114,8 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 			Path location = getConfigurationPath(reference, service);
 
 			LOGGER.fine(format("Storing configuration to [%s]", location));
-			PathUtils.tryMkdirsParent(location);
 			synchronized (service) {
-				try (Writer writer = new OutputStreamWriter(Files.newOutputStream(location), "UTF-8")) {
-					gson.toJson(service.store(), writer);
-				}
+				GsonUtils.toJson(location, service.store());
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, format("Couldn't save configuration for [%s]", service), e);
