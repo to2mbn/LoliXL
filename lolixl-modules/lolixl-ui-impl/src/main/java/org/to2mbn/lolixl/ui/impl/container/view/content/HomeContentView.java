@@ -24,5 +24,5 @@ public class HomeContentView extends View {
 	public Button settingsTile;
 
 	@FXML
-	public Button setTileSizeTile;
+	public Button moreTilesTile;
 }

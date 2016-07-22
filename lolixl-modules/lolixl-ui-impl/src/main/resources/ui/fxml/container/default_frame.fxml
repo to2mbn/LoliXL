@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 
-<BorderPane id="frameRootPane" fx:id="rootPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="340.0" minWidth="600.0" prefHeight="480.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView">
-    <left>
-        <BorderPane fx:id="sidebarPane" prefHeight="440.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-    </left>
-    <top>
-        <BorderPane fx:id="titleBarPane" prefHeight="30.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
-    </top>
-    <center>
-        <BorderPane fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
-    </center>
-</BorderPane>
+
+<Pane id="default-frame-shadow-container" fx:id="shadowContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView">
+   <children>
+      <BorderPane id="default-frame-root-container" fx:id="rootContainer" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="340.0" minWidth="600.0" prefHeight="480.0" prefWidth="850.0">
+         <left>
+            <BorderPane id="default-frame-sidebar-container" fx:id="sidebarPane" prefHeight="440.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </left>
+         <top>
+            <BorderPane id="default-frame-title-bar-container" fx:id="titleBarPane" prefHeight="30.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <BorderPane id="default-frame-content-container" fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
+         </center>
+         <effect>
+            <DropShadow blurType="GAUSSIAN" spread="0.83" />
+         </effect>
+      </BorderPane>
+   </children>
+</Pane>

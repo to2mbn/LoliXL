@@ -73,7 +73,7 @@ public class UIApp {
 		mainStage.initStyle(StageStyle.UNDECORATED);
 		initPresenters();
 		initLayout();
-		mainScene = new Scene(framePresenter.getView().rootPane);
+		mainScene = new Scene(framePresenter.getView().rootContainer);
 		mainScene.getStylesheets().addAll(LOCATIONS_OF_DEFAULT_CSS);
 		mainStage.setScene(mainScene);
 		mainStage.show();
@@ -83,8 +83,6 @@ public class UIApp {
 		// Setup presenters
 		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
 		titleBarPresenter.setParentStage(mainStage);
-
-		// TODO window drag
 
 		try {
 			framePresenter.initialize();

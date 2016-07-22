@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.contentmeContentView">
+<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView">
    <bottom>
       <AnchorPane fx:id="bottomContainer" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -15,13 +14,10 @@
       </AnchorPane>
    </bottom>
    <right>
-      <VBox fx:id="tileContainer" prefHeight="350.0" prefWidth="60.0" spacing="5.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets top="5.0" />
-         </padding>
+      <VBox fx:id="tileContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="80.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button id="tile-button-settings" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
-            <Button id="tile-button-settings" fx:id="moreTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+            <Button id="home-content-settings-tile" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+            <Button id="home-content-more-tiles-tile" fx:id="moreTilesTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
          </children>
       </VBox>
    </right>

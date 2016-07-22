@@ -28,6 +28,7 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 				.when(parentStage.focusedProperty())
 				.then(view.rootContainer.idProperty().get().replace("-unfocused", ""))
 				.otherwise(view.rootContainer.idProperty().get().concat("-unfocused")));
+		makeDraggable();
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
@@ -38,6 +39,12 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 		parentStage.hide();
 	}
 
+	private void makeDraggable() {
+		view.rootContainer.onMouseDraggedProperty().addListener(System.out::println);
+		view.rootContainer.onMouseDragOverProperty().addListener(System.out::println);
+		view.rootContainer.onMouseDragReleasedProperty().addListener(System.out::println);
+	}
+
 	public void setCloseButtonListener(Consumer<MouseEvent> closeButtonListener) {
 		this.closeButtonListener = closeButtonListener;
 	}
@@ -45,5 +52,4 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	public void setParentStage(Stage parentStage) {
 		this.parentStage = parentStage;
 	}
-
 }

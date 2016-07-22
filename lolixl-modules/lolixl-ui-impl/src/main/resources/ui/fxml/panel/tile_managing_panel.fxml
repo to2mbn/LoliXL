@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane id="tile-managing-panel-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panelcontent.TileManagingPanelContentView">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="440.0" />
+    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <ListView id="tile-managing-panel-list-view" fx:id="listView" />
+      <VBox id="tile-managing-panel-button-container" fx:id="buttonContainer" spacing="5.0" GridPane.columnIndex="1">
+         <children>
+            <Button id="tile-managing-panel-up-button" fx:id="upButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="163.0" />
+            <Button id="tile-managing-panel-down-button" fx:id="downButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="163.0" />
+         </children>
+      </VBox>
+   </children>
+</GridPane>

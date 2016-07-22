@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Background;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
@@ -43,12 +42,12 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	@Override
 	public void setBackground(Background background) {
 		preCheck(background);
-		view.rootPane.setBackground(background);
+		view.rootContainer.setBackground(background);
 	}
 
 	@Override
 	public Background getBackground() {
-		return view.rootPane.getBackground();
+		return view.rootContainer.getBackground();
 	}
 
 	@Override
@@ -122,13 +121,13 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 		// 先隐藏添加的面板 等待之后的动画效果即将播放了再显示回来
 		entry.view.setVisible(false);
-		if (view.rootPane.getLeft() != null) { // 如果此时没有已经显示了的面板
+		if (view.rootContainer.getLeft() != null) { // 如果此时没有已经显示了的面板
 			// 暂时移除默认的侧边栏和主页栏
-			view.rootPane.setCenter(null);
-			view.rootPane.setLeft(null);
+			view.rootContainer.setCenter(null);
+			view.rootContainer.setLeft(null);
 		}
 		// 向主页栏添加面板
-		view.rootPane.setCenter(entry.view);
+		view.rootContainer.setCenter(entry.view);
 
 		Animation animation = generateAnimation(entry.view, false);
 		animation.play();
@@ -146,14 +145,14 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 				// 先隐藏面板
 				entry.view.setVisible(false);
 				// 把先前隐藏的侧边栏和主页栏加回来
-				view.rootPane.setLeft(view.sidebarPane);
-				view.rootPane.setCenter(view.contentPane);
+				view.rootContainer.setLeft(view.sidebarPane);
+				view.rootContainer.setCenter(view.contentPane);
 			});
 		} else { // 如果此时存在多层叠加(逻辑上的)着的面板
 			PanelEntry previous = panels.element();
 			animation.setOnFinished(event ->
 					// 直接设置为下一层的面板
-					view.rootPane.setCenter(previous.view)
+					view.rootContainer.setCenter(previous.view)
 			);
 		}
 		animation.play();

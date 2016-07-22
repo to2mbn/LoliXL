@@ -1,5 +1,11 @@
-#frameRootPane {
-    -fx-effect: dropshadow(three-pass-box, derive(cadetblue, -20%), 10, 0, 4, 4);
+#default-frame-root-container {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0.7, 0.0, 0.0);
+    -fx-border-width: 0.4;
+    -fx-border-color: black;
+}
+
+#default-frame-shadow-container {
+    -fx-background-color: transparent;
 }
 
 #close-window-button:hover, #minimize-window-button:hover {
@@ -17,48 +23,19 @@
     -fx-text-fill: #cdcdcd;
 }
 
-#default-user-profile {
-
-}
-
-#default-content {
-    -fx-background-color: rgba(255, 255, 255, 0);
-}
-
-#return-button {
-    -fx-border-style: hidden;
-    -fx-background-color: white;
-    -fx-text-fill: transparent;
-    -fx-shape: "M512 108c-229.8 0-416 186.2-416 416s186.2 416 416 416c229.8 0 416-186.2 416-416s-186.2-416-416-416zM512 905.4c-210.2 0-381.4-171-381.4-381.4 0-210.2 171-381.4 381.4-381.4 210.2 0 381.4 171 381.4 381.4 0 210.2-171.2 381.4-381.4 381.4z";
-}
-
-#return-button:hover {
-    -fx-border-color: white;
-    -fx-shape: "M511.905334 0.189286C229.042875 0.189286-2.3e-05 229.23423-2.3e-05 512.094643c0 282.864505 229.042898 511.905357 511.905357 511.905357 282.863482 0 511.905357-229.040852 511.905357-511.905357C1023.810691 229.23423 794.768816 0.189286 511.905334 0.189286z"
-}
-
-/*
- * Tile
- */
-#tile-button-home {
-}
-
-#tile-button-settings {
-}
-
 /*
  * Panel
  */
-#content_panel_title_label {
+#content-panel-title-label {
     -fx-text-fill: white;
     -fx-font-size: 26;
 }
 
-#content_panel_previous_button {
+#content-panel-previous-button {
     -fx-text-fill: transparent;
     -fx-background-image: "@ui/img/previous_button.png";
 }
 
-#content_panel_previous_button:hover {
+#content-panel-previous-button:hover {
     -fx-background-image: "@ui/img/previous_button_hover.png";
 }
