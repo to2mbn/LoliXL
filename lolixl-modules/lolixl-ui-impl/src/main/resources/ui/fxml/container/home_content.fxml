@@ -14,11 +14,6 @@
       </AnchorPane>
    </bottom>
    <right>
-      <VBox fx:id="tileContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="80.0" spacing="5.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button id="home-content-settings-tile" fx:id="settingsTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
-            <Button id="home-content-more-tiles-tile" fx:id="moreTilesTile" defaultButton="true" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
-         </children>
-      </VBox>
+      <VBox fx:id="tileContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="80.0" spacing="5.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>
