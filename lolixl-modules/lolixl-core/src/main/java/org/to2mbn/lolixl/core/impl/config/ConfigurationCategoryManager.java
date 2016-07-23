@@ -1,9 +1,9 @@
 package org.to2mbn.lolixl.core.impl.config;
 
 import static java.lang.String.format;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +42,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 	@Reference
 	private EventAdmin eventAdmin;
 
-	private Path storeLocation = new File(".lolixl/config").toPath();
+	private Path storeLocation = Paths.get(".lolixl", "config");
 
 	private BundleContext bundleContext;
 	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;

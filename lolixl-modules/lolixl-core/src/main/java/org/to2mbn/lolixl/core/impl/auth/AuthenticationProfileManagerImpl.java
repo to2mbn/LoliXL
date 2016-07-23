@@ -2,10 +2,10 @@ package org.to2mbn.lolixl.core.impl.auth;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,8 +47,8 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private BundleContext bundleContext;
 
-	private Path profileBaseDir = new File(".lolixl/auth/profiles").toPath();
-	private Path profilesListFile = new File(".lolixl/auth/profiles-list.json").toPath();
+	private Path profileBaseDir = Paths.get(".lolixl", "auth", "profiles");
+	private Path profilesListFile = Paths.get(".lolixl", "auth", "profiles-list.json");
 
 	private AuthenticationProfileList profiles;
 

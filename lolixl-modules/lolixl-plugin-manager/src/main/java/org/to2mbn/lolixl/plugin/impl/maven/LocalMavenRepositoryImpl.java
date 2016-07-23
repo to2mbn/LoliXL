@@ -1,12 +1,12 @@
 package org.to2mbn.lolixl.plugin.impl.maven;
 
 import static java.lang.String.format;
-import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
 
-	private Path m2dir = new File(".lolixl/m2/repo").toPath();
+	private Path m2dir = Paths.get(".lolixl", ".m2", "repo");
 
 	@Override
 	public CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
