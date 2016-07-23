@@ -13,8 +13,8 @@
    <right>
       <VBox id="tile-managin-panel-button-container" fx:id="buttonContainer" prefHeight="390.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button id="tile-managin-panel-up-button" fx:id="upButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="190.0" />
-            <Button id="tile-managin-panel-down-button" fx:id="downButton" mnemonicParsing="false" prefHeight="31.0" prefWidth="190.0" />
+            <Button id="tile-managin-panel-up-button" fx:id="upButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="190.0" />
+            <Button id="tile-managin-panel-down-button" fx:id="downButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="190.0" />
          </children>
          <padding>
             <Insets left="5.0" top="5.0" />

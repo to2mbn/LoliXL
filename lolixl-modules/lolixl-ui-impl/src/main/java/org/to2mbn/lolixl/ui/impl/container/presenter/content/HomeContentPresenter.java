@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.content;
 
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -35,25 +36,25 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	private List<Node> shownTiles;
 	private List<Node> hiddenTiles;
 
-	private Supplier<Panel> hiddenTilesPanel = () -> {
+	public Supplier<Tile> hiddenTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(hiddenTilesPanelContentPresenter.getView().tilesContainer);
-		return panel;
+		return newTileForPanel(panel);
 	};
 
-	private Supplier<Panel> manageTilesPanel = () -> {
+	public Supplier<Tile> manageTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
-		return panel;
+		return newTileForPanel(panel);
 	};
 
 	@Override
 	public void postInitialize() {
 		shownTiles = view.tileContainer.getChildren();
 		setSize(tileSize);
-		addTileForPanel(manageTilesPanel.get());
+		addTile(manageTilesPanel.get());
 		// TODO: Start game button
-		// TODO: 当窗体大小改变时重新计算磁贴
+		view.tileContainer.heightProperty().addListener(this::onTileContainerChanged);
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 			hiddenTiles.add(tile);
 		} else if (checkIfOverFull(tileSize, true)) {
 			hiddenTiles.add(tile);
-			shownTiles.add(newTileForPanel(hiddenTilesPanel.get()));
+			shownTiles.add(hiddenTilesPanel.get());
 		} else {
 			// 将"管理磁贴"磁贴放到最后一位
 			int index = shownTiles.indexOf(manageTilesPanel);
@@ -123,7 +124,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 				hideLastTile();
 			} while (checkIfOverFull(size, false));
 			hideLastTile(); // 再隐藏一个是为了给"..."磁贴留位置
-			addTileForPanel(hiddenTilesPanel.get());
+			addTile(hiddenTilesPanel.get());
 		} else {
 			shownTiles.forEach(tile -> tile.resize(size, size));
 		}
@@ -204,5 +205,9 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 			tile.setBackground(new Background(new BackgroundImage(panel.getIcon(), null, null, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 		}
 		return tile;
+	}
+
+	private void onTileContainerChanged(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+		setSize(tileSize); // 刷新磁贴
 	}
 }

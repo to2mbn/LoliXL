@@ -48,23 +48,23 @@
 }
 
 .button:default {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #ff00a8;
     -fx-text-fill: white;
 }
 
 .button:default:hover {
     -fx-border-style: none;
-    -fx-border-width: 2.5;
-    -fx-border-color: #75b2e6;
+    -fx-border-width: 2;
+    -fx-border-color: rgba(255, 200, 241, 0.75);
 }
 
 .button:default:hover:pressed {
-    -fx-background-color: #75b2e6;
+    -fx-background-color: rgba(255, 200, 241, 0.75);
 }
 
 .button:disabled, .button:default:disabled {
     -fx-opacity: 0.5;
-    -fx-background-color: #1b597d;
+    -fx-background-color: rgba(110, 0, 74, 0.83);
     -fx-text-fill: #9b9b9b;
 }
 
@@ -128,11 +128,11 @@
 }
 
 .check-box:selected .mark {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #d70090;
 }
 
 .check-box:indeterminate .mark {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #d7008c;
     -fx-background-insets: 2.8;
     -fx-padding: 7px;
     -fx-shape: null;
@@ -148,7 +148,7 @@
 }
 
 .check-box:armed .box {
-    -fx-background-color: white, #3498db;
+    -fx-background-color: white, #ff00a8;
     -fx-background-insets: -1, 2;
     -fx-background-radius: 0, 0;
 }
@@ -190,7 +190,7 @@
 }
 
 .radio-button:selected .dot {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #ff00a8;
 }
 
 .radio-button:disabled {
@@ -218,15 +218,15 @@
 }
 
 .radio-button:pressed:selected .dot {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #ff00a8;
 }
 
 .radio-button:armed .dot {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #ff00a8;
 }
 
 .radio-button:focused:armed .radio {
-    -fx-background-color: #0085d7;
+    -fx-background-color: #ff00a8;
     -fx-background-radius: 1.0em; /* large value to make sure this remains circular */
     -fx-background-insets: 0;
     -fx-padding: 5px; /* 4 -- padding from outside edge to the inner black dot */
@@ -391,13 +391,13 @@
     -fx-background-color: transparent, #bababa, transparent, white;
     -fx-background-radius: 0, 0, 0, 0;
     -fx-padding: 0.166667em; /* 2 */
-    -fx-border-color: #818181;
+    -fx-border-color: #afafaf;
     -fx-border-width: 2;
 }
 
 .combo-box-base:hover {
     -fx-background-color: transparent, #909090, transparent, white;
-    -fx-border-color: #666666;
+    -fx-border-color: #7d7d7d;
 }
 
 .combo-box-base:disabled {
@@ -415,25 +415,29 @@
     -fx-shape: "M1012.1 247.7c-15.8-15.8-41.4-15.8-57.2 0L512 690.6 69.1 247.7c-15.8-15.8-41.4-15.8-57.2 0-15.8 15.8-15.8 41.4 0 57.2l471.5 471.5c7.9 7.9 18.2 11.8 28.6 11.8s20.7-3.9 28.6-11.8l471.5-471.5C1027.8 289.1 1027.8 263.5 1012.1 247.7z";
 }
 
-.combo-box-popup .list-view {
+/* TODO: 视情况完善修改 */
+.combo-box-popup > .list-view {
+    -fx-border-color: #9b9b9b;
+    -fx-border-width: 1;
     -fx-background-color: #909090, -fx-control-inner-background;
+    -fx-effect: none;
 }
 
-.combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #dedede;
+.combo-box-popup > .list-view .list-cell:hover {
+    -fx-background-color: #c3c3c3;
     -fx-text-fill: #1d1d1d;
 }
 
-.combo-box-popup .list-view .list-cell:filled:selected {
-    -fx-background-color: #55c4fe;
+.combo-box-popup > .list-view .list-cell:filled:selected {
+    -fx-background-color: #ff6ab6;
 }
 
-.combo-box-popup .list-view .list-cell:filled:selected:hover {
-    -fx-background-color: #6dcdff;
+.combo-box-popup > .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: #ff6ab6;
 }
 
-.combo-box-popup .list-view .list-cell:filled:pressed, .combo-box-popup .list-view .list-cell:filled:selected:pressed {
-    -fx-background-color: #d3d3d3;
+.combo-box-popup > .list-view .list-cell:filled:pressed, .combo-box-popup .list-view .list-cell:filled:selected:pressed {
+    -fx-background-color: #afafaf;
     -fx-text-fill: #1d1d1d;
 }
 
@@ -525,7 +529,7 @@
     -fx-background-color: white;
     -fx-border-color: #193555;
     -fx-prompt-text-fill: #818181;
-    -fx-highlight-fill: #3498db;
+    -fx-highlight-fill: #ff6ab6;
 }
 
 .text-input:hover {

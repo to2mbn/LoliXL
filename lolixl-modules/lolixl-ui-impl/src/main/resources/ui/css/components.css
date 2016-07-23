@@ -3,10 +3,6 @@
     -fx-border-color: black;
 }
 
-#default-frame-shadow-container {
-    -fx-background-color: transparent;
-}
-
 #close-window-button:hover, #minimize-window-button:hover {
     -fx-background-color: #d1d6e1;
     -fx-tooltip-visible: false;
@@ -32,9 +28,9 @@
 
 #content-panel-previous-button {
     -fx-text-fill: transparent;
-    -fx-background-image: "@ui/img/previous_button.png";
+    -fx-background-image: "/ui/img/previous_button.png";
 }
 
 #content-panel-previous-button:hover {
-    -fx-background-image: "@ui/img/previous_button_hover.png";
+    -fx-background-image: "/ui/img/previous_button_hover.png";
 }

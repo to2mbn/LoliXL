@@ -12,7 +12,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.ui.BackgroundService;
-import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
@@ -115,12 +114,5 @@ public class UIApp {
 		framePresenter.setTitleBar(titleBarPresenter.getView().rootContainer);
 		framePresenter.setSidebar(sideBarPresenter.getView().rootContainer);
 		framePresenter.setContent(homeContentPresenter.getView().rootContainer);
-
-		// 默认的磁贴
-		Panel panel = framePresenter.newPanel();
-		// TODO: panel.setIcon(???);
-		//       panel.setTitle();
-		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
-		homeContentPresenter.addTileForPanel(panel);
 	}
 }
