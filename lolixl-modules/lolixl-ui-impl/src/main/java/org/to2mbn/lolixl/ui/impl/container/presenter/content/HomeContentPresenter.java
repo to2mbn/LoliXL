@@ -1,67 +1,115 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.content;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundSize;
 import org.apache.felix.scr.annotations.Component;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.component.TileImpl;
+import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView;
 import org.to2mbn.lolixl.utils.FXUtils;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
 public class HomeContentPresenter extends Presenter<HomeContentView> implements TileManagingService {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/container/home_content.fxml";
 
-	private final List<Node> tiles = view.tileContainer.getChildren();
-	private final List<Node> hiddenTiles = new LinkedList<>();
-
 	private int tileSize = 60;
 
-	public void initialize() throws IOException {
-		super.initialize(LOCATION_OF_FXML);
-		AnchorPane.setRightAnchor(view.startGameButton, 0D);
-		view.tileContainer.getChildren().remove(view.moreTilesTile); // 默认不显示"..."磁贴
-		// TODO: Start game button & 'More' tile
-		setSize(tileSize);
+	private DefaultFramePresenter defaultFramePresenter;
+	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
+	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
 
-		// TODO 默认的磁贴
+	private List<Node> shownTiles;
+	private List<Node> hiddenTiles;
+
+	private Supplier<Panel> hiddenTilesPanel = () -> {
+		Panel panel = defaultFramePresenter.newPanel();
+		panel.setContent(hiddenTilesPanelContentPresenter.getView().tilesContainer);
+		return panel;
+	};
+
+	private Supplier<Panel> manageTilesPanel = () -> {
+		Panel panel = defaultFramePresenter.newPanel();
+		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
+		return panel;
+	};
+
+	@Override
+	public void postInitialize() {
+		shownTiles = view.tileContainer.getChildren();
+		setSize(tileSize);
+		addTileForPanel(manageTilesPanel.get());
+		// TODO: Start game button
+		// TODO: 当窗体大小改变时重新计算磁贴
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return LOCATION_OF_FXML;
+	}
+
+	public void setHiddenTilesPanelContentPresenter(HiddenTilesPanelContentPresenter presenter) {
+		hiddenTilesPanelContentPresenter = presenter;
+		hiddenTiles = presenter.getView().tilesContainer.getChildren();
+	}
+
+	public void setTileManagingPanelContentPresenter(TileManagingPanelContentPresenter _tileManagingPanelContentPresenter) {
+		tileManagingPanelContentPresenter = _tileManagingPanelContentPresenter;
+	}
+
+	public void setDefaultFramePresenter(DefaultFramePresenter _defaultFramePresenter) {
+		defaultFramePresenter = _defaultFramePresenter;
 	}
 
 	@Override
 	public void addTile(Tile tile) {
 		Objects.requireNonNull(tile);
-		tiles.add((Button) tile);
-	}
-
-	@Override
-	public Tile newTile() {
-		return new TileImpl();
+		FXUtils.checkFxThread();
+		if (checkIfOverFull(tileSize, false)) {
+			hiddenTiles.add(tile);
+		} else if (checkIfOverFull(tileSize, true)) {
+			hiddenTiles.add(tile);
+			shownTiles.add(newTileForPanel(hiddenTilesPanel.get()));
+		} else {
+			// 将"管理磁贴"磁贴放到最后一位
+			int index = shownTiles.indexOf(manageTilesPanel);
+			shownTiles.add(index, tile);
+		}
 	}
 
 	@Override
 	public void addTileForPanel(Panel panel) {
 		Objects.requireNonNull(panel);
-		Tile tile = newTile();
-		tile.setIcon(panel.getIcon());
-		tile.setText(panel.getTitle());
-		tile.setOnClicked(event -> panel.show());
-		addTile(tile);
+		FXUtils.checkFxThread();
+		addTile(newTileForPanel(panel));
 	}
 
 	@Override
 	public void removeTile(Panel panel) {
 		Objects.requireNonNull(panel);
-		tiles.remove(panel);
+		FXUtils.checkFxThread();
+		if (!shownTiles.remove(panel)) {
+			hiddenTiles.remove(panel);
+		}
+		// 将被隐藏的首个磁贴添加到容器中显示
+		if (!checkIfOverFull(tileSize, false) && hiddenTiles.size() > 0) {
+			Node tile = hiddenTiles.get(0);
+			hiddenTiles.remove(0);
+			shownTiles.add(tile);
+		}
 	}
 
 	@Override
@@ -70,21 +118,21 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		if (size > TILE_MAX_SIZE) {
 			throw new IllegalArgumentException("size can not be bigger than 60");
 		}
-		if (checkIfOverFull(size)) {
+		if (checkIfOverFull(size, false)) {
 			do {
-				removeLastTile();
-			} while (checkIfOverFull(size));
-			removeLastTile(); // 再删除一个是为了给"..."磁贴留位置
-			tiles.add(view.moreTilesTile);
+				hideLastTile();
+			} while (checkIfOverFull(size, false));
+			hideLastTile(); // 再隐藏一个是为了给"..."磁贴留位置
+			addTileForPanel(hiddenTilesPanel.get());
 		} else {
-			tiles.forEach(tile -> tile.resize(size, size));
+			shownTiles.forEach(tile -> tile.resize(size, size));
 		}
 		tileSize = size;
 	}
 
 	@Override
 	public int getSize() {
-		return 0;
+		return tileSize;
 	}
 
 	@Override
@@ -92,16 +140,16 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		Stream<Node> stream;
 		switch (status) {
 			case SHOWN:
-				List<Node> copyAll = new LinkedList<>(tiles);
-				copyAll.removeAll(hiddenTiles);
-				stream = copyAll.stream();
+				stream = shownTiles.stream();
 				break;
 			case HIDDEN:
 				stream = hiddenTiles.stream();
 				break;
 			case COMMON:
 			default:
-				stream = tiles.stream();
+				List<Node> copy = new LinkedList<>(shownTiles);
+				copy.addAll(hiddenTiles);
+				stream = copy.stream();
 				break;
 		}
 		return stream
@@ -110,23 +158,51 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	}
 
 	@Override
-	public void updateTilesOrder(Tile[] tiles) {
-		Objects.requireNonNull(tiles);
+	public void updateTilesOrder(Tile[] newTiles) {
+		Objects.requireNonNull(newTiles);
 		FXUtils.checkFxThread();
-		// TODO
+
+		Tile[] allTiles = getTiles(TileStatus.COMMON);
+		Stream<Tile> newTilesStream = Stream.of(newTiles);
+		Stream<Tile> tileStream = Stream.of(allTiles);
+		if (!tileStream.allMatch(tile -> newTilesStream.anyMatch(newTile -> tile.equals(newTile)))) {
+			throw new IllegalArgumentException("tiles must contain all the tiles in the container");
+		}
+
+		// 先清除容器中的所有磁贴
+		shownTiles.clear();
+		hiddenTiles.clear();
+
+		// 除去newTiles中不存在于tiles中的元素并添加到容器中
+		newTilesStream
+				.filter(newTile -> tileStream.anyMatch(tile -> tile.equals(newTile)))
+				.forEach(this::addTile);
 	}
 
-	private boolean checkIfOverFull(int size) {
+	private boolean checkIfOverFull(int size, boolean pre) {
 		int total = 0;
-		for (int i = 0; i < view.tileContainer.getChildren().size(); i++) {
+		for (int i = 0; i < view.tileContainer.getChildren().size() + (pre ? 1 : 0); i++) {
 			total += size + view.tileContainer.getSpacing();
 		}
 		total -= view.tileContainer.getSpacing();
 		return view.tileContainer.getHeight() < total;
 	}
 
-	private void removeLastTile() {
-		Node last = tiles.get(tiles.size() - 1);
-		tiles.remove(last);
+	private void hideLastTile() {
+		Node last = shownTiles.get(shownTiles.size() - 1);
+		hiddenTiles.add(last);
+		shownTiles.remove(last);
+	}
+
+	private Tile newTileForPanel(Panel panel) {
+		FXUtils.checkFxThread();
+		Tile tile = new Tile();
+		tile.resize(getSize(), getSize());
+		tile.setText(panel.getTitle());
+		tile.setOnAction(event -> panel.show());
+		if (panel.getIcon() != null) {
+			tile.setBackground(new Background(new BackgroundImage(panel.getIcon(), null, null, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+		}
+		return tile;
 	}
 }

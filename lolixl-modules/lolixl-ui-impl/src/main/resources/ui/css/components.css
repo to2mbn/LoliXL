@@ -1,5 +1,4 @@
 #default-frame-root-container {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0.7, 0.0, 0.0);
     -fx-border-width: 0.4;
     -fx-border-color: black;
 }

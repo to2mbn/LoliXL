@@ -3,15 +3,16 @@ package org.to2mbn.lolixl.ui.impl.component.model;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.Panel;
+import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
 
 import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {
-	private Image icon;
-	private String title;
-	private Runnable hideOperation = () -> {
-	};
-	private Parent content;
+	private Image icon = null;
+	private String title = "";
+	private Runnable hideOperation = () -> {};
+	private Parent content = null;
+	private PanelContentPresenter<?> presenter = null;
 
 	private final Consumer<Panel> onShow;
 	private final Runnable onClose;
@@ -62,13 +63,29 @@ public class PanelImpl implements Panel {
 	}
 
 	@Override
+	public PanelContentPresenter<?> getPresenter() {
+		return presenter;
+	}
+
+	@Override
+	public void setPresenter(PanelContentPresenter<?> _presenter) {
+		presenter = _presenter;
+	}
+
+	@Override
 	public void show() {
 		onShow.accept(this);
+		if (presenter != null) {
+			presenter.onPanelShown();
+		}
 	}
 
 	@Override
 	public void hide() {
 		hideOperation.run();
 		onClose.run();
+		if (presenter != null) {
+			presenter.onPanelClosed();
+		}
 	}
 }

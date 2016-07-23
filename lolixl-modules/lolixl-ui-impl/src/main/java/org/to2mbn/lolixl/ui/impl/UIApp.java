@@ -12,12 +12,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.ui.BackgroundService;
+import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
 import java.io.IOException;
@@ -41,10 +44,11 @@ public class UIApp {
 	private DefaultTitleBarPresenter titleBarPresenter;
 	private DefaultSideBarPresenter sideBarPresenter;
 	private HomeContentPresenter homeContentPresenter;
-
-	private PanelDisplayService displayService;
+	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
+	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
 
 	@Activate
+
 	public void active(ComponentContext compCtx) {
 		LOGGER.info("Initializing UI");
 
@@ -53,7 +57,8 @@ public class UIApp {
 		titleBarPresenter = new DefaultTitleBarPresenter();
 		sideBarPresenter = new DefaultSideBarPresenter();
 		homeContentPresenter = new HomeContentPresenter();
-		displayService = framePresenter;
+		tileManagingPanelContentPresenter = new TileManagingPanelContentPresenter();
+		hiddenTilesPanelContentPresenter = new HiddenTilesPanelContentPresenter();
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
@@ -80,23 +85,42 @@ public class UIApp {
 	}
 
 	private void initPresenters() {
-		// Setup presenters
-		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
-		titleBarPresenter.setParentStage(mainStage);
-
 		try {
-			framePresenter.initialize();
-			titleBarPresenter.initialize();
-			sideBarPresenter.initialize();
-			homeContentPresenter.initialize();
+			framePresenter.initializeView();
+			titleBarPresenter.initializeView();
+			sideBarPresenter.initializeView();
+			homeContentPresenter.initializeView();
+			tileManagingPanelContentPresenter.initializeView();
+			hiddenTilesPanelContentPresenter.initializeView();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+
+		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
+		titleBarPresenter.setParentStage(mainStage);
+		homeContentPresenter.setTileManagingPanelContentPresenter(tileManagingPanelContentPresenter);
+		homeContentPresenter.setDefaultFramePresenter(framePresenter);
+		homeContentPresenter.setHiddenTilesPanelContentPresenter(hiddenTilesPanelContentPresenter);
+		tileManagingPanelContentPresenter.setHomeContentPresenter(homeContentPresenter);
+
+		framePresenter.postInitialize();
+		titleBarPresenter.postInitialize();
+		sideBarPresenter.postInitialize();
+		homeContentPresenter.postInitialize();
+		tileManagingPanelContentPresenter.postInitialize();
+		hiddenTilesPanelContentPresenter.postInitialize();
 	}
 
 	private void initLayout() {
 		framePresenter.setTitleBar(titleBarPresenter.getView().rootContainer);
 		framePresenter.setSidebar(sideBarPresenter.getView().rootContainer);
 		framePresenter.setContent(homeContentPresenter.getView().rootContainer);
+
+		// 默认的磁贴
+		Panel panel = framePresenter.newPanel();
+		// TODO: panel.setIcon(???);
+		//       panel.setTitle();
+		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
+		homeContentPresenter.addTileForPanel(panel);
 	}
 }

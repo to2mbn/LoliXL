@@ -2,12 +2,10 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
@@ -17,11 +15,8 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	private Consumer<MouseEvent> closeButtonListener;
 	private Stage parentStage;
 
-	public void initialize() throws IOException {
-		super.initialize(LOCATION_OF_FXML);
-		AnchorPane.setLeftAnchor(view.titleLabel, 10D);
-		AnchorPane.setRightAnchor(view.buttonContainer, 0D);
-		view.titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version", ""));
+	@Override
+	public void postInitialize() {
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings
@@ -40,9 +35,7 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	}
 
 	private void makeDraggable() {
-		view.rootContainer.onMouseDraggedProperty().addListener(System.out::println);
-		view.rootContainer.onMouseDragOverProperty().addListener(System.out::println);
-		view.rootContainer.onMouseDragReleasedProperty().addListener(System.out::println);
+		// TODO
 	}
 
 	public void setCloseButtonListener(Consumer<MouseEvent> closeButtonListener) {
@@ -51,5 +44,10 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 
 	public void setParentStage(Stage parentStage) {
 		this.parentStage = parentStage;
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return LOCATION_OF_FXML;
 	}
 }
