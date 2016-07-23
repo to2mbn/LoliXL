@@ -45,7 +45,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
 
-	private Path m2dir = Paths.get(".lolixl", ".m2", "repo");
+	private Path m2dir = Paths.get(".lolixl", "m2", "repo");
 
 	@Override
 	public CompletableFuture<Void> downloadArtifact(MavenArtifact artifact, String classifier, String type, Supplier<WritableByteChannel> output) {
