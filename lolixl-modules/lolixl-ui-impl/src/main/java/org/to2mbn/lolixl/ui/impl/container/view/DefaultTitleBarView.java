@@ -22,4 +22,11 @@ public class DefaultTitleBarView extends View {
 
 	@FXML
 	public ImageView closeButton;
+
+	@FXML
+	private void initialize() {
+		AnchorPane.setLeftAnchor(titleLabel, 10D);
+		AnchorPane.setRightAnchor(buttonContainer, 0D);
+		titleLabel.setText("LoliXL " + System.getProperty("org.to2mbn.lolixl.version", ""));
+	}
 }

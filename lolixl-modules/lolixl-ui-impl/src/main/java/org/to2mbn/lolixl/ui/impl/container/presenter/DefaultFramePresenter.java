@@ -30,10 +30,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
 
-	public void initialize() throws IOException {
-		super.initialize(LOCATION_OF_FXML);
-	}
-
 	/**
 	 * 需要在JavaFX线程下运行
 	 *
@@ -174,6 +170,11 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		ParallelTransition parallel = new ParallelTransition(tran, fade);
 		parallel.setCycleCount(Animation.INDEFINITE);
 		return parallel;
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return LOCATION_OF_FXML;
 	}
 
 	private static class PanelEntry {

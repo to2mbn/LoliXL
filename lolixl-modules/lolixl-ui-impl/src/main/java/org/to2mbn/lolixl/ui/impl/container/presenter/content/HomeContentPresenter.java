@@ -1,20 +1,21 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.content;
 
 import javafx.scene.Node;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundSize;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
 import org.to2mbn.lolixl.ui.Panel;
-import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView;
 import org.to2mbn.lolixl.utils.FXUtils;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -25,38 +26,39 @@ import java.util.stream.Stream;
 public class HomeContentPresenter extends Presenter<HomeContentView> implements TileManagingService {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/container/home_content.fxml";
 
-	@Reference
-	private PanelDisplayService panelDisplayService;
+	private int tileSize = 60;
 
+	private DefaultFramePresenter defaultFramePresenter;
 	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
 	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
+
 	private List<Node> shownTiles;
 	private List<Node> hiddenTiles;
 
-	private int tileSize = 60;
-
 	private Supplier<Panel> hiddenTilesPanel = () -> {
-		Panel panel = panelDisplayService.newPanel();
-		// TODO: panel.setTitle("");
+		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(hiddenTilesPanelContentPresenter.getView().tilesContainer);
 		return panel;
 	};
 
 	private Supplier<Panel> manageTilesPanel = () -> {
-		Panel panel = panelDisplayService.newPanel();
+		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
 		return panel;
 	};
 
-	public void initialize() throws IOException {
-		super.initialize(LOCATION_OF_FXML);
-		AnchorPane.setRightAnchor(view.startGameButton, 0D);
+	@Override
+	public void postInitialize() {
 		shownTiles = view.tileContainer.getChildren();
 		setSize(tileSize);
 		addTileForPanel(manageTilesPanel.get());
 		// TODO: Start game button
-
 		// TODO: 当窗体大小改变时重新计算磁贴
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return LOCATION_OF_FXML;
 	}
 
 	public void setHiddenTilesPanelContentPresenter(HiddenTilesPanelContentPresenter presenter) {
@@ -66,6 +68,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 
 	public void setTileManagingPanelContentPresenter(TileManagingPanelContentPresenter _tileManagingPanelContentPresenter) {
 		tileManagingPanelContentPresenter = _tileManagingPanelContentPresenter;
+	}
+
+	public void setDefaultFramePresenter(DefaultFramePresenter _defaultFramePresenter) {
+		defaultFramePresenter = _defaultFramePresenter;
 	}
 
 	@Override
@@ -193,8 +199,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		Tile tile = new Tile();
 		tile.resize(getSize(), getSize());
 		tile.setText(panel.getTitle());
-		tile.setBackground(new Background(new BackgroundImage(panel.getIcon(), null, null, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 		tile.setOnAction(event -> panel.show());
+		if (panel.getIcon() != null) {
+			tile.setBackground(new Background(new BackgroundImage(panel.getIcon(), null, null, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+		}
 		return tile;
 	}
 }

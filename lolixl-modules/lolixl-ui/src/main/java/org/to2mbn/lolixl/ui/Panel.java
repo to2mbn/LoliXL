@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
+import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
 
 public interface Panel {
 
@@ -28,6 +29,9 @@ public interface Panel {
 
 	Parent getContent();
 	void setContent(Parent content);
+
+	PanelContentPresenter<?> getPresenter();
+	void setPresenter(PanelContentPresenter<?> presenter);
 
 	/**
 	 * 不需要在JavaFX线程下运行(对就是这么坑

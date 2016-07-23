@@ -19,4 +19,9 @@ public class HomeContentView extends View {
 
 	@FXML
 	public Button startGameButton;
+
+	@FXML
+	private void initialize() {
+		AnchorPane.setRightAnchor(startGameButton, 0D);
+	}
 }

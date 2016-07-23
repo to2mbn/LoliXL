@@ -9,15 +9,20 @@ import java.io.IOException;
 public abstract class Presenter<T extends View> {
 	protected T view;
 
-	protected void initialize(String fxmlLocation) throws IOException {
+	public void initializeView() throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setClassLoader(getClass().getClassLoader());
-		loader.load(BundleUtils.getInputStreamFromBundle(getClass(), fxmlLocation));
+		loader.load(BundleUtils.getInputStreamFromBundle(getClass(), getFxmlLocation()));
 		view = loader.getController();
 		// FXMLLoader 会自动close掉InputStream
+	}
+
+	public void postInitialize() {
 	}
 
 	public T getView() {
 		return view;
 	}
+
+	protected abstract String getFxmlLocation();
 }

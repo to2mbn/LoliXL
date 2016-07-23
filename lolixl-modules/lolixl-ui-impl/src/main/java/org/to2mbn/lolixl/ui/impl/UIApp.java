@@ -86,21 +86,29 @@ public class UIApp {
 
 	private void initPresenters() {
 		try {
-			framePresenter.initialize();
-			titleBarPresenter.initialize();
-			sideBarPresenter.initialize();
-			homeContentPresenter.initialize();
-			tileManagingPanelContentPresenter.initialize();
-			hiddenTilesPanelContentPresenter.initialize();
+			framePresenter.initializeView();
+			titleBarPresenter.initializeView();
+			sideBarPresenter.initializeView();
+			homeContentPresenter.initializeView();
+			tileManagingPanelContentPresenter.initializeView();
+			hiddenTilesPanelContentPresenter.initializeView();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 
-		// Setup presenters
 		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
 		titleBarPresenter.setParentStage(mainStage);
-		homeContentPresenter.setHiddenTilesPanelContentPresenter(hiddenTilesPanelContentPresenter);
 		homeContentPresenter.setTileManagingPanelContentPresenter(tileManagingPanelContentPresenter);
+		homeContentPresenter.setDefaultFramePresenter(framePresenter);
+		homeContentPresenter.setHiddenTilesPanelContentPresenter(hiddenTilesPanelContentPresenter);
+		tileManagingPanelContentPresenter.setHomeContentPresenter(homeContentPresenter);
+
+		framePresenter.postInitialize();
+		titleBarPresenter.postInitialize();
+		sideBarPresenter.postInitialize();
+		homeContentPresenter.postInitialize();
+		tileManagingPanelContentPresenter.postInitialize();
+		hiddenTilesPanelContentPresenter.postInitialize();
 	}
 
 	private void initLayout() {
