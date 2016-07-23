@@ -9,7 +9,7 @@
 */
 
 .root {
-    -fx-font-family: "Segoe UI", "PingFang", Arial, sans-serif;
+    -fx-font-family: "Segoe UI", "Microsoft Yahei", "Hiragino Sans GB", "WenQuanYi Zen Hei", Arial, sans-serif;
 }
 
 .background {
@@ -28,10 +28,9 @@
 }
 
 .button {
-    -fx-border-radius: 0;
     -fx-background-radius: 0;
-    -fx-background-color: #cccccc;
-    -fx-text-fill: #193555;
+    -fx-background-color: #b6b6b6;
+    -fx-text-fill: #252525;
     -fx-font-weight: bold;
     -fx-font-size: 14;
     -fx-opacity: 0.8;
@@ -39,8 +38,8 @@
 
 .button:hover {
     -fx-border-style: none;
-    -fx-border-width: 2.5;
-    -fx-border-color: #7a7a7a;
+    -fx-border-width: 2;
+    -fx-border-color: #6f6f6f;
 }
 
 .button:pressed {
@@ -110,8 +109,7 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-border-color: #818181;
-    -fx-border-width: 2px;
-    -fx-border-style: solid;
+    -fx-border-width: 2;
     -fx-padding: 1;
 }
 
@@ -128,11 +126,11 @@
 }
 
 .check-box:selected .mark {
-    -fx-background-color: #d70090;
+    -fx-background-color: #d731b2;
 }
 
 .check-box:indeterminate .mark {
-    -fx-background-color: #d7008c;
+    -fx-background-color: #d731b2;
     -fx-background-insets: 2.8;
     -fx-padding: 7px;
     -fx-shape: null;
@@ -526,14 +524,15 @@
 }
 
 .text-input {
+    -fx-border-width: 2;
     -fx-background-color: white;
-    -fx-border-color: #193555;
+    -fx-border-color: #afafaf;
     -fx-prompt-text-fill: #818181;
     -fx-highlight-fill: #ff6ab6;
 }
 
 .text-input:hover {
-    -fx-background-color: #e2e2e2;
+    -fx-border-color: #666666;
 }
 
 .text-input:focused {
