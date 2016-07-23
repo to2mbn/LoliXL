@@ -7,11 +7,11 @@ import org.to2mbn.lolixl.ui.Panel;
 import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {
-	private Image icon;
-	private String title;
+	private Image icon = null;
+	private String title = "";
 	private Runnable hideOperation = () -> {
 	};
-	private Parent content;
+	private Parent content = null;
 
 	private final Consumer<Panel> onShow;
 	private final Runnable onClose;

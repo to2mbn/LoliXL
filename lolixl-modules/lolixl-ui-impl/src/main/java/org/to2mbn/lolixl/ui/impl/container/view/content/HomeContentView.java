@@ -19,10 +19,4 @@ public class HomeContentView extends View {
 
 	@FXML
 	public Button startGameButton;
-
-	@FXML
-	public Button settingsTile;
-
-	@FXML
-	public Button moreTilesTile;
 }

@@ -21,21 +21,32 @@ public interface TileManagingService {
 	int TILE_MAX_SIZE = 80;
 
 	/**
+	 * 向容器内添加磁贴
+	 * 对于已经满了的容器 新加入的磁贴会被隐藏
+	 * <p>
 	 * 需要在JavaFX线程运行
 	 *
 	 * @param tile
 	 */
 	void addTile(Tile tile);
 
-	Tile newTile();
-
 	/**
+	 * 自动为给定的面板对象创建对应的磁贴 并加入容器中
+	 * <p>
 	 * 需要在JavaFX线程运行
 	 *
 	 * @param panel
 	 */
 	void addTileForPanel(Panel panel);
 
+	/**
+	 * 删除磁贴
+	 * 该磁贴可能在容器中也可能被隐藏
+	 * <p>
+	 * 需要在JavaFX线程运行
+	 *
+	 * @param panel
+	 */
 	void removeTile(Panel panel);
 
 	/**
@@ -49,6 +60,13 @@ public interface TileManagingService {
 
 	int getSize();
 
+	/**
+	 * 依照给定的TileStatus获取磁贴
+	 *
+	 * @param status
+	 * @return 给定TileStatus下所有符合条件的磁贴
+	 * @see TileManagingService.TileStatus
+	 */
 	Tile[] getTiles(TileStatus status);
 
 	/**
