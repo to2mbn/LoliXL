@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.Texture;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.TextureType;
-import org.to2mbn.lolixl.core.ui.DisplayableTile;
+import org.to2mbn.lolixl.ui.component.DisplayableTile;
 import org.to2mbn.lolixl.utils.Observable;
 import org.to2mbn.lolixl.utils.Storable;
 import javafx.scene.layout.Region;

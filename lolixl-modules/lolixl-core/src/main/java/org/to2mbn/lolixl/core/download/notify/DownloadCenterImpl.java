@@ -35,7 +35,7 @@ import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.lolixl.core.download.DownloadCenter;
 import org.to2mbn.lolixl.core.download.DownloadStartEvent;
 import org.to2mbn.lolixl.core.impl.download.CompletableFutureAdapter;
-import org.to2mbn.lolixl.core.ui.DisplayableItem;
+import org.to2mbn.lolixl.ui.component.DisplayableItem;
 
 @Service({ DownloadCenter.class, DownloadCenterNotifier.class, EventHandler.class })
 @Properties({
