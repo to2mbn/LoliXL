@@ -39,13 +39,13 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	public Supplier<Tile> hiddenTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(hiddenTilesPanelContentPresenter.getView().tilesContainer);
-		return newTileForPanel(panel);
+		return newTileForPanel("lolixl_hidden_tiles", panel);
 	};
 
 	public Supplier<Tile> manageTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(tileManagingPanelContentPresenter.getView().rootContainer);
-		return newTileForPanel(panel);
+		return newTileForPanel("lolixl_manage_tiles", panel);
 	};
 
 	@Override
@@ -55,6 +55,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		addTile(manageTilesPanel.get());
 		// TODO: Start game button
 		view.tileContainer.heightProperty().addListener(this::onTileContainerChanged);
+		// TODO: 将磁贴顺序可持续化
 	}
 
 	@Override
@@ -92,10 +93,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	}
 
 	@Override
-	public void addTileForPanel(Panel panel) {
+	public void addTileForPanel(String nameTag, Panel panel) {
 		Objects.requireNonNull(panel);
 		FXUtils.checkFxThread();
-		addTile(newTileForPanel(panel));
+		addTile(newTileForPanel(nameTag, panel));
 	}
 
 	@Override
@@ -164,7 +165,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		FXUtils.checkFxThread();
 
 		Tile[] allTiles = getTiles(TileStatus.COMMON);
-		Stream<Tile> newTilesStream = Stream.of(newTiles);
+		Stream<Tile> newTilesStream = Stream.of(newTiles).filter(it -> it != null);
 		Stream<Tile> tileStream = Stream.of(allTiles);
 		if (!tileStream.allMatch(tile -> newTilesStream.anyMatch(newTile -> tile.equals(newTile)))) {
 			throw new IllegalArgumentException("tiles must contain all the tiles in the container");
@@ -195,10 +196,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		shownTiles.remove(last);
 	}
 
-	private Tile newTileForPanel(Panel panel) {
+	private Tile newTileForPanel(String nameTag, Panel panel) {
 		FXUtils.checkFxThread();
-		Tile tile = new Tile();
-		tile.resize(getSize(), getSize());
+		Tile tile = new Tile(nameTag);
+		tile.resize(tileSize, tileSize);
 		tile.setText(panel.getTitle());
 		tile.setOnAction(event -> panel.show());
 		if (panel.getIcon() != null) {

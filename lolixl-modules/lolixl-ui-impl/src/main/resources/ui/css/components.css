@@ -1,6 +1,19 @@
+#default-frame-shadow-container {
+    -fx-background-color: transparent;
+}
+
 #default-frame-root-container {
     -fx-border-width: 0.4;
     -fx-border-color: black;
+    -fx-effect: dropshadow(three-pass-box, black, 0, 0.5);
+}
+
+#default-sidebar-root-container {
+
+}
+
+#default-sidebar-sidebar-container {
+    -fx-background-color: transparent;
 }
 
 #close-window-button:hover, #minimize-window-button:hover {

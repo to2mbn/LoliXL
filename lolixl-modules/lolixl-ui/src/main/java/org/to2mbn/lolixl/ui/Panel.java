@@ -34,8 +34,11 @@ public interface Panel {
 	void setPresenter(PanelContentPresenter<?> presenter);
 
 	/**
-	 * 不需要在JavaFX线程下运行(对就是这么坑
+	 * 需要在JavaFX线程运行
 	 */
 	void show();
+	/**
+	 * 需要在JavaFX线程运行
+	 */
 	void hide();
 }

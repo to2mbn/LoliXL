@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
 
-<BorderPane fx:id="rootContainer" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.9" prefHeight="440.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" />
+<BorderPane id="default-sidebar-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.9" prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
+   <left>
+      <StackPane id="default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
+   <center>
+      <StackPane id="default-sidebar-sidebar-container" fx:id="sidebarContainer" prefHeight="150.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

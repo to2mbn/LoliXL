@@ -4,6 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
+import org.to2mbn.lolixl.utils.FXUtils;
 
 import java.util.function.Consumer;
 
@@ -74,6 +75,7 @@ public class PanelImpl implements Panel {
 
 	@Override
 	public void show() {
+		FXUtils.checkFxThread();
 		onShow.accept(this);
 		if (presenter != null) {
 			presenter.onPanelShown();
@@ -82,6 +84,7 @@ public class PanelImpl implements Panel {
 
 	@Override
 	public void hide() {
+		FXUtils.checkFxThread();
 		hideOperation.run();
 		onClose.run();
 		if (presenter != null) {

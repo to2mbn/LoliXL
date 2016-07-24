@@ -72,7 +72,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	public void setTitleBar(Parent titleBar) {
 		preCheck(titleBar);
 		if (view.titleBarPane != null) {
-			view.titleBarPane.setCenter(titleBar);
+			view.titleBarPane.getChildren().add(titleBar);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	public void setSidebar(Parent sidebar) {
 		preCheck(sidebar);
 		if (view.sidebarPane != null) {
-			view.sidebarPane.setCenter(sidebar);
+			view.sidebarPane.getChildren().add(sidebar);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	public void setContent(Parent content) {
 		preCheck(content);
 		if (view.contentPane != null) {
-			view.contentPane.setCenter(content);
+			view.contentPane.getChildren().add(content);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		FXUtils.checkFxThread();
 	}
 
-	private synchronized void displayPanelEntry(Panel model) {
+	private void displayPanelEntry(Panel model) {
 		PanelEntry entry;
 		try {
 			entry = new PanelEntry(model, new ContentPanelView(model));
@@ -130,7 +130,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		entry.view.setVisible(true);
 	}
 
-	private synchronized void hideCurrent() {
+	private void hideCurrent() {
 		if (panels.isEmpty()) {
 			return;
 		}

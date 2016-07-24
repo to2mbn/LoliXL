@@ -1,7 +1,6 @@
-package org.to2mbn.lolixl.ui.impl.component;
+package org.to2mbn.lolixl.ui.component;
 
 import javafx.scene.control.ListCell;
-import org.to2mbn.lolixl.ui.component.Tile;
 
 public class TileListCell extends ListCell<Tile> {
 	@Override

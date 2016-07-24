@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane id="default-frame-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="340.0" minWidth="600.0" prefHeight="480.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView">
-   <left>
-      <BorderPane id="default-frame-sidebar-container" fx:id="sidebarPane" prefHeight="440.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-   </left>
-   <top>
-      <BorderPane id="default-frame-title-bar-container" fx:id="titleBarPane" prefHeight="30.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
-   </top>
-   <center>
-      <BorderPane id="default-frame-content-container" fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
-   </center>
-</BorderPane>
+<StackPane id="default-frame-shadow-container" fx:id="shadowContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView">
+   <children>
+      <BorderPane id="default-frame-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="340.0" minWidth="600.0" prefHeight="480.0" prefWidth="850.0">
+         <left>
+            <StackPane id="default-frame-sidebar-container" fx:id="sidebarPane" prefHeight="450.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
+         </left>
+         <top>
+            <StackPane id="default-frame-title-bar-container" fx:id="titleBarPane" prefHeight="30.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <StackPane id="default-frame-content-container" fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
+         </center>
+         <effect>
+            <DropShadow spread="0.5" />
+         </effect>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</StackPane>

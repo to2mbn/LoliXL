@@ -35,9 +35,11 @@ public interface TileManagingService {
 	 * <p>
 	 * 需要在JavaFX线程运行
 	 *
+	 * @param nameTag
 	 * @param panel
+	 * @see Tile
 	 */
-	void addTileForPanel(Panel panel);
+	void addTileForPanel(String nameTag, Panel panel);
 
 	/**
 	 * 删除磁贴

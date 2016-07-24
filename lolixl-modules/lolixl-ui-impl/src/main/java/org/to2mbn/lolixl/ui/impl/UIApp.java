@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.ui.BackgroundService;
+import org.to2mbn.lolixl.ui.DefaultSideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
@@ -64,6 +65,7 @@ public class UIApp {
 		ctx.registerService(BackgroundService.class, framePresenter, null);
 		ctx.registerService(PanelDisplayService.class, framePresenter, null);
 		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
+		ctx.registerService(DefaultSideBarPanelDisplayService.class, sideBarPresenter, null);
 
 		LOGGER.info("Initializing JavaFX");
 		new JFXPanel(); // init JavaFX

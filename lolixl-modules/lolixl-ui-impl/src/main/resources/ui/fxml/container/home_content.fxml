@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="default-content" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView">
+<BorderPane id="default-content" fx:id="rootContainer" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView">
    <bottom>
       <AnchorPane fx:id="bottomContainer" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="startGameButton" defaultButton="true" layoutX="495.0" layoutY="5.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Start Game" textAlignment="CENTER" />
+            <Button fx:id="startGameButton" defaultButton="true" layoutX="500.0" layoutY="5.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" text="Start Game" textAlignment="CENTER" />
          </children>
       </AnchorPane>
    </bottom>

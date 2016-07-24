@@ -2,18 +2,23 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.scene.layout.Region;
+import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.TileManagingService;
 import org.to2mbn.lolixl.ui.component.Tile;
+import org.to2mbn.lolixl.ui.component.TileListCell;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
-import org.to2mbn.lolixl.ui.impl.component.TileListCell;
 import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panelcontent.TileManagingPanelContentView;
+import org.to2mbn.lolixl.utils.ObservableContext;
 
 import java.util.List;
+import java.util.stream.Stream;
 
-public class TileManagingPanelContentPresenter extends PanelContentPresenter<TileManagingPanelContentView> {
+public class TileManagingPanelContentPresenter extends PanelContentPresenter<TileManagingPanelContentView> implements ConfigurationCategory<TilesOrderConfiguration> {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/tile_managing_panel.fxml";
 
+	private final TilesOrderConfiguration configuration = new TilesOrderConfiguration();
 	private HomeContentPresenter homeContentPresenter;
 
 	public void setHomeContentPresenter(HomeContentPresenter _homeContentPresenter) {
@@ -25,6 +30,12 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 		view.listView.setCellFactory(view -> new TileListCell());
 		view.upButton.setOnAction(this::onUpButtonClicked);
 		view.downButton.setOnAction(this::onDownButtonClicked);
+
+		// 根据configuration读取磁贴顺序并设置生效
+		Tile[] tiles = new Tile[configuration.tiles.size()];
+		Stream<Tile> oldTiles = Stream.of(homeContentPresenter.getTiles(TileManagingService.TileStatus.COMMON));
+		configuration.tiles.forEach((index, tag) -> tiles[index] = oldTiles.filter(it -> it.getNameTag().equals(tag)).findFirst().get());
+		homeContentPresenter.updateTilesOrder(tiles);
 		updateListData();
 	}
 
@@ -36,6 +47,36 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 	@Override
 	public void onPanelShown() {
 		updateListData();
+	}
+
+	@Override
+	public Region createConfiguringPanel() {
+		return null; // 不需要
+	}
+
+	@Override
+	public String getLocalizedName() {
+		return null; // 不需要
+	}
+
+	@Override
+	public void setObservableContext(ObservableContext ctx) {
+	}
+
+	@Override
+	public TilesOrderConfiguration store() {
+		return configuration;
+	}
+
+	@Override
+	public void restore(TilesOrderConfiguration memento) {
+		configuration.tiles.clear();
+		configuration.tiles.putAll(memento.tiles);
+	}
+
+	@Override
+	public Class<? extends TilesOrderConfiguration> getMementoType() {
+		return configuration.getClass();
 	}
 
 	private void updateListData() {
@@ -62,6 +103,7 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 		Tile anotherTile = tiles.get(newIndex);
 		tiles.set(newIndex, tile);
 		tiles.set(newIndex + (isUp ? 1 : -1), anotherTile);
+
 		homeContentPresenter.updateTilesOrder(tiles.toArray(new Tile[tiles.size()]));
 		updateListData();
 	}
