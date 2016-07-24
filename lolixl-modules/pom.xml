@@ -21,6 +21,7 @@
 		<module>lolixl-offline-authenticator</module>
 		<module>lolixl-version-provider-mcdir</module>
 		<module>lolixl-ui-impl</module>
+		<module>lolixl-plugin-center</module>
 	</modules>
 
 	<build>

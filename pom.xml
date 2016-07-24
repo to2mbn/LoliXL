@@ -397,6 +397,11 @@
 				<artifactId>lolixl-offline-authenticator</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-plugin-center</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- Maven -->
 			<dependency>

@@ -117,6 +117,10 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-offline-authenticator</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-plugin-center</artifactId>
+								</artifactItem>
 
 
 								<!-- lolixl-plugin xml -->
@@ -171,6 +175,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-offline-authenticator</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-plugin-center</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>
