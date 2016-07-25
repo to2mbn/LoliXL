@@ -11,15 +11,13 @@ import org.apache.felix.scr.annotations.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.ui.BackgroundService;
-import org.to2mbn.lolixl.ui.DefaultSideBarPanelDisplayService;
-import org.to2mbn.lolixl.ui.PanelDisplayService;
-import org.to2mbn.lolixl.ui.TileManagingService;
+import org.to2mbn.lolixl.ui.*;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.SettingsPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
@@ -32,7 +30,7 @@ public class UIApp {
 
 	private static final Logger LOGGER = Logger.getLogger(UIApp.class.getCanonicalName());
 
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/metro.css", "/ui/css/components.css"};
+	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/default_theme/metro.css", "/ui/css/default_theme/components.css", "/ui/css/default_theme/color_sets.css"};
 
 	@Reference
 	private EventAdmin eventAdmin;
@@ -46,6 +44,7 @@ public class UIApp {
 	private HomeContentPresenter homeContentPresenter;
 	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
 	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
+	private SettingsPanelContentPresenter settingsPanelContentPresenter;
 
 	@Activate
 
@@ -59,13 +58,15 @@ public class UIApp {
 		homeContentPresenter = new HomeContentPresenter();
 		tileManagingPanelContentPresenter = new TileManagingPanelContentPresenter();
 		hiddenTilesPanelContentPresenter = new HiddenTilesPanelContentPresenter();
+		settingsPanelContentPresenter = new SettingsPanelContentPresenter();
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
 		ctx.registerService(BackgroundService.class, framePresenter, null);
 		ctx.registerService(PanelDisplayService.class, framePresenter, null);
 		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
-		ctx.registerService(DefaultSideBarPanelDisplayService.class, sideBarPresenter, null);
+		ctx.registerService(SideBarPanelDisplayService.class, sideBarPresenter, null);
+		ctx.registerService(SettingsCategoriesManagingService.class, settingsPanelContentPresenter, null);
 
 		LOGGER.info("Initializing JavaFX");
 		new JFXPanel(); // init JavaFX

@@ -2,13 +2,20 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
-
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane id="default-sidebar-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.9" prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
-   <left>
-      <StackPane id="default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-   </left>
    <center>
-      <StackPane id="default-sidebar-sidebar-container" fx:id="sidebarContainer" prefHeight="150.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
+      <StackPane id="default-sidebar-sidebar-container" fx:id="sidebarContainer" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
    </center>
+   <left>
+      <BorderPane id="default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+         <top>
+            <BorderPane id="default-sidebar-user-profile-container" fx:id="userProfileContainer" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+         </top>
+         <center>
+            <VBox id="default-sidebar-functional-tile-container" fx:id="functionalTileContainer" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </left>
 </BorderPane>
