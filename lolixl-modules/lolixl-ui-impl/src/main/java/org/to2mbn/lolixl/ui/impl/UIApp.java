@@ -16,6 +16,7 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.GameVersionsPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.SettingsPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
@@ -45,9 +46,9 @@ public class UIApp {
 	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
 	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
 	private SettingsPanelContentPresenter settingsPanelContentPresenter;
+	private GameVersionsPanelContentPresenter gameVersionsPanelContentPresenter;
 
 	@Activate
-
 	public void active(ComponentContext compCtx) {
 		LOGGER.info("Initializing UI");
 
@@ -59,6 +60,7 @@ public class UIApp {
 		tileManagingPanelContentPresenter = new TileManagingPanelContentPresenter();
 		hiddenTilesPanelContentPresenter = new HiddenTilesPanelContentPresenter();
 		settingsPanelContentPresenter = new SettingsPanelContentPresenter();
+		gameVersionsPanelContentPresenter = new GameVersionsPanelContentPresenter();
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
