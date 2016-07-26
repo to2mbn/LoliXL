@@ -1,19 +1,19 @@
-#default-frame-shadow-container {
-    -fx-background-color: transparent;
-}
-
 #default-frame-root-container {
     -fx-border-width: 0.4;
     -fx-border-color: black;
     -fx-effect: dropshadow(three-pass-box, black, 0, 0.5);
 }
 
-#default-sidebar-root-container {
-
+#default-frame-shadow-container,
+#default-sidebar-root-container,
+#default-sidebar-functional-tile-container,
+#default-sidebar-sidebar-container,
+#default-sidebar-user-profile-container {
+    -fx-background-color: transparent;
 }
 
-#default-sidebar-sidebar-container {
-    -fx-background-color: transparent;
+#default-sidebar-main-content-container {
+    -fx-background-color: #b85658;
 }
 
 #close-window-button:hover, #minimize-window-button:hover {
@@ -22,7 +22,7 @@
 }
 
 #default-title-bar {
-    -fx-background-color: #3498db;
+    -fx-background-color: #b85658;
     -fx-text-fill: white;
 }
 

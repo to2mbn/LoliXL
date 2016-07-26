@@ -47,23 +47,22 @@
 }
 
 .button:default {
-    -fx-background-color: #ff00a8;
     -fx-text-fill: white;
 }
 
 .button:default:hover {
     -fx-border-style: none;
     -fx-border-width: 2;
-    -fx-border-color: rgba(255, 200, 241, 0.75);
+    -fx-border-color: rgba(255, 255, 255, 0.75);
 }
 
 .button:default:hover:pressed {
-    -fx-background-color: rgba(255, 200, 241, 0.75);
+    -fx-background-color: rgba(255, 255, 255, 0.75);
 }
 
 .button:disabled, .button:default:disabled {
     -fx-opacity: 0.5;
-    -fx-background-color: rgba(110, 0, 74, 0.83);
+    -fx-background-color: rgba(255, 255, 255, 0.83);
     -fx-text-fill: #9b9b9b;
 }
 
@@ -125,12 +124,7 @@
     -fx-border-color: #666666;
 }
 
-.check-box:selected .mark {
-    -fx-background-color: #d731b2;
-}
-
 .check-box:indeterminate .mark {
-    -fx-background-color: #d731b2;
     -fx-background-insets: 2.8;
     -fx-padding: 7px;
     -fx-shape: null;
@@ -146,7 +140,6 @@
 }
 
 .check-box:armed .box {
-    -fx-background-color: white, #ff00a8;
     -fx-background-insets: -1, 2;
     -fx-background-radius: 0, 0;
 }
@@ -187,10 +180,6 @@
     -fx-padding: 6px; /* 3 -- radius of the inner black dot when selected */
 }
 
-.radio-button:selected .dot {
-    -fx-background-color: #ff00a8;
-}
-
 .radio-button:disabled {
     -fx-opacity: 0.5;
 }
@@ -215,16 +204,7 @@
     -fx-border-style: hidden;
 }
 
-.radio-button:pressed:selected .dot {
-    -fx-background-color: #ff00a8;
-}
-
-.radio-button:armed .dot {
-    -fx-background-color: #ff00a8;
-}
-
 .radio-button:focused:armed .radio {
-    -fx-background-color: #ff00a8;
     -fx-background-radius: 1.0em; /* large value to make sure this remains circular */
     -fx-background-insets: 0;
     -fx-padding: 5px; /* 4 -- padding from outside edge to the inner black dot */
@@ -310,15 +290,13 @@
 }
 
 .scroll-bar .increment-button, .scroll-bar .decrement-button {
-    -fx-background-color: #f0f0f0;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-
     -fx-padding: 0.25em; /* 3 */
 }
 
 .scroll-bar .increment-button:hover, .scroll-bar .decrement-button:hover {
-    -fx-background-color: #dadada;
+    -fx-background-color: #c7c7c7;
 }
 
 .scroll-bar .increment-button:pressed, .scroll-bar .decrement-button:pressed {
@@ -326,43 +304,43 @@
 }
 
 .scroll-bar:horizontal .increment-arrow {
-    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-color: #606060;
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-padding: 0.5em 0.333333em 0.0em 0.0em; /* 6 4 0 0 */
     -fx-shape: "M7.626,12.876L4.251,8.751H7.14L11,12.876L7.14,17H4.251L7.626,12.876z";
 }
 
 .scroll-bar:vertical .increment-arrow {
-    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-color: #606060;
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-padding: 0.333333em 0.5em 0.0em 0.0em; /* 4 6 0 0 */
     -fx-shape: "M8.124,13.625l4.125-3.375v2.889l-4.125,3.86L4,13.139V10.25L8.124,13.625z";
 }
 
 .scroll-bar .increment-button:pressed .increment-arrow {
-    -fx-background-color: white, white;
+    -fx-background-color: #c7c7c7;
 }
 
 .scroll-bar:horizontal .decrement-arrow {
-    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-color: #606060;
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-padding: 0.5em 0.333333em 0.0em 0.0em; /* 6 4 0 0 */
     -fx-shape: "M11,17H8.111l-3.86-4.124l3.86-4.125H11l-3.375,4.125L11,17z";
 }
 
 .scroll-bar:vertical .decrement-arrow {
-    -fx-background-color: -fx-mark-highlight-color, -fx-mark-color;
+    -fx-background-color: #606060;
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-padding: 0.333333em 0.5em 0.0em 0.0em; /* 4 6 0 0 */
     -fx-shape: "M4,17v-2.889l4.124-3.86l4.125,3.86V17l-4.125-3.375L4,17z";
 }
 
 .scroll-bar .decrement-button:pressed .decrement-arrow {
-    -fx-background-color: white, white;
+    -fx-background-color: #c7c7c7;
 }
 
 .scroll-bar:disabled {
-    -fx-opacity: 0.4;
+    -fx-opacity: 0.5;
 }
 
 /*******************************************************************************
@@ -424,14 +402,6 @@
 .combo-box-popup > .list-view .list-cell:hover {
     -fx-background-color: #c3c3c3;
     -fx-text-fill: #1d1d1d;
-}
-
-.combo-box-popup > .list-view .list-cell:filled:selected {
-    -fx-background-color: #ff6ab6;
-}
-
-.combo-box-popup > .list-view .list-cell:filled:selected:hover {
-    -fx-background-color: #ff6ab6;
 }
 
 .combo-box-popup > .list-view .list-cell:filled:pressed, .combo-box-popup .list-view .list-cell:filled:selected:pressed {
@@ -528,7 +498,6 @@
     -fx-background-color: white;
     -fx-border-color: #afafaf;
     -fx-prompt-text-fill: #818181;
-    -fx-highlight-fill: #ff6ab6;
 }
 
 .text-input:hover {
