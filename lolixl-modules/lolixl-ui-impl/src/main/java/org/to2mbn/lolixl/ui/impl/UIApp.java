@@ -3,14 +3,17 @@ package org.to2mbn.lolixl.ui.impl;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
+import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.*;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
@@ -20,6 +23,14 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.GameVersionsPa
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.SettingsPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.theme.DefaultTheme;
+import org.to2mbn.lolixl.ui.impl.theme.management.InstalledThemesConfiguration;
+import org.to2mbn.lolixl.ui.theme.BundledTheme;
+import org.to2mbn.lolixl.ui.theme.Theme;
+import org.to2mbn.lolixl.ui.theme.exception.InvalidBundledThemeException;
+import org.to2mbn.lolixl.ui.theme.management.ThemeManagementService;
+import org.to2mbn.lolixl.utils.FXUtils;
+import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
 import java.io.IOException;
@@ -27,17 +38,21 @@ import java.io.UncheckedIOException;
 import java.util.logging.Logger;
 
 @Component
-public class UIApp {
-
+@Service({ ThemeManagementService.class })
+public class UIApp implements ThemeManagementService, ConfigurationCategory<InstalledThemesConfiguration> {
 	private static final Logger LOGGER = Logger.getLogger(UIApp.class.getCanonicalName());
 
-	private static final String[] LOCATIONS_OF_DEFAULT_CSS = {"/ui/css/default_theme/metro.css", "/ui/css/default_theme/components.css", "/ui/css/default_theme/color_sets.css"};
+	private static final String DEFAULT_METRO_STYLE_SHEET = "/ui/css/metro.css";
 
 	@Reference
 	private EventAdmin eventAdmin;
 
 	private Stage mainStage;
 	private Scene mainScene;
+
+	private ObservableContext observableContext;
+	private InstalledThemesConfiguration configuration;
+	private Theme installedTheme;
 
 	private DefaultFramePresenter framePresenter;
 	private DefaultTitleBarPresenter titleBarPresenter;
@@ -51,6 +66,7 @@ public class UIApp {
 	@Activate
 	public void active(ComponentContext compCtx) {
 		LOGGER.info("Initializing UI");
+		configuration = new InstalledThemesConfiguration();
 
 		// Create presenters
 		framePresenter = new DefaultFramePresenter();
@@ -75,6 +91,68 @@ public class UIApp {
 		Platform.runLater(() -> start(new Stage()));
 	}
 
+	@Override
+	public void installTheme(Theme theme) throws InvalidBundledThemeException {
+		FXUtils.checkFxThread();
+		if (installedTheme != null) {
+			uninstallTheme(installedTheme);
+		}
+		if (theme instanceof BundledTheme) {
+			String bundleLocation = (String) theme.getMeta().get(BundledTheme.INTERNAL_META_KEY_BUNDLE_URL);
+			if (bundleLocation == null || bundleLocation.isEmpty()) {
+				throw new InvalidBundledThemeException("location url of the theme can not be null");
+			}
+			configuration.urls.add(bundleLocation);
+			ClassLoader resourceLoader = ((BundledTheme) theme).getResourceLoader();
+			Thread.currentThread().setContextClassLoader(resourceLoader);
+		}
+		mainScene.getStylesheets().retainAll(DEFAULT_METRO_STYLE_SHEET);
+		mainScene.getStylesheets().addAll(theme.getStyleSheets());
+		installedTheme = theme;
+	}
+
+	@Override
+	public void uninstallTheme(Theme theme) {
+		FXUtils.checkFxThread();
+		mainScene.getStylesheets().removeAll(theme.getStyleSheets());
+		installedTheme = null;
+	}
+
+	@Override
+	public Theme getInstalledTheme() {
+		return installedTheme;
+	}
+
+	@Override
+	public void setObservableContext(ObservableContext ctx) {
+		observableContext = ctx;
+	}
+
+	@Override
+	public InstalledThemesConfiguration store() {
+		return configuration;
+	}
+
+	@Override
+	public void restore(InstalledThemesConfiguration memento) {
+		configuration.urls = memento.urls;
+	}
+
+	@Override
+	public Class<? extends InstalledThemesConfiguration> getMementoType() {
+		return configuration.getClass();
+	}
+
+	@Override
+	public String getLocalizedName() {
+		return null;
+	}
+
+	@Override
+	public Region createConfiguringPanel() {
+		return null;
+	}
+
 	private void start(Stage primaryStage) {
 		// 防止StyleManager智障读不到CSS
 		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -83,8 +161,14 @@ public class UIApp {
 		initPresenters();
 		initLayout();
 		mainScene = new Scene(framePresenter.getView().rootContainer);
-		mainScene.getStylesheets().addAll(LOCATIONS_OF_DEFAULT_CSS);
+		mainScene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 		mainStage.setScene(mainScene);
+
+		try {
+			installTheme(new DefaultTheme());
+		} catch (InvalidBundledThemeException e) {
+			throw new Error(e); // impossible
+		}
 		mainStage.show();
 	}
 

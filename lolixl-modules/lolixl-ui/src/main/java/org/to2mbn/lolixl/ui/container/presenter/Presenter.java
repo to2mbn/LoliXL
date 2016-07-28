@@ -17,8 +17,7 @@ public abstract class Presenter<T extends View> {
 		// FXMLLoader 会自动close掉InputStream
 	}
 
-	public void postInitialize() {
-	}
+	public void postInitialize() {}
 
 	public T getView() {
 		return view;
