@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.ui.impl.theme.loading;
 
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.theme.BundledTheme;
 import org.to2mbn.lolixl.ui.theme.Theme;
@@ -23,7 +25,8 @@ import java.util.zip.ZipInputStream;
 
 @Component
 @Service({ ThemeLoadingProcessor.class })
-public class ZippedBundledThemeLoadingProcessor implements ThemeLoadingProcessor<ZipInputStream> {
+@Properties({ @Property(name = "name", value = "zipped_processor") })
+public class ZippedBundledThemeLoadingProcessor implements ThemeLoadingProcessor {
 	private static final Logger LOGGER = Logger.getLogger(ZippedBundledThemeLoadingProcessor.class.getCanonicalName());
 
 	@Override
@@ -32,12 +35,12 @@ public class ZippedBundledThemeLoadingProcessor implements ThemeLoadingProcessor
 	}
 
 	@Override
-	public Supplier<ThemeLoadingProcessor<ZipInputStream>> getProcessorFactory() {
+	public Supplier<ThemeLoadingProcessor> getProcessorFactory() {
 		return ZippedBundledThemeLoadingProcessor::new;
 	}
 
 	@Override
-	public Theme process(URL baseUrl, ZipInputStream stream) throws IOException {
+	public Theme process(URL baseUrl) throws IOException {
 		LOGGER.fine("Started processing bundled theme: " + baseUrl.toExternalForm());
 		URI bundleURI = URI.create("jar:" + baseUrl.toExternalForm());
 		Map<String, Object> metaMap = new HashMap<>();
@@ -46,6 +49,8 @@ public class ZippedBundledThemeLoadingProcessor implements ThemeLoadingProcessor
 			metaMap.putAll(GsonUtils.fromJson(meta, metaMap.getClass()));
 			metaMap.put(BundledTheme.INTERNAL_META_KEY_BUNDLE_URL, baseUrl.toExternalForm());
 		}
+
+		ZipInputStream stream = new ZipInputStream(baseUrl.openStream());
 		ClassLoader resourceLoader = new URLClassLoader(new URL[]{ baseUrl });
 		List<String> styleSheets = new ArrayList<>();
 		ZipEntry entry;
@@ -55,6 +60,7 @@ public class ZippedBundledThemeLoadingProcessor implements ThemeLoadingProcessor
 			}
 		}
 		stream.close();
+
 		return new BundledTheme() {
 			@Override
 			public ClassLoader getResourceLoader() {

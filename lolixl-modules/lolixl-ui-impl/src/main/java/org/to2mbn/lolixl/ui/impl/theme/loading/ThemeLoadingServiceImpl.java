@@ -12,16 +12,18 @@ import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingProcessor;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 @Component(immediate = true)
 @Service({ ThemeLoadingService.class })
 public class ThemeLoadingServiceImpl implements ThemeLoadingService {
+	private static final Logger LOGGER = Logger.getLogger(ThemeLoadingServiceImpl.class.getCanonicalName());
+
 	private ServiceTracker<ThemeLoadingProcessor, ThemeLoadingProcessor> processorTracker;
 	private List<URLProcessorMapper> mappers;
 	private Queue<Theme> loadedThemes;
@@ -32,9 +34,9 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 		loadedThemes = new ConcurrentLinkedQueue<>();
 		processorTracker = new ServiceTracker<>(compCtx.getBundleContext(), ThemeLoadingProcessor.class, new ServiceTrackerCustomizer<ThemeLoadingProcessor, ThemeLoadingProcessor>() {
 			@Override
-			public ThemeLoadingProcessor<?> addingService(ServiceReference<ThemeLoadingProcessor> serviceReference) {
+			public ThemeLoadingProcessor addingService(ServiceReference<ThemeLoadingProcessor> serviceReference) {
 				ThemeLoadingProcessor processor = compCtx.getBundleContext().getService(serviceReference);
-				mappers.add(new URLProcessorMapper(processor.getClass(), processor.getChecker(), processor.getProcessorFactory()));
+				registerProcessor(processor.getClass(), processor.getChecker(), processor.getProcessorFactory());
 				return processor;
 			}
 
@@ -53,22 +55,25 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 	public Optional<Theme> loadFromURL(URL url) throws IOException {
 		Optional<Theme> theme = Optional.empty();
 		for (URLProcessorMapper mapper : mappers) {
-			if (mapper.getChecker().test(url)) {
-				ThemeLoadingProcessor processor = mapper.getProcessorSupplier().get();
-				theme = Optional.of(processor.process(url, url.openStream()));
+			if (mapper.checker.test(url)) {
+				ThemeLoadingProcessor processor = mapper.processorSupplier.get();
+				LOGGER.info("Loading theme from '" + url.toExternalForm() + "' using '" + processor.getClass().getCanonicalName() + "'");
+				theme = Optional.of(processor.process(url));
 			}
 		}
 		return theme;
 	}
 
 	@Override
-	public <T extends InputStream> void registerProcessor(Class<? extends ThemeLoadingProcessor<T>> processorType, Predicate<URL> checker, Supplier<ThemeLoadingProcessor<T>> processorSupplier) {
+	public void registerProcessor(Class<? extends ThemeLoadingProcessor> processorType, Predicate<URL> checker, Supplier<? extends ThemeLoadingProcessor> processorSupplier) {
+		LOGGER.info("Registering processor '" + processorType.getCanonicalName() + "'");
 		mappers.add(new URLProcessorMapper(processorType, checker, processorSupplier));
 	}
 
 	@Override
-	public <T extends ThemeLoadingProcessor> void unregisterProcessor(Class<T> processorType) {
-		mappers.removeIf(mapper -> mapper.getProcessorType() == processorType);
+	public void unregisterProcessor(Class<? extends ThemeLoadingProcessor> processorType) {
+		LOGGER.info("Removing processor '" + processorType.getCanonicalName() + "'");
+		mappers.removeIf(mapper -> mapper.processorType == processorType);
 	}
 
 	@Override
