@@ -28,6 +28,7 @@ import org.to2mbn.lolixl.ui.impl.theme.management.InstalledThemesConfiguration;
 import org.to2mbn.lolixl.ui.theme.BundledTheme;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.exception.InvalidBundledThemeException;
+import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
 import org.to2mbn.lolixl.ui.theme.management.ThemeManagementService;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.ObservableContext;
@@ -35,9 +36,12 @@ import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
+@Component(immediate = true)
 @Service({ ThemeManagementService.class })
 public class UIApp implements ThemeManagementService, ConfigurationCategory<InstalledThemesConfiguration> {
 	private static final Logger LOGGER = Logger.getLogger(UIApp.class.getCanonicalName());
@@ -46,6 +50,9 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 
 	@Reference
 	private EventAdmin eventAdmin;
+
+	@Reference
+	private ThemeLoadingService themeLoadingService;
 
 	private Stage mainStage;
 	private Scene mainScene;
@@ -103,6 +110,7 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 				throw new InvalidBundledThemeException("location url of the theme can not be null");
 			}
 			configuration.urls.add(bundleLocation);
+			observableContext.notifyChanged();
 			ClassLoader resourceLoader = ((BundledTheme) theme).getResourceLoader();
 			Thread.currentThread().setContextClassLoader(resourceLoader);
 		}
@@ -163,12 +171,7 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 		mainScene = new Scene(framePresenter.getView().rootContainer);
 		mainScene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 		mainStage.setScene(mainScene);
-
-		try {
-			installTheme(new DefaultTheme());
-		} catch (InvalidBundledThemeException e) {
-			throw new Error(e); // impossible
-		}
+		initTheme();
 		mainStage.show();
 	}
 
@@ -203,5 +206,34 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 		framePresenter.setTitleBar(titleBarPresenter.getView().rootContainer);
 		framePresenter.setSidebar(sideBarPresenter.getView().rootContainer);
 		framePresenter.setContent(homeContentPresenter.getView().rootContainer);
+	}
+
+	private void initTheme() {
+		try {
+			installTheme(new DefaultTheme());
+		} catch (InvalidBundledThemeException e) {
+			throw new Error(e); // impossible
+		}
+
+		LOGGER.info("Loading bundled themes from configuration");
+		for (String url : configuration.urls) {
+			try {
+				themeLoadingService.loadFromURL(new URL(url));
+			} catch (IOException e) {
+				LOGGER.log(Level.WARNING, "Failed to load bundled theme from '" + url + "'", e);
+			}
+		}
+
+		Optional<Theme> lastTheme = themeLoadingService.findThemeById(configuration.lastInstalledThemeId);
+		if (!lastTheme.isPresent()) {
+			LOGGER.warning("Missing last bundled theme: " + configuration.lastInstalledThemeId);
+		} else {
+			LOGGER.info("Installing last bundled theme: " + configuration.lastInstalledThemeId);
+			try {
+				installTheme(lastTheme.get());
+			} catch (InvalidBundledThemeException e) {
+				LOGGER.log(Level.WARNING, "Failed to install last bundled theme", e);
+			}
+		}
 	}
 }
