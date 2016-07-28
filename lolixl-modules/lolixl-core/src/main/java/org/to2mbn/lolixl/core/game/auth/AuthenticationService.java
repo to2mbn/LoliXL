@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.core.game.auth;
 
-import org.to2mbn.lolixl.ui.component.DisplayableTile;
+import org.to2mbn.lolixl.ui.model.DisplayableTile;
 
 /**
  * OSGi的一个服务，代表了一种验证方法。

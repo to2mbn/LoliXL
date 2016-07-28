@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import org.to2mbn.lolixl.ui.component.DisplayableItem;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
 public class DownloadTaskGroup extends AbstractDownloadTaskModel {
 

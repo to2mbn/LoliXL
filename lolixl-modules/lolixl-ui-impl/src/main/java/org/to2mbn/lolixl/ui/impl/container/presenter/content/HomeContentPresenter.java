@@ -8,7 +8,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundSize;
 import org.apache.felix.scr.annotations.Component;
 import org.to2mbn.lolixl.ui.Panel;
-import org.to2mbn.lolixl.ui.TileManagingService;
+import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Component
-public class HomeContentPresenter extends Presenter<HomeContentView> implements TileManagingService {
+public class HomeContentPresenter extends Presenter<HomeContentView> implements SideBarTileService {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/container/home_content.fxml";
 
 	private int tileSize = 60;
@@ -34,7 +34,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
 
 	private List<Node> shownTiles;
-	private List<Node> hiddenTiles;
 
 	public Supplier<Tile> hiddenTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
@@ -138,7 +137,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	}
 
 	@Override
-	public Tile[] getTiles(TileStatus status) {
+	public Tile[] getTiles(StackingStatus status) {
 		Stream<Node> stream;
 		switch (status) {
 			case SHOWN:
@@ -164,7 +163,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		Objects.requireNonNull(newTiles);
 		FXUtils.checkFxThread();
 
-		Tile[] allTiles = getTiles(TileStatus.COMMON);
+		Tile[] allTiles = getTiles(StackingStatus.COMMON);
 		Stream<Tile> newTilesStream = Stream.of(newTiles).filter(it -> it != null);
 		Stream<Tile> tileStream = Stream.of(allTiles);
 		if (!tileStream.allMatch(tile -> newTilesStream.anyMatch(newTile -> tile.equals(newTile)))) {

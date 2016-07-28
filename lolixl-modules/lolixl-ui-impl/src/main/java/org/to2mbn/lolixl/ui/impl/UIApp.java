@@ -13,8 +13,11 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.*;
+import org.to2mbn.lolixl.ui.BackgroundService;
+import org.to2mbn.lolixl.ui.PanelDisplayService;
+import org.to2mbn.lolixl.ui.SettingsCategoriesManagingService;
+import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
+import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
@@ -82,7 +85,7 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 		BundleContext ctx = compCtx.getBundleContext();
 		ctx.registerService(BackgroundService.class, framePresenter, null);
 		ctx.registerService(PanelDisplayService.class, framePresenter, null);
-		ctx.registerService(TileManagingService.class, homeContentPresenter, null);
+		ctx.registerService(SideBarTileService.class, homeContentPresenter, null);
 		ctx.registerService(SideBarPanelDisplayService.class, sideBarPresenter, null);
 		ctx.registerService(SettingsCategoriesManagingService.class, settingsPanelContentPresenter, null);
 

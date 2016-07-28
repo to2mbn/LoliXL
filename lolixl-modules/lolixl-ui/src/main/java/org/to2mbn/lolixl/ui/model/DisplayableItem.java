@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.component;
+package org.to2mbn.lolixl.ui.model;
 
 import javafx.scene.image.Image;
 

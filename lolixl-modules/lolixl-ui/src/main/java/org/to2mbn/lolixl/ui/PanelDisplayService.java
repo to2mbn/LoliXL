@@ -7,9 +7,7 @@ import java.util.Optional;
  * 
  * @author yushijinhun
  */
-public interface PanelDisplayService {
-
-	Panel newPanel();
+public interface PanelDisplayService extends PanelFactory {
 
 	/**
 	 * 获取当前打开的Panel。

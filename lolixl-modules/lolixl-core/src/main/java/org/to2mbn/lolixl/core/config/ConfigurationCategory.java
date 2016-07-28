@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.core.config;
 
-import org.to2mbn.lolixl.ui.component.DisplayableItem;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import org.to2mbn.lolixl.utils.Observable;
 import org.to2mbn.lolixl.utils.Storable;
 import javafx.scene.layout.Region;

@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.Region;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.TileManagingService;
+import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.TileListCell;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
@@ -32,9 +32,9 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 		view.downButton.setOnAction(this::onDownButtonClicked);
 
 		// 根据configuration读取磁贴顺序并设置生效
-		Tile[] tiles = new Tile[configuration.tiles.size()];
-		Stream<Tile> oldTiles = Stream.of(homeContentPresenter.getTiles(TileManagingService.TileStatus.COMMON));
-		configuration.tiles.forEach((index, tag) -> tiles[index] = oldTiles.filter(it -> it.getNameTag().equals(tag)).findFirst().get());
+		Tile[] tiles = new Tile[configuration.tilesOrder.size()];
+		Stream<Tile> oldTiles = Stream.of(homeContentPresenter.getTiles(SideBarTileService.StackingStatus.COMMON));
+		configuration.tilesOrder.forEach((tag, index) -> tiles[index] = oldTiles.filter(it -> it.getNameTag().equals(tag)).findFirst().get());
 		homeContentPresenter.updateTilesOrder(tiles);
 		updateListData();
 	}
@@ -80,7 +80,7 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 	}
 
 	private void updateListData() {
-		view.listView.setItems(FXCollections.observableArrayList(homeContentPresenter.getTiles(TileManagingService.TileStatus.COMMON)));
+		view.listView.setItems(FXCollections.observableArrayList(homeContentPresenter.getTiles(SideBarTileService.StackingStatus.COMMON)));
 	}
 
 	private void onUpButtonClicked(ActionEvent event) {

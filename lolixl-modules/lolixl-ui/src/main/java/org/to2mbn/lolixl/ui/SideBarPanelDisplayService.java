@@ -11,7 +11,7 @@ import java.util.Optional;
  * 1.前者不会占满整个窗口的内容栏
  * 2.不能叠加，如果在显示了A面板同时调用显示B面板，A面板将会被关闭
  */
-public interface SideBarPanelDisplayService {
+public interface SideBarPanelDisplayService extends PanelFactory {
 	/**
 	 * 获取一个新的组成默认侧边栏的侧边栏面板的实例
 	 * <p>
@@ -19,6 +19,7 @@ public interface SideBarPanelDisplayService {
 	 *
 	 * @return
 	 */
+	@Override
 	Panel newPanel(); // TODO: 可能需要返回一个特别的继承自Panel的子类
 
 	/**

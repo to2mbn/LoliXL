@@ -1,7 +1,7 @@
 package org.to2mbn.lolixl.core.game.download;
 
 import java.util.List;
-import org.to2mbn.lolixl.ui.component.DisplayableItem;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
 public interface VersionsGroup<VER extends DownloadableVersion> extends DisplayableItem {
 

@@ -31,6 +31,7 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileEvent;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.ServiceUtils;
 import com.google.gson.JsonSyntaxException;
 
 @Service({ AuthenticationProfileManager.class })
@@ -91,7 +92,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 				profiles = GsonUtils.fromJson(profilesListFile, AuthenticationProfileList.class);
 				LOGGER.fine(() -> format("Loaded auth profiles list: %s", profiles.entries));
 			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, format("Couldn't read save auth profiles list [%s]", profilesListFile), e);
+				LOGGER.log(Level.WARNING, format("Couldn't read auth profiles list [%s]", profilesListFile), e);
 			}
 		}
 		if (profiles == null) {
@@ -134,7 +135,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 		try {
 			AuthenticationService service = bundleContext.getService(reference);
-			entry.method = getAuthMethodName(reference, service);
+			entry.method = ServiceUtils.getIdProperty(AuthenticationService.PROPERTY_AUTH_METHOD, reference, service);
 			entry.profile = service.createProfile();
 		} finally {
 			bundleContext.ungetService(reference);
@@ -182,18 +183,8 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		}
 	}
 
-	private String getAuthMethodName(ServiceReference<AuthenticationService> reference, AuthenticationService service) {
-		String method = (String) reference.getProperty(AuthenticationService.PROPERTY_AUTH_METHOD);
-		if (method == null) {
-			LOGGER.warning(format("No PROPERTY_AUTH_METHOD found for %s, using class name", reference));
-			method = service.getClass().getName()
-					.replace('$', '.');
-		}
-		return method;
-	}
-
 	private Stream<AuthenticationProfileEntry> profilesOfService(ServiceReference<AuthenticationService> reference, AuthenticationService service) {
-		String authMethod = getAuthMethodName(reference, service);
+		String authMethod = ServiceUtils.getIdProperty(AuthenticationService.PROPERTY_AUTH_METHOD, reference, service);
 		return profiles.entries.stream()
 				.filter(entry -> authMethod.equals(entry.method));
 	}

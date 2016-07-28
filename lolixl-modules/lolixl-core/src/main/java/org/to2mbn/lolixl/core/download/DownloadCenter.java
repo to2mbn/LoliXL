@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.to2mbn.jmccc.mcdownloader.MinecraftDownloader;
-import org.to2mbn.lolixl.ui.component.DisplayableItem;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
 public interface DownloadCenter {
 
