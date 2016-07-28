@@ -13,11 +13,8 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
-import org.to2mbn.lolixl.ui.BackgroundService;
-import org.to2mbn.lolixl.ui.PanelDisplayService;
-import org.to2mbn.lolixl.ui.SettingsCategoriesManagingService;
-import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
-import org.to2mbn.lolixl.ui.SideBarTileService;
+import org.to2mbn.lolixl.core.config.ConfigurationCategory;
+import org.to2mbn.lolixl.ui.*;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
@@ -30,7 +27,7 @@ import org.to2mbn.lolixl.ui.impl.theme.DefaultTheme;
 import org.to2mbn.lolixl.ui.impl.theme.management.InstalledThemesConfiguration;
 import org.to2mbn.lolixl.ui.theme.BundledTheme;
 import org.to2mbn.lolixl.ui.theme.Theme;
-import org.to2mbn.lolixl.ui.theme.exception.InvalidBundledThemeException;
+import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
 import org.to2mbn.lolixl.ui.theme.management.ThemeManagementService;
 import org.to2mbn.lolixl.utils.FXUtils;
@@ -102,20 +99,28 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 	}
 
 	@Override
-	public void installTheme(Theme theme) throws InvalidBundledThemeException {
+	public void installTheme(Theme theme) throws InvalidThemeException {
 		FXUtils.checkFxThread();
 		if (installedTheme != null) {
 			uninstallTheme(installedTheme);
 		}
+		String themeId = (String) theme.getMeta().get(Theme.META_KEY_ID);
+		if (themeId == null || themeId.isEmpty()) {
+			throw new InvalidThemeException("ID meta of a theme can not be null");
+		}
 		if (theme instanceof BundledTheme) {
 			String bundleLocation = (String) theme.getMeta().get(BundledTheme.INTERNAL_META_KEY_BUNDLE_URL);
 			if (bundleLocation == null || bundleLocation.isEmpty()) {
-				throw new InvalidBundledThemeException("location url of the theme can not be null");
+				throw new InvalidThemeException("location url of the theme can not be null");
 			}
 			configuration.urls.add(bundleLocation);
+			configuration.lastInstalledBundledThemeId = themeId;
 			observableContext.notifyChanged();
 			ClassLoader resourceLoader = ((BundledTheme) theme).getResourceLoader();
 			Thread.currentThread().setContextClassLoader(resourceLoader);
+		} else {
+			configuration.lastInstalledBundledThemeId = "";
+			observableContext.notifyChanged();
 		}
 		mainScene.getStylesheets().retainAll(DEFAULT_METRO_STYLE_SHEET);
 		mainScene.getStylesheets().addAll(theme.getStyleSheets());
@@ -214,7 +219,7 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 	private void initTheme() {
 		try {
 			installTheme(new DefaultTheme());
-		} catch (InvalidBundledThemeException e) {
+		} catch (InvalidThemeException e) {
 			throw new Error(e); // impossible
 		}
 
@@ -227,15 +232,17 @@ public class UIApp implements ThemeManagementService, ConfigurationCategory<Inst
 			}
 		}
 
-		Optional<Theme> lastTheme = themeLoadingService.findThemeById(configuration.lastInstalledThemeId);
-		if (!lastTheme.isPresent()) {
-			LOGGER.warning("Missing last bundled theme: " + configuration.lastInstalledThemeId);
-		} else {
-			LOGGER.info("Installing last bundled theme: " + configuration.lastInstalledThemeId);
-			try {
-				installTheme(lastTheme.get());
-			} catch (InvalidBundledThemeException e) {
-				LOGGER.log(Level.WARNING, "Failed to install last bundled theme", e);
+		if (!configuration.lastInstalledBundledThemeId.isEmpty()) {
+			Optional<Theme> lastTheme = themeLoadingService.findThemeById(configuration.lastInstalledBundledThemeId);
+			if (!lastTheme.isPresent()) {
+				LOGGER.warning("Missing last bundled theme: " + configuration.lastInstalledBundledThemeId);
+			} else {
+				LOGGER.info("Installing last bundled theme: " + configuration.lastInstalledBundledThemeId);
+				try {
+					installTheme(lastTheme.get());
+				} catch (InvalidThemeException e) {
+					LOGGER.log(Level.WARNING, "Failed to install last bundled theme", e);
+				}
 			}
 		}
 	}
