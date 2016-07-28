@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
 
 import org.to2mbn.lolixl.core.config.Configuration;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

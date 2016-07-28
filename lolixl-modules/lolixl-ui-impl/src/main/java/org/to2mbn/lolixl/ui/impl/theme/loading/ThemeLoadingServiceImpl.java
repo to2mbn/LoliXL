@@ -59,6 +59,9 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 				ThemeLoadingProcessor processor = mapper.processorSupplier.get();
 				LOGGER.info("Loading theme from '" + url.toExternalForm() + "' using '" + processor.getClass().getCanonicalName() + "'");
 				theme = Optional.of(processor.process(url));
+				if (theme.isPresent()) {
+					loadedThemes.offer(theme.get());
+				}
 			}
 		}
 		return theme;
@@ -79,6 +82,9 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 	@Override
 	public Optional<Theme> findThemeById(String id) {
 		Objects.requireNonNull(id);
+		if (id.isEmpty()) {
+			return Optional.empty();
+		}
 		for (Theme theme : loadedThemes) {
 			if (id.equals(theme.getMeta().get(Theme.META_KEY_ID))) {
 				return Optional.of(theme);
