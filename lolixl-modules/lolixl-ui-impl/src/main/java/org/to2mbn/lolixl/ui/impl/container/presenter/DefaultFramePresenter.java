@@ -6,6 +6,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Parent;
 import javafx.scene.layout.Background;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
 import org.to2mbn.lolixl.ui.BackgroundService;
@@ -29,6 +30,24 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_frame.fxml";
 
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
+
+	// for draggable:
+	private double lastDragX, lastDragY;
+	private boolean isDragging = false;
+	// for resizeable:
+	private double lastResizeX, lastResizeY;
+	private Stage stage;
+
+	@Override
+	public void postInitialize() {
+		makeDraggable();
+		makeResizeable();
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return LOCATION_OF_FXML;
+	}
 
 	/**
 	 * 需要在JavaFX线程下运行
@@ -59,9 +78,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Override
 	public Panel[] getOpenedPanels() {
-		return panels.stream()
-				.map(entry -> entry.model)
-				.toArray(Panel[]::new);
+		return panels.stream().map(entry -> entry.model).toArray(Panel[]::new);
 	}
 
 	/**
@@ -98,6 +115,10 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		if (view.contentPane != null) {
 			view.contentPane.getChildren().add(content);
 		}
+	}
+
+	public void setStage(Stage _stage) {
+		stage = _stage;
 	}
 
 	private <T> void preCheck(T obj) {
@@ -148,8 +169,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 			PanelEntry previous = panels.element();
 			animation.setOnFinished(event ->
 					// 直接设置为下一层的面板
-					view.rootContainer.setCenter(previous.view)
-			);
+					view.rootContainer.setCenter(previous.view));
 		}
 		animation.play();
 	}
@@ -172,16 +192,62 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		return parallel;
 	}
 
-	@Override
-	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+
+	private void makeDraggable() {
+		view.titleBarPane.setOnMousePressed(event -> {
+			if (!checkIfOnEdge(event.getSceneY(), event.getSceneY())) {
+				lastDragX = event.getSceneX();
+				lastDragY = event.getSceneY();
+				isDragging = true;
+			}
+		});
+		view.titleBarPane.setOnMouseDragged(event -> {
+			if (isDragging) {
+				stage.setX(event.getScreenX() - lastDragX);
+				stage.setY(event.getScreenY() - lastDragY);
+			}
+		});
+		view.titleBarPane.setOnMouseReleased(event -> {
+			isDragging = false;
+		});
+	}
+
+	private void makeResizeable() {
+		// TODO: no need for ubuntu
+		view.shadowContainer.setOnMousePressed(event -> {
+			if (!isDragging && checkIfOnEdge(event.getSceneX(), event.getSceneY())) {
+				lastResizeX = event.getSceneX();
+				lastResizeY = event.getSceneY();
+			}
+		});
+		view.shadowContainer.setOnMouseDragged(event -> {
+			if (!isDragging && !checkMinSize()){
+				double height = view.shadowContainer.getHeight();
+				double width = view.shadowContainer.getWidth();
+				view.shadowContainer.resize(width + event.getSceneX() - lastResizeX, height + event.getSceneY() - lastResizeY);
+			}
+		});
+	}
+
+	private boolean checkIfOnEdge(double x, double y) {
+		if (x >= 3 && x <= view.shadowContainer.getWidth() - 3) {
+			return (y >= 3 && y <= 12) || (y >= view.shadowContainer.getHeight() - 12 && y <= view.shadowContainer.getHeight() - 3);
+		} else if (y >= 3 && y <= view.shadowContainer.getHeight() - 3) {
+			return (x >= 3 && x <= 12) || (x >= view.shadowContainer.getWidth() - 12 && x <= view.shadowContainer.getWidth() - 3);
+		}
+		return false;
+	}
+
+	private boolean checkMinSize() {
+		return view.shadowContainer.getHeight() <= view.shadowContainer.getMinHeight()
+				|| view.shadowContainer.getWidth() <= view.shadowContainer.getMinWidth();
 	}
 
 	private static class PanelEntry {
 		private final Panel model;
 		private final Parent view;
 
-		public PanelEntry(Panel _model, Parent _view) {
+		private PanelEntry(Panel _model, Parent _view) {
 			model = _model;
 			view = _view;
 		}

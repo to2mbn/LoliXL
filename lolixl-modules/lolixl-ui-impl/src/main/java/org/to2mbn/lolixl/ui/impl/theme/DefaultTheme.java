@@ -1,19 +1,23 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
-import org.to2mbn.lolixl.ui.theme.BundledTheme;
 import org.to2mbn.lolixl.ui.theme.Theme;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultTheme implements BundledTheme {
+public class DefaultTheme implements Theme {
 	private final Map<String, Object> meta;
 
 	public DefaultTheme() {
 		meta = new HashMap<>();
-		meta.put(Theme.META_KEY_ID, "lolixl_default");
-		meta.put(Theme.META_KEY_AUTHROS, "LoliXL Developers");
-		meta.put(BundledTheme.META_KEY_ICON_LOCATION, "/icon.png");
+		meta.put(Theme.PROPERTY_KEY_ID, "lolixl_default");
+		meta.put(Theme.PROPERTY_KEY_AUTHORS, "LoliXL Developers");
+		meta.put(Theme.PROPERTY_KEY_ICON_LOCATION, "/icon.png");
+	}
+
+	@Override
+	public String getId() {
+		return (String) meta.get(Theme.PROPERTY_KEY_ID);
 	}
 
 	@Override
@@ -23,10 +27,7 @@ public class DefaultTheme implements BundledTheme {
 
 	@Override
 	public String[] getStyleSheets() {
-		return new String[]{
-			"/ui/css/default_theme/components.css",
-			"/ui/css/default_theme/color_sets.css"
-		};
+		return new String[]{ "/ui/css/default_theme/components.css", "/ui/css/default_theme/color_sets.css" };
 	}
 
 	@Override

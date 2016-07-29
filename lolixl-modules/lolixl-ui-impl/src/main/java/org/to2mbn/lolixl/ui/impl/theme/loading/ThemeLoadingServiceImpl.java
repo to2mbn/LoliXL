@@ -3,20 +3,20 @@ package org.to2mbn.lolixl.ui.impl.theme.loading;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.ui.theme.Theme;
+import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingProcessor;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 
 @Component(immediate = true)
@@ -25,18 +25,16 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 	private static final Logger LOGGER = Logger.getLogger(ThemeLoadingServiceImpl.class.getCanonicalName());
 
 	private ServiceTracker<ThemeLoadingProcessor, ThemeLoadingProcessor> processorTracker;
-	private List<URLProcessorMapper> mappers;
-	private Queue<Theme> loadedThemes;
+	private Queue<ThemeLoadingProcessor> processors;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
-		mappers = new LinkedList<>();
-		loadedThemes = new ConcurrentLinkedQueue<>();
+		processors = new ConcurrentLinkedDeque<>();
 		processorTracker = new ServiceTracker<>(compCtx.getBundleContext(), ThemeLoadingProcessor.class, new ServiceTrackerCustomizer<ThemeLoadingProcessor, ThemeLoadingProcessor>() {
 			@Override
 			public ThemeLoadingProcessor addingService(ServiceReference<ThemeLoadingProcessor> serviceReference) {
 				ThemeLoadingProcessor processor = compCtx.getBundleContext().getService(serviceReference);
-				registerProcessor(processor.getClass(), processor.getChecker(), processor.getProcessorFactory());
+				registerProcessor(processor);
 				return processor;
 			}
 
@@ -45,56 +43,40 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 
 			@Override
 			public void removedService(ServiceReference<ThemeLoadingProcessor> serviceReference, ThemeLoadingProcessor themeLoadingProcessor) {
-				unregisterProcessor(themeLoadingProcessor.getClass());
+				unregisterProcessor(themeLoadingProcessor);
 			}
 		});
 		processorTracker.open();
 	}
 
 	@Override
-	public Optional<Theme> loadFromURL(URL url) throws IOException {
+	public Optional<Theme> loadAndPublish(URL url) throws IOException, InvalidThemeException {
 		Optional<Theme> theme = Optional.empty();
-		for (URLProcessorMapper mapper : mappers) {
-			if (mapper.checker.test(url)) {
-				ThemeLoadingProcessor processor = mapper.processorSupplier.get();
+		for (Iterator<ThemeLoadingProcessor> iterator = processors.iterator(); iterator.hasNext(); ) {
+			ThemeLoadingProcessor processor = iterator.next();
+			if (processor.getChecker().test(url)) {
 				LOGGER.info("Loading theme from '" + url.toExternalForm() + "' using '" + processor.getClass().getCanonicalName() + "'");
 				theme = Optional.of(processor.process(url));
+				// 注册theme为服务
 				if (theme.isPresent()) {
-					loadedThemes.offer(theme.get());
+					Theme themeObj = theme.get();
+					if (themeObj.getId() == null || themeObj.getId().isEmpty()) {
+						throw new InvalidThemeException("the publishing theme does not have a ID property!");
+					}
+					FrameworkUtil.getBundle(getClass()).getBundleContext().registerService(Theme.class, themeObj, new Hashtable<>(Collections.singletonMap(Theme.PROPERTY_KEY_ID, themeObj.getId())));
 				}
 			}
 		}
 		return theme;
 	}
 
-	@Override
-	public void registerProcessor(Class<? extends ThemeLoadingProcessor> processorType, Predicate<URL> checker, Supplier<? extends ThemeLoadingProcessor> processorSupplier) {
-		LOGGER.info("Registering processor '" + processorType.getCanonicalName() + "'");
-		mappers.add(new URLProcessorMapper(processorType, checker, processorSupplier));
+	private void registerProcessor(ThemeLoadingProcessor processor) {
+		LOGGER.info("Registering processor '" + processor.getClass().getCanonicalName() + "'");
+		processors.offer(processor);
 	}
 
-	@Override
-	public void unregisterProcessor(Class<? extends ThemeLoadingProcessor> processorType) {
-		LOGGER.info("Removing processor '" + processorType.getCanonicalName() + "'");
-		mappers.removeIf(mapper -> mapper.processorType == processorType);
-	}
-
-	@Override
-	public Optional<Theme> findThemeById(String id) {
-		Objects.requireNonNull(id);
-		if (id.isEmpty()) {
-			return Optional.empty();
-		}
-		for (Theme theme : loadedThemes) {
-			if (id.equals(theme.getMeta().get(Theme.META_KEY_ID))) {
-				return Optional.of(theme);
-			}
-		}
-		return Optional.empty();
-	}
-
-	@Override
-	public Theme[] getLoadedThemes() {
-		return loadedThemes.toArray(new Theme[loadedThemes.size()]);
+	private void unregisterProcessor(ThemeLoadingProcessor processor) {
+		LOGGER.info("Removing processor '" + processor.getClass().getCanonicalName() + "'");
+		processors.remove(processor);
 	}
 }

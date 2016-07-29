@@ -14,9 +14,6 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	private Consumer<MouseEvent> closeButtonListener;
 	private Stage parentStage;
 
-	// for draggable:
-	private double lastX, lastY;
-
 	@Override
 	public void postInitialize() {
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
@@ -25,7 +22,6 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 				.when(parentStage.focusedProperty())
 				.then(view.rootContainer.idProperty().get().replace("-unfocused", ""))
 				.otherwise(view.rootContainer.idProperty().get().concat("-unfocused")));
-		makeDraggable();
 	}
 
 	public void setCloseButtonListener(Consumer<MouseEvent> _closeButtonListener) {
@@ -39,18 +35,6 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	@Override
 	protected String getFxmlLocation() {
 		return LOCATION_OF_FXML;
-	}
-
-
-	private void makeDraggable() {
-		view.rootContainer.setOnMousePressed(event -> {
-			lastX = event.getSceneX();
-			lastY = event.getSceneY();
-		});
-		view.rootContainer.setOnMouseDragged(event -> {
-			parentStage.setX(event.getScreenX() - lastX);
-			parentStage.setY(event.getScreenY() - lastY);
-		});
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
