@@ -44,6 +44,7 @@ public class ThemeLoadingServiceImpl implements ThemeLoadingService {
 			@Override
 			public void removedService(ServiceReference<ThemeLoadingProcessor> serviceReference, ThemeLoadingProcessor themeLoadingProcessor) {
 				unregisterProcessor(themeLoadingProcessor);
+				compCtx.getBundleContext().ungetService(serviceReference);
 			}
 		});
 		processorTracker.open();

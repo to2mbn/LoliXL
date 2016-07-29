@@ -22,4 +22,7 @@ public class ThemesContentPanelView extends View {
 
 	@FXML
 	public Label themeAuthorsLabel;
+
+	@FXML
+	public Label themeDescriptionLabel;
 }

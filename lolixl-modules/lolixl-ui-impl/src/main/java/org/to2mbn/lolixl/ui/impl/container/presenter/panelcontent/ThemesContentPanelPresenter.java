@@ -54,7 +54,8 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 	public void handle(ActionEvent event) {
 		Tile clickedTile = (Tile) event.getSource();
 		StackPane imgContainer = (StackPane) clickedTile.getGraphic();
-		if (imgContainer.getChildren().size() == 1) {
+		Theme theme = tileThemeMap.get(clickedTile);
+		if (!uiApp.isThemeInstalled(theme)) {
 			try {
 				uiApp.installTheme(tileThemeMap.get(clickedTile));
 			} catch (InvalidThemeException e) {
@@ -64,7 +65,7 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 			imgContainer.setAlignment(Pos.CENTER_LEFT);
 			imgContainer.getChildren().add(themeInstalledMark);
 		} else {
-			uiApp.uninstallTheme(tileThemeMap.get(clickedTile));
+			uiApp.uninstallTheme(theme);
 			imgContainer.getChildren().remove(themeInstalledMark);
 		}
 	}
@@ -98,18 +99,24 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 	private void addTileForTheme(Theme theme) {
 		Tile tile = makeTile();
 		tile.setText(theme.getId());
-		StackPane container = new StackPane();
-		container.resize(100, 100);
+		tile.setOnMouseMoved(event -> updateThemeInfoLabels(theme));
+		tile.setOnAction(this);
+
+		StackPane imgContainer = new StackPane();
+		imgContainer.resize(100, 100);
 		Image icon;
 		if (theme.getMeta().containsKey(Theme.PROPERTY_KEY_ICON_LOCATION)) {
 			icon = new Image(theme.getResourceLoader().getResourceAsStream((String) theme.getMeta().get(Theme.PROPERTY_KEY_ICON_LOCATION)));
 		} else {
 			icon = new Image(getClass().getResourceAsStream("/ui/img/theme_empty_icon.png"));
 		}
-		container.getChildren().add(new ImageView(icon));
-		tile.setGraphic(container);
-		tile.setOnMouseMoved(event -> updateThemeInfoLabels(theme));
-		tile.setOnAction(this);
+		imgContainer.getChildren().add(new ImageView(icon));
+		if (uiApp.isThemeInstalled(theme)) {
+			imgContainer.setAlignment(Pos.CENTER_LEFT);
+			imgContainer.getChildren().add(themeInstalledMark);
+		}
+		tile.setGraphic(imgContainer);
+
 		view.themesContainer.getChildren().add(tile);
 		tileThemeMap.put(tile, theme);
 	}
@@ -117,7 +124,6 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 	private void refreshThemeTiles() {
 		view.themesContainer.getChildren().clear();
 		uiApp.getAllThemes().forEach(this::addTileForTheme);
-
 		Tile installThemeTile = makeTile();
 		installThemeTile.setOnAction(event -> showFileSelector());
 		// TODO: icon
@@ -128,5 +134,6 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 		view.themeNameLabel.setText(theme.getId());
 		List<String> authors = (List<String>) theme.getMeta().get(Theme.PROPERTY_KEY_AUTHORS);
 		view.themeAuthorsLabel.setText(authors.stream().reduce("", (string, author) -> string + ", " + author));
+		view.themeDescriptionLabel.setText((String) theme.getMeta().get(Theme.PROPERTY_KEY_DESCRIPTION));
 	}
 }
