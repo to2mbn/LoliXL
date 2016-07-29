@@ -12,14 +12,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 @Component
 @Service({ ThemeLoadingProcessor.class })
@@ -36,24 +33,21 @@ public class ZippedThemePackageLoadingProcessor implements ThemeLoadingProcessor
 	public Theme process(URL baseUrl) throws IOException {
 		LOGGER.fine("Started processing bundled theme: " + baseUrl.toExternalForm());
 		URI bundleURI = URI.create("jar:" + baseUrl.toExternalForm());
+		ClassLoader resourceLoader = new URLClassLoader(new URL[]{ baseUrl });
 		Map<String, Object> metaMap = new HashMap<>();
-		try (FileSystem bundleFileSystem = FileSystems.newFileSystem(bundleURI, Collections.emptyMap())) {
-			Path meta = bundleFileSystem.getPath("/" + Theme.PROPERTY_FILE_NAME);
+		List<String> styleSheets = new ArrayList<>();
+		try (FileSystem fileSystem = FileSystems.newFileSystem(bundleURI, Collections.emptyMap())) {
+			Path meta = fileSystem.getPath("/" + Theme.PROPERTY_FILE_NAME);
 			metaMap.putAll(GsonUtils.fromJson(meta, metaMap.getClass()));
 			metaMap.put(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_PATH, baseUrl.getFile());
+			Files.walkFileTree(fileSystem.getPath("/"), new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+					styleSheets.add(path.toString());
+					return super.visitFile(path, attrs);
+				}
+			});
 		}
-
-		ZipInputStream stream = new ZipInputStream(baseUrl.openStream());
-		ClassLoader resourceLoader = new URLClassLoader(new URL[]{ baseUrl });
-		List<String> styleSheets = new ArrayList<>();
-		ZipEntry entry;
-		while ((entry = stream.getNextEntry()) != null) {
-			if (!entry.isDirectory() && entry.getName().endsWith(".css")) {
-				styleSheets.add("/" + entry.getName());
-			}
-		}
-		stream.close();
-
 		return new Theme() {
 			@Override
 			public ClassLoader getResourceLoader() {
