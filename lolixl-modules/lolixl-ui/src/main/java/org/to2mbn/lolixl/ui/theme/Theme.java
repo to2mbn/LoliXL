@@ -7,7 +7,7 @@ public interface Theme {
 	String PROPERTY_KEY_ID = "id";
 	String PROPERTY_KEY_AUTHORS = "authors";
 	String PROPERTY_KEY_ICON_LOCATION = "icon";
-	String INTERNAL_PROPERTY_KEY_PACKAGE_URL = "package_url";
+	String INTERNAL_PROPERTY_KEY_PACKAGE_PATH = "package_path";
 
 	String getId();
 

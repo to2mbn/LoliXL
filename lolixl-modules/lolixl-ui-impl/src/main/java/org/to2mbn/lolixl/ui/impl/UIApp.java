@@ -36,8 +36,8 @@ import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,7 +61,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 
 	private ObservableContext observableContext;
 	private InstalledThemeMemento memento;
-	private Theme installedTheme;
 
 	private DefaultFramePresenter framePresenter;
 	private DefaultTitleBarPresenter titleBarPresenter;
@@ -102,10 +101,10 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 
 	@Deactivate
 	public void deactive(ComponentContext compCtx) {
-		memento.lastLoadedThemePackageUrls.clear();
+		memento.lastLoadedThemePaths.clear();
 		for (Theme theme : getAllThemes()) {
-			if (theme.getMeta().containsKey(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_URL)) {
-				memento.lastLoadedThemePackageUrls.add((String) theme.getMeta().get(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_URL));
+			if (theme.getMeta().containsKey(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_PATH)) {
+				memento.lastLoadedThemePaths.add((String) theme.getMeta().get(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_PATH));
 			}
 		}
 		observableContext.notifyChanged();
@@ -124,8 +123,8 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 
 	@Override
 	public void restore(InstalledThemeMemento _memento) {
-		memento.lastLoadedThemePackageUrls = _memento.lastLoadedThemePackageUrls;
-		memento.lastInstalledThemeId = _memento.lastInstalledThemeId;
+		memento.lastLoadedThemePaths = _memento.lastLoadedThemePaths;
+		memento.lastInstalledThemeIds = _memento.lastInstalledThemeIds;
 	}
 
 	@Override
@@ -159,36 +158,27 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	}
 
 	public void installTheme(Theme theme) throws InvalidThemeException {
-		if (installedTheme != null) {
-			uninstallTheme(installedTheme);
-		}
 		String themeId = theme.getId();
 		if (themeId == null || themeId.isEmpty()) {
 			throw new InvalidThemeException("ID meta of a theme can not be null");
 		}
 
-		String bundleLocation = (String) theme.getMeta().get(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_URL);
-		if (bundleLocation != null && !bundleLocation.isEmpty()) {
-			memento.lastLoadedThemePackageUrls.add(bundleLocation);
+		String themePackagePath = (String) theme.getMeta().get(Theme.INTERNAL_PROPERTY_KEY_PACKAGE_PATH);
+		if (themePackagePath != null && !themePackagePath.isEmpty()) {
+			memento.lastLoadedThemePaths.add(themePackagePath);
 		}
-		memento.lastInstalledThemeId = themeId;
+		memento.lastInstalledThemeIds.add(themeId);
 		observableContext.notifyChanged();
 
 		ClassLoader resourceLoader = theme.getResourceLoader();
 		Thread.currentThread().setContextClassLoader(resourceLoader);
 		mainScene.getStylesheets().retainAll(DEFAULT_METRO_STYLE_SHEET);
 		mainScene.getStylesheets().addAll(theme.getStyleSheets());
-		installedTheme = theme;
 		LOGGER.info("Installed theme '" + themeId + "'");
 	}
 
 	public void uninstallTheme(Theme theme) {
 		mainScene.getStylesheets().removeAll(theme.getStyleSheets());
-		installedTheme = null;
-	}
-
-	public Theme getInstalledTheme() {
-		return installedTheme;
 	}
 
 	public Stage getMainStage() {
@@ -251,32 +241,29 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	}
 
 	private void initTheme() {
-		for (String strUrl : memento.lastLoadedThemePackageUrls) {
-			URL url;
-			try {
-				url = new URL(strUrl);
-			} catch (MalformedURLException e) {
-				LOGGER.log(Level.WARNING, "The theme package url '" + strUrl + "' is in a valid format, it will be ignored", e);
+		for (String path : memento.lastLoadedThemePaths) {
+			if (!Files.exists(Paths.get(path))) {
+				LOGGER.info("Last loaded theme path '" + path + "' is invalid, deleting it");
+				memento.lastLoadedThemePaths.remove(path);
 				continue;
 			}
 			try {
-				themeLoadingService.loadAndPublish(url);
+				themeLoadingService.loadAndPublish(Paths.get(path).toUri().toURL());
 			} catch (IOException | InvalidThemeException e) {
-				LOGGER.log(Level.WARNING, "Failed to load theme package from '" + strUrl + "'", e);
+				LOGGER.log(Level.WARNING, "Failed to load theme package from '" + path + "'", e);
 			}
 		}
 
-		String lastId = memento.lastInstalledThemeId;
-		if (lastId != null && !lastId.isEmpty()) {
-			BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			try {
-				Collection<ServiceReference<Theme>> references = ctx.getServiceReferences(Theme.class, "(" + Theme.PROPERTY_KEY_ID + "=" + lastId + ")");
-				if (references.size() > 0) {
-					installTheme(ctx.getService(references.iterator().next()));
+		List<String> lastIds = memento.lastInstalledThemeIds;
+		if (lastIds != null && !lastIds.isEmpty()) {
+			for (String id : lastIds) {
+				try {
+					installTheme(findThemeById(id));
+				} catch (InvalidSyntaxException | InvalidThemeException e) {
+					LOGGER.log(Level.WARNING, "Failed to load last theme package '" + id + "'", e);
 				}
-			} catch (InvalidSyntaxException | InvalidThemeException e) {
-				LOGGER.log(Level.WARNING, "Failed to load last theme package '" + lastId + "'", e);
 			}
+
 		} else {
 			try {
 				installTheme(new DefaultTheme());
@@ -284,5 +271,15 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 				throw new Error(e); // impossible
 			}
 		}
+	}
+
+	private Theme findThemeById(String id) throws InvalidSyntaxException {
+		Theme theme = null;
+		BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		Collection<ServiceReference<Theme>> references = ctx.getServiceReferences(Theme.class, "(" + Theme.PROPERTY_KEY_ID + "=" + id + ")");
+		if (references.size() > 0) {
+			theme = ctx.getService(references.iterator().next());
+		}
+		return theme;
 	}
 }

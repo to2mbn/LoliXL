@@ -6,6 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstalledThemeMemento implements Configuration {
-	public List<String> lastLoadedThemePackageUrls = new ArrayList<>();
-	public String lastInstalledThemeId = "";
+	public List<String> lastLoadedThemePaths = new ArrayList<>();
+	public List<String> lastInstalledThemeIds = new ArrayList<>();
 }

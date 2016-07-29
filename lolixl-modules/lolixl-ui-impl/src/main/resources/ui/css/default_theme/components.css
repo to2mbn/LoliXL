@@ -47,3 +47,7 @@
 #content-panel-previous-button:hover {
     -fx-background-image: "/ui/img/previous_button_hover.png";
 }
+
+#tile {
+    -fx-text-fill: white;
+}
