@@ -1,20 +1,27 @@
 package org.to2mbn.lolixl.ui.theme;
 
-import java.util.Map;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
-public interface Theme {
-	String PROPERTY_FILE_NAME = "meta.json";
-	String PROPERTY_KEY_ID = "id";
-	String PROPERTY_KEY_AUTHORS = "authors";
-	String PROPERTY_KEY_ICON_LOCATION = "icon";
-	String PROPERTY_KEY_DESCRIPTION = "description";
-	String INTERNAL_PROPERTY_KEY_PACKAGE_PATH = "package_path";
+public interface Theme extends DisplayableItem {
 
-	String getId();
-
-	Map<String, Object> getMeta();
+	String PROPERTY_THEME_ID = "org.to2mbn.lolixl.ui.theme.id";
 
 	String[] getStyleSheets();
 
-	ClassLoader getResourceLoader();
+	default ClassLoader getResourceLoader() {
+		return getClass().getClassLoader();
+	}
+
+	default String getURI() {
+		return null;
+	}
+
+	default String[] getAuthors() {
+		return null;
+	}
+
+	default String getDescription() {
+		return null;
+	}
+
 }

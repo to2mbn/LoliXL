@@ -14,26 +14,16 @@ public class SideBarTileList implements Configuration {
 		private static final long serialVersionUID = 1L;
 
 		public String tagName;
-		public volatile SidebarTileElement tileElement;
-		public volatile Tile tileComponent;
-
-		@Override
-		public String toString() {
-			return "[" + tagName + "]";
-		}
+		public volatile transient SidebarTileElement tileElement;
+		public volatile transient Tile tileComponent;
 
 	}
 
 	private static final long serialVersionUID = 1L;
 
 	public Vector<TileEntry> entries;
-	public volatile Map<String, TileEntry> tagNameMapping;
-	public volatile Map<SidebarTileElement, TileEntry> serviceMapping;
-	public volatile Map<Tile, TileEntry> componentMapping;
-
-	@Override
-	public String toString() {
-		return String.valueOf(entries);
-	}
+	public transient Map<String, TileEntry> tagNameMapping;
+	public transient Map<SidebarTileElement, TileEntry> serviceMapping;
+	public transient Map<Tile, TileEntry> componentMapping;
 
 }

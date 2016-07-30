@@ -15,8 +15,7 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.UIApp;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.ThemesContentPanelView;
 import org.to2mbn.lolixl.ui.theme.Theme;
-import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
-import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
+import org.to2mbn.lolixl.ui.theme.ThemeService;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 	private static final String FXML_LOCATION = "/ui/fxml/panel/themes_panel.fxml";
 
 	@Reference
-	private ThemeLoadingService themeLoadingService;
+	private ThemeService themeLoadingService;
 
 	private UIApp uiApp;
 	private Map<Tile, Theme> tileThemeMap = new HashMap<>();
