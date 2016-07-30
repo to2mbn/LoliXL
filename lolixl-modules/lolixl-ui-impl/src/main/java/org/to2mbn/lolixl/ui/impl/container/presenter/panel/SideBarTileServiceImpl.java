@@ -13,18 +13,16 @@ import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toConcurrentMap;
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
@@ -53,7 +51,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 
 		private static final long serialVersionUID = 1L;
 
-		LinkedList<TileEntry> entries;
+		ArrayList<TileEntry> entries;
 		volatile Map<String, TileEntry> tagNameMapping;
 
 		@Override
@@ -139,7 +137,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 			tiles = new TileList();
 		}
 		if (tiles.entries == null) {
-			tiles.entries = new LinkedList<>();
+			tiles.entries = new ArrayList<>();
 		}
 		tiles.tagNameMapping = tiles.entries.stream()
 				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
@@ -148,7 +146,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 	void saveTilesListFile() {
 		TileList copy = new TileList();
 		synchronized (tiles) {
-			copy.entries = new LinkedList<>(tiles.entries);
+			copy.entries = new ArrayList<>(tiles.entries);
 		}
 		try {
 			synchronized (tileListFile) {
@@ -162,6 +160,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 	@Override
 	public SidebarTileElement[] getTiles(StackingStatus... types) {
 		checkFxThread();
+		Objects.requireNonNull(types);
 
 		boolean includeShown = false;
 		boolean includeHidden = false;
@@ -206,6 +205,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 	@Override
 	public StackingStatus getStatus(SidebarTileElement element) {
 		checkFxThread();
+		Objects.requireNonNull(element);
 
 		int idx = 0;
 		synchronized (tiles) {
@@ -225,6 +225,8 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 
 	@Override
 	public String getTagName(SidebarTileElement element) {
+		Objects.requireNonNull(element);
+
 		for (TileEntry ele : tiles.tagNameMapping.values()) {
 			if (ele.tileElement == element) {
 				return ele.tagName;
@@ -236,10 +238,57 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 	@Override
 	public int moveTile(SidebarTileElement element, int offset) {
 		checkFxThread();
+		Objects.requireNonNull(element);
+
 		synchronized (tiles) {
-			// TODO: wip
+			List<TileEntry> entries = tiles.entries;
+			int idxSrc = entries.indexOf(element);
+			if (idxSrc == -1 || offset == 0) {
+				return 0;
+			}
+			int idxSrcDisplay = 0;
+			for (int i = 0; i < entries.size(); i++) {
+				SidebarTileElement tileEle = entries.get(i).tileElement;
+				if (tileEle == element) {
+					break;
+				} else if (tileEle != null) {
+					idxSrcDisplay++;
+				}
+			}
+			int idxDestDisplay = idxSrc + offset;
+			int idxDest = -1;
+			if (idxDestDisplay <= 0) {
+				idxDest = 0;
+			} else {
+				int iDisplay = 0;
+
+				for (int i = 0; i < entries.size(); i++) {
+					if (entries.get(i).tileElement != null) {
+						if (iDisplay == idxDestDisplay) {
+							idxDest = i;
+							break;
+						}
+						iDisplay++;
+					}
+				}
+				if (idxDest == -1) {
+					idxDest = entries.size();
+					idxDestDisplay = iDisplay;
+				}
+			}
+			if (idxDest == idxSrc) {
+				return 0;
+			}
+			TileEntry entry = entries.get(idxSrc);
+			entries.remove(idxSrc);
+			if (idxDest > idxSrc) {
+				entries.add(idxDest - 1, entry);
+			} else {
+				entries.add(idxDest, entry);
+			}
+			// TODO notify
+			return idxDestDisplay - idxSrcDisplay;
 		}
-		return 0;
 	}
 
 }
