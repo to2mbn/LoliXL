@@ -22,7 +22,10 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.*;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.GameVersionsPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.SettingsPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.theme.DefaultTheme;
 import org.to2mbn.lolixl.ui.impl.theme.management.InstalledThemeMemento;
 import org.to2mbn.lolixl.ui.theme.Theme;
@@ -35,7 +38,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,8 +56,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	@Reference
 	private ThemeLoadingService themeLoadingService;
 
-	private Set<Theme> installedThemes = new HashSet<>();
-
 	private Stage mainStage;
 	private Scene mainScene;
 
@@ -67,7 +70,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
 	private SettingsPanelContentPresenter settingsPanelContentPresenter;
 	private GameVersionsPanelContentPresenter gameVersionsPanelContentPresenter;
-	private ThemesContentPanelPresenter themesContentPanelPresenter;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -83,7 +85,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		hiddenTilesPanelContentPresenter = new HiddenTilesPanelContentPresenter();
 		settingsPanelContentPresenter = new SettingsPanelContentPresenter();
 		gameVersionsPanelContentPresenter = new GameVersionsPanelContentPresenter();
-		themesContentPanelPresenter = new ThemesContentPanelPresenter();
 
 		// Register services
 		BundleContext ctx = compCtx.getBundleContext();
@@ -173,18 +174,11 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		Thread.currentThread().setContextClassLoader(resourceLoader);
 		mainScene.getStylesheets().retainAll(DEFAULT_METRO_STYLE_SHEET);
 		mainScene.getStylesheets().addAll(theme.getStyleSheets());
-		synchronized (installedThemes) {
-			installedThemes.add(theme);
-		}
 		LOGGER.info("Installed theme '" + themeId + "'");
 	}
 
 	public void uninstallTheme(Theme theme) {
 		mainScene.getStylesheets().removeAll(theme.getStyleSheets());
-		synchronized (installedThemes) {
-			installedThemes.remove(theme);
-		}
-		LOGGER.info("Uninstalled theme '" + theme.getId() + "'");
 	}
 
 	public Stage getMainStage() {
@@ -193,12 +187,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 
 	public Scene getMainScene() {
 		return mainScene;
-	}
-
-	public boolean isThemeInstalled(Theme theme) {
-		synchronized (installedThemes) {
-			return installedThemes.contains(theme);
-		}
 	}
 
 	private void start(Stage primaryStage) {
@@ -224,8 +212,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 			homeContentPresenter.initializeView();
 			tileManagingPanelContentPresenter.initializeView();
 			hiddenTilesPanelContentPresenter.initializeView();
-			gameVersionsPanelContentPresenter.initializeView();
-			themesContentPanelPresenter.initializeView();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -239,7 +225,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		homeContentPresenter.setDefaultFramePresenter(framePresenter);
 		homeContentPresenter.setHiddenTilesPanelContentPresenter(hiddenTilesPanelContentPresenter);
 		tileManagingPanelContentPresenter.setHomeContentPresenter(homeContentPresenter);
-		themesContentPanelPresenter.setUiApp(this);
 
 		framePresenter.postInitialize();
 		titleBarPresenter.postInitialize();
@@ -247,8 +232,6 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		homeContentPresenter.postInitialize();
 		tileManagingPanelContentPresenter.postInitialize();
 		hiddenTilesPanelContentPresenter.postInitialize();
-		gameVersionsPanelContentPresenter.postInitialize();
-		themesContentPanelPresenter.postInitialize();
 	}
 
 	private void initLayout() {
