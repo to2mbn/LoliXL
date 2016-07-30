@@ -31,8 +31,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	private HiddenTilesPanelContentPresenter hiddenTilesPanelContentPresenter;
 	private TileManagingPanelContentPresenter tileManagingPanelContentPresenter;
 
-	private List<Node> shownTiles;
-
 	public Supplier<Tile> hiddenTilesPanel = () -> {
 		Panel panel = defaultFramePresenter.newPanel();
 		panel.setContent(hiddenTilesPanelContentPresenter.getView().tilesContainer);

@@ -1,28 +1,49 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
+import static java.util.stream.Collectors.*;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.layout.Region;
-import org.to2mbn.lolixl.core.config.ConfigurationCategory;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
+import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.ui.SideBarTileService;
+import org.to2mbn.lolixl.ui.SideBarTileService.StackingStatus;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.TileListCell;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.TileManagingPanelContentView;
-import org.to2mbn.lolixl.utils.ObservableContext;
+import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 
-import java.util.List;
-import java.util.stream.Stream;
+@Service({ EventHandler.class })
+@Properties({
+		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
+		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
+})
+@Component(immediate = true)
+public class TileManagingPanelContentPresenter extends PanelContentPresenter<TileManagingPanelContentView> implements EventHandler {
 
-public class TileManagingPanelContentPresenter extends PanelContentPresenter<TileManagingPanelContentView> implements ConfigurationCategory<TilesOrderConfiguration> {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/tile_managing_panel.fxml";
+	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";
+	
+	private static final Logger LOGGER = Logger.getLogger(TileManagingPanelContentPresenter.class.getCanonicalName());
 
-	private final TilesOrderConfiguration configuration = new TilesOrderConfiguration();
-	private HomeContentPresenter homeContentPresenter;
+	@Reference
+	private SideBarTileService tileService;
 
-	public void setHomeContentPresenter(HomeContentPresenter _homeContentPresenter) {
-		homeContentPresenter = _homeContentPresenter;
+	private ObservableList<Tile> tiles;
+
+	@Override
+	public void handleEvent(Event event) {
+		LOGGER.fine(() -> "Event-driven tiles refreshing: " + event);
+		Platform.runLater(() -> refreshTiles());
 	}
 
 	@Override
@@ -31,80 +52,39 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 		view.upButton.setOnAction(this::onUpButtonClicked);
 		view.downButton.setOnAction(this::onDownButtonClicked);
 
-		// 根据configuration读取磁贴顺序并设置生效
-		Tile[] tiles = new Tile[configuration.tilesOrder.size()];
-		Stream<Tile> oldTiles = Stream.of(homeContentPresenter.getTiles(SideBarTileService.StackingStatus.COMMON));
-		configuration.tilesOrder.forEach((tag, index) -> tiles[index] = oldTiles.filter(it -> it.getNameTag().equals(tag)).findFirst().get());
-		homeContentPresenter.updateTilesOrder(tiles);
-		updateListData();
+		tiles = FXCollections.observableArrayList();
 	}
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	@Override
 	public void onPanelShown() {
-		updateListData();
+		refreshTiles();
 	}
 
-	@Override
-	public Region createConfiguringPanel() {
-		return null; // 不需要
-	}
-
-	@Override
-	public String getLocalizedName() {
-		return null; // 不需要
-	}
-
-	@Override
-	public void setObservableContext(ObservableContext ctx) {
-	}
-
-	@Override
-	public TilesOrderConfiguration store() {
-		return configuration;
-	}
-
-	@Override
-	public void restore(TilesOrderConfiguration memento) {
-		configuration.tiles.clear();
-		configuration.tiles.putAll(memento.tiles);
-	}
-
-	@Override
-	public Class<? extends TilesOrderConfiguration> getMementoType() {
-		return configuration.getClass();
-	}
-
-	private void updateListData() {
-		view.listView.setItems(FXCollections.observableArrayList(homeContentPresenter.getTiles(SideBarTileService.StackingStatus.COMMON)));
+	private void refreshTiles() {
+		tiles.setAll(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN).stream()
+				.map(tileService::getTileComponent)
+				.collect(toList()));
 	}
 
 	private void onUpButtonClicked(ActionEvent event) {
-		Tile selectedTile = (Tile) view.listView.getSelectionModel().getSelectedItem();
-		updateTileOrder(true, selectedTile);
+		Tile selectedTile = view.listView.getSelectionModel().getSelectedItem();
+		moveTile(selectedTile, -1);
 	}
 
 	private void onDownButtonClicked(ActionEvent event) {
-		Tile selectedTile = (Tile) view.listView.getSelectionModel().getSelectedItem();
-		updateTileOrder(false, selectedTile);
+		Tile selectedTile = view.listView.getSelectionModel().getSelectedItem();
+		moveTile(selectedTile, 1);
 	}
 
-	private void updateTileOrder(boolean isUp, Tile tile) {
-		List<Tile> tiles = view.listView.getItems();
-		int index = tiles.indexOf(tile);
-		if ((index == 0 && isUp) || (index == tiles.size() - 1 && !isUp)) {
-			return;
+	private void moveTile(Tile tile, int offset) {
+		SidebarTileElement entry = tileService.getTileByComponent(tile);
+		if (entry != null) {
+			tileService.moveTile(entry, offset);
 		}
-		int newIndex = index + (isUp ? -1 : 1);
-		Tile anotherTile = tiles.get(newIndex);
-		tiles.set(newIndex, tile);
-		tiles.set(newIndex + (isUp ? 1 : -1), anotherTile);
-
-		homeContentPresenter.updateTilesOrder(tiles.toArray(new Tile[tiles.size()]));
-		updateListData();
 	}
 }

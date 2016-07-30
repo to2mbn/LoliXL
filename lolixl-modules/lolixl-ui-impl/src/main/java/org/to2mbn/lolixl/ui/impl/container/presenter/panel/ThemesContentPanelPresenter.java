@@ -17,7 +17,6 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.ThemesContentPanelView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,7 +26,8 @@ import java.util.Optional;
 
 @Component
 public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/themes_panel.fxml";
+
+	private static final String FXML_LOCATION = "/ui/fxml/panel/themes_panel.fxml";
 
 	@Reference
 	private ThemeLoadingService themeLoadingService;
@@ -38,7 +38,7 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	@Override

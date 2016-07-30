@@ -1,10 +1,9 @@
 package org.to2mbn.lolixl.ui.model;
 
-import javafx.scene.control.Button;
+import org.to2mbn.lolixl.ui.component.Tile;
 
 public interface DisplayableTile extends DisplayableItem {
 
-	// TODO: Change to our Tile class?
-	Button createTile();
+	Tile createTile();
 
 }

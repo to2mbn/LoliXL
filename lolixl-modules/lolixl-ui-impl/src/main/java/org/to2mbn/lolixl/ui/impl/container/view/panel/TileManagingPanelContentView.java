@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.view.View;
 
 public class TileManagingPanelContentView extends View {
@@ -12,7 +13,7 @@ public class TileManagingPanelContentView extends View {
 	public BorderPane rootContainer;
 
 	@FXML
-	public ListView listView;
+	public ListView<Tile> listView;
 
 	@FXML
 	public VBox buttonContainer;

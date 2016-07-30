@@ -1,8 +1,12 @@
 package org.to2mbn.lolixl.ui;
 
+import java.util.List;
+import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 
 public interface SideBarTileService {
+
+	String CATEGORY_SIDEBAR_TILES = "org.to2mbn.lolixl.ui.impl.sideBarTiles";
 
 	/**
 	 * 描述一个磁贴的状态
@@ -19,7 +23,7 @@ public interface SideBarTileService {
 	 * @param types
 	 * @return
 	 */
-	SidebarTileElement[] getTiles(StackingStatus... types);
+	List<SidebarTileElement> getTiles(StackingStatus... types);
 
 	/**
 	 * 返回 {@code element} 的堆叠状态，若不存在于磁贴集合中则 {@code null} 。
@@ -36,6 +40,10 @@ public interface SideBarTileService {
 	 * @return
 	 */
 	String getTagName(SidebarTileElement element);
+
+	Tile getTileComponent(SidebarTileElement element);
+
+	SidebarTileElement getTileByComponent(Tile component);
 
 	/**
 	 * 移动给定磁贴。

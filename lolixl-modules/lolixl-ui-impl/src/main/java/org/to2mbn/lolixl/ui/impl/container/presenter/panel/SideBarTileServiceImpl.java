@@ -1,77 +1,54 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import javafx.application.Platform;
+import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
+import org.to2mbn.lolixl.ui.component.Tile;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.SideBarTileList.TileEntry;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toConcurrentMap;
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 
-@Service({ SideBarTileService.class })
+@Service({ SideBarTileService.class, ConfigurationCategory.class })
+@Properties({
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = SideBarTileService.CATEGORY_SIDEBAR_TILES)
+})
 @Component(immediate = true)
-public class SideBarTileServiceImpl implements SideBarTileService {
+public class SideBarTileServiceImpl implements SideBarTileService, ConfigurationCategory<SideBarTileList> {
 
-	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.TileEntry.class.getCanonicalName());
+	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
-	public static class TileEntry implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		String tagName;
-		volatile SidebarTileElement tileElement;
-
-		@Override
-		public String toString() {
-			return "[" + tagName + "]";
-		}
-
-	}
-
-	public static class TileList implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		ArrayList<TileEntry> entries;
-		volatile Map<String, TileEntry> tagNameMapping;
-
-		@Override
-		public String toString() {
-			return String.valueOf(entries);
-		}
-
-	}
-
-	TileList tiles;
+	SideBarTileList tiles;
 	int maxShownTiles = 4; // TODO calculate by height
 
-	Path tileListFile = Paths.get(".lolixl", "ui", "tiles-list.json");
+	ObservableContext observableContext;
 	BundleContext bundleContext;
 	ServiceTracker<SidebarTileElement, SidebarTileElement> serviceTracker;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
 		bundleContext = compCtx.getBundleContext();
-		tryReadTilesListFile();
 		serviceTracker = new ServiceTracker<>(bundleContext, SidebarTileElement.class, new ServiceTrackerCustomizer<SidebarTileElement, SidebarTileElement>() {
 
 			@Override
@@ -79,22 +56,23 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 				SidebarTileElement service = bundleContext.getService(reference);
 				Platform.runLater(() -> {
 					String tagName = ServiceUtils.getIdProperty(SidebarTileElement.PROPERTY_TAG_NAME, reference, service);
-					synchronized (tiles) {
+					synchronized (tiles.entries) {
 						TileEntry entry = tiles.tagNameMapping.get(tagName);
 						if (entry == null) {
 							LOGGER.fine("Loading new tile: " + tagName);
 							entry = new TileEntry();
 							entry.tagName = tagName;
-							entry.tileElement = service;
 							tiles.tagNameMapping.put(tagName, entry);
 							tiles.entries.add(entry);
 						} else {
 							LOGGER.fine("Loading old tile: " + tagName);
-							entry.tileElement = service;
 						}
+						entry.tileElement = service;
+						entry.tileComponent = service.createTile();
+						tiles.serviceMapping.put(service, entry);
+						tiles.componentMapping.put(entry.tileComponent, entry);
 					}
-					saveTilesListFile();
-					// TODO notify
+					observableContext.notifyChanged();
 				});
 				return service;
 			}
@@ -105,17 +83,15 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 			@Override
 			public void removedService(ServiceReference<SidebarTileElement> reference, SidebarTileElement service) {
 				Platform.runLater(() -> {
-					String tagName = ServiceUtils.getIdProperty(SidebarTileElement.PROPERTY_TAG_NAME, reference, service);
-					TileEntry entry = tiles.tagNameMapping.get(tagName);
-					if (entry == null) {
-						LOGGER.warning(format("Tile service %s is going to be removed, but no tile entry for it is found"));
-					} else {
-						if (entry.tileElement == null) {
-							LOGGER.warning(format("Tile service %s is going to be removed, but tileElement of its tile entry is null"));
+					synchronized (tiles.entries) {
+						TileEntry entry = tiles.serviceMapping.remove(service);
+						if (entry == null) {
+							LOGGER.warning(format("Tile service %s is going to be removed, but no tile entry for it is found"));
 						} else {
+							tiles.componentMapping.remove(entry.tileComponent);
+							tiles.tagNameMapping.remove(entry.tagName);
+							entry.tileComponent = null;
 							entry.tileElement = null;
-							LOGGER.fine("Removing tile service: " + tagName);
-							// TODO notify
 						}
 					}
 				});
@@ -124,41 +100,13 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 		});
 	}
 
-	void tryReadTilesListFile() {
-		if (Files.isRegularFile(tileListFile)) {
-			try {
-				tiles = GsonUtils.fromJson(tileListFile, TileList.class);
-				LOGGER.fine(() -> format("Loaded tiles list: %s", tiles));
-			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, format("Couldn't read tiles list [%s]", tileListFile), e);
-			}
-		}
-		if (tiles == null) {
-			tiles = new TileList();
-		}
-		if (tiles.entries == null) {
-			tiles.entries = new ArrayList<>();
-		}
-		tiles.tagNameMapping = tiles.entries.stream()
-				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
-	}
-
-	void saveTilesListFile() {
-		TileList copy = new TileList();
-		synchronized (tiles) {
-			copy.entries = new ArrayList<>(tiles.entries);
-		}
-		try {
-			synchronized (tileListFile) {
-				GsonUtils.toJson(tileListFile, copy);
-			}
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, format("Couldn't tiles list to [%s]", tileListFile), e);
-		}
+	@Deactivate
+	public void deactive() {
+		serviceTracker.close();
 	}
 
 	@Override
-	public SidebarTileElement[] getTiles(StackingStatus... types) {
+	public List<SidebarTileElement> getTiles(StackingStatus... types) {
 		checkFxThread();
 		Objects.requireNonNull(types);
 
@@ -177,13 +125,13 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 			}
 		}
 
+		List<SidebarTileElement> result = new ArrayList<>();
 		if (!includeShown && !includeHidden) {
-			return new SidebarTileElement[0];
+			return result;
 		}
 
-		List<SidebarTileElement> result = new ArrayList<>();
 		int size = 0;
-		synchronized (tiles) {
+		synchronized (tiles.entries) {
 			for (TileEntry ele : tiles.entries) {
 				if (ele.tileElement != null) {
 					if (size < maxShownTiles) {
@@ -199,7 +147,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 				}
 			}
 		}
-		return result.toArray(new SidebarTileElement[size]);
+		return result;
 	}
 
 	@Override
@@ -208,7 +156,7 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 		Objects.requireNonNull(element);
 
 		int idx = 0;
-		synchronized (tiles) {
+		synchronized (tiles.entries) {
 			for (TileEntry ele : tiles.entries) {
 				if (ele.tileElement != null) {
 					if (ele.tileElement == element) {
@@ -227,10 +175,31 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 	public String getTagName(SidebarTileElement element) {
 		Objects.requireNonNull(element);
 
-		for (TileEntry ele : tiles.tagNameMapping.values()) {
-			if (ele.tileElement == element) {
-				return ele.tagName;
-			}
+		TileEntry entry = tiles.serviceMapping.get(element);
+		if (entry != null) {
+			return entry.tagName;
+		}
+		return null;
+	}
+
+	@Override
+	public Tile getTileComponent(SidebarTileElement element) {
+		Objects.requireNonNull(element);
+
+		TileEntry entry = tiles.serviceMapping.get(element);
+		if (entry != null) {
+			return entry.tileComponent;
+		}
+		return null;
+	}
+
+	@Override
+	public SidebarTileElement getTileByComponent(Tile component) {
+		Objects.requireNonNull(component);
+
+		TileEntry entry = tiles.componentMapping.get(component);
+		if (entry != null) {
+			return entry.tileElement;
 		}
 		return null;
 	}
@@ -240,7 +209,9 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 		checkFxThread();
 		Objects.requireNonNull(element);
 
-		synchronized (tiles) {
+		int result;
+
+		synchronized (tiles.entries) {
 			List<TileEntry> entries = tiles.entries;
 			int idxSrc = entries.indexOf(element);
 			if (idxSrc == -1 || offset == 0) {
@@ -286,9 +257,53 @@ public class SideBarTileServiceImpl implements SideBarTileService {
 			} else {
 				entries.add(idxDest, entry);
 			}
-			// TODO notify
-			return idxDestDisplay - idxSrcDisplay;
+			result = idxDestDisplay - idxSrcDisplay;
 		}
+		observableContext.notifyChanged();
+		return result;
+	}
+
+	@Override
+	public void setObservableContext(ObservableContext ctx) {
+		this.observableContext = ctx;
+	}
+
+	@Override
+	public SideBarTileList store() {
+		return tiles;
+	}
+
+	@Override
+	public void restore(SideBarTileList memento) {
+		tiles = memento;
+
+		if (tiles == null) {
+			tiles = new SideBarTileList();
+		}
+		if (tiles.entries == null) {
+			tiles.entries = new Vector<>();
+		}
+		tiles.tagNameMapping = tiles.entries.stream()
+				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
+		tiles.serviceMapping = new ConcurrentHashMap<>();
+		tiles.componentMapping = new ConcurrentHashMap<>();
+
+		serviceTracker.open(true);
+	}
+
+	@Override
+	public Class<? extends SideBarTileList> getMementoType() {
+		return SideBarTileList.class;
+	}
+
+	@Override
+	public String getLocalizedName() {
+		return null;
+	}
+
+	@Override
+	public Region createConfiguringPanel() {
+		return null;
 	}
 
 }
