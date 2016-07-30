@@ -5,7 +5,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
-
 import java.util.function.Consumer;
 
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {

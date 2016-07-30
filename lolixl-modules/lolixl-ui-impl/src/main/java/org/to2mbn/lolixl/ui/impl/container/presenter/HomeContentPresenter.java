@@ -15,7 +15,6 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.panel.HiddenTilesPanelConte
 import org.to2mbn.lolixl.ui.impl.container.presenter.panel.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.utils.FXUtils;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

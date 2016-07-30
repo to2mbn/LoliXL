@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
-
 import java.io.IOException;
 
 public class ContentPanelView extends BorderPane {

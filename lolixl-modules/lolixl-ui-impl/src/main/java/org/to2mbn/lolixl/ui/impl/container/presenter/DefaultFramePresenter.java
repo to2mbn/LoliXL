@@ -17,7 +17,6 @@ import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.ContentPanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
 import org.to2mbn.lolixl.utils.FXUtils;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
@@ -207,7 +206,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 			}
 		});
 		view.shadowContainer.setOnMouseDragged(event -> {
-			if (!isDragging && !checkMinSize()){
+			if (!isDragging && !checkMinSize()) {
 				double height = view.shadowContainer.getHeight();
 				double width = view.shadowContainer.getWidth();
 				view.shadowContainer.resize(width + event.getSceneX() - lastResizeX, height + event.getSceneY() - lastResizeY);
@@ -225,8 +224,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	}
 
 	private boolean checkMinSize() {
-		return view.shadowContainer.getHeight() <= view.shadowContainer.getMinHeight()
-				|| view.shadowContainer.getWidth() <= view.shadowContainer.getMinWidth();
+		return view.shadowContainer.getHeight() <= view.shadowContainer.getMinHeight() || view.shadowContainer.getWidth() <= view.shadowContainer.getMinWidth();
 	}
 
 	private static class PanelEntry {

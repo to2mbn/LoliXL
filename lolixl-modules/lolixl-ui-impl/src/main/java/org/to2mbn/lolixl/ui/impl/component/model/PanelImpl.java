@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
 import org.to2mbn.lolixl.utils.FXUtils;
-
 import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {

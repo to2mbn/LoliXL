@@ -12,10 +12,13 @@ import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingProcessor;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
-
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 

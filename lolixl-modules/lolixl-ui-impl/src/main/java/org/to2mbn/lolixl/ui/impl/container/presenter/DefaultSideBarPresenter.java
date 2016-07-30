@@ -5,12 +5,11 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.Parent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
-import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.Panel;
+import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView;
-
 import java.util.Objects;
 import java.util.Optional;
 

@@ -7,14 +7,22 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingProcessor;
 import org.to2mbn.lolixl.utils.GsonUtils;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -33,7 +41,7 @@ public class ZippedThemePackageLoadingProcessor implements ThemeLoadingProcessor
 	public Theme process(URL baseUrl) throws IOException {
 		LOGGER.fine("Started processing bundled theme: " + baseUrl.toExternalForm());
 		URI bundleURI = URI.create("jar:" + baseUrl.toExternalForm());
-		ClassLoader resourceLoader = new URLClassLoader(new URL[]{ baseUrl });
+		ClassLoader resourceLoader = new URLClassLoader(new URL[] { baseUrl });
 		Map<String, Object> metaMap = new HashMap<>();
 		List<String> styleSheets = new ArrayList<>();
 		try (FileSystem fileSystem = FileSystems.newFileSystem(bundleURI, Collections.emptyMap())) {
