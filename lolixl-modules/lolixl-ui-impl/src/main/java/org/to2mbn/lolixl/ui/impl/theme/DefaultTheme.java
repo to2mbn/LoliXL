@@ -1,28 +1,19 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Service;
+import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.theme.Theme;
-import java.util.HashMap;
-import java.util.Map;
+import javafx.scene.image.Image;
 
+@Service({ Theme.class })
+@Properties({
+		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.impl.theme.default")
+})
+@Component(immediate = true)
 public class DefaultTheme implements Theme {
-	private final Map<String, Object> meta;
-
-	public DefaultTheme() {
-		meta = new HashMap<>();
-		meta.put(Theme.PROPERTY_KEY_ID, "lolixl_default");
-		meta.put(Theme.PROPERTY_KEY_AUTHORS, "LoliXL Developers");
-		meta.put(Theme.PROPERTY_KEY_ICON_LOCATION, "/icon.png");
-	}
-
-	@Override
-	public String getId() {
-		return (String) meta.get(Theme.PROPERTY_KEY_ID);
-	}
-
-	@Override
-	public Map<String, Object> getMeta() {
-		return meta;
-	}
 
 	@Override
 	public String[] getStyleSheets() {
@@ -30,7 +21,24 @@ public class DefaultTheme implements Theme {
 	}
 
 	@Override
-	public ClassLoader getResourceLoader() {
-		return getClass().getClassLoader();
+	public String getLocalizedName() {
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.name");
 	}
+
+	@Override
+	public String[] getAuthors() {
+		return new String[] { "LoliXL Developers" };
+	}
+
+	@Override
+	public String getDescription() {
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.description");
+	}
+
+	@Override
+	public Image getIcon() {
+		// TODO Use an icon here
+		return null;
+	}
+
 }
