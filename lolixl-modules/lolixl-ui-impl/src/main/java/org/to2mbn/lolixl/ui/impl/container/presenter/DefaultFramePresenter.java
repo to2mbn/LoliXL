@@ -49,11 +49,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		return LOCATION_OF_FXML;
 	}
 
-	/**
-	 * 需要在JavaFX线程下运行
-	 *
-	 * @param background
-	 */
 	@Override
 	public void setBackground(Background background) {
 		preCheck(background);
@@ -83,8 +78,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	/**
 	 * 需要在JavaFX线程下运行
-	 *
-	 * @param titleBar
 	 */
 	public void setTitleBar(Parent titleBar) {
 		preCheck(titleBar);
@@ -95,8 +88,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	/**
 	 * 需要在JavaFX线程下运行
-	 *
-	 * @param sidebar
 	 */
 	public void setSidebar(Parent sidebar) {
 		preCheck(sidebar);
@@ -107,8 +98,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	/**
 	 * 需要在JavaFX线程下运行
-	 *
-	 * @param content
 	 */
 	public void setContent(Parent content) {
 		preCheck(content);
@@ -133,9 +122,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-
 		panels.offer(entry);
-
 		// 先隐藏添加的面板 等待之后的动画效果即将播放了再显示回来
 		entry.view.setVisible(false);
 		if (view.rootContainer.getLeft() != null) { // 如果此时没有已经显示了的面板
@@ -145,7 +132,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		}
 		// 向主页栏添加面板
 		view.rootContainer.setCenter(entry.view);
-
 		Animation animation = generateAnimation(entry.view, false);
 		animation.play();
 		entry.view.setVisible(true);

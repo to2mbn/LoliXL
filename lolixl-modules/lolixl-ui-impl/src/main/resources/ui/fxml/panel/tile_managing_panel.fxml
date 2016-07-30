@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="tile-managin-panel-root-container" fx:id="rootContainer" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panelcontent.TileManagingPanelContentView">
+<BorderPane id="tile-managin-panel-root-container" fx:id="rootContainer" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.TileManagingPanelContentView">
    <center>
       <ListView id="tile-managin-panel-list-view" fx:id="listView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </center>

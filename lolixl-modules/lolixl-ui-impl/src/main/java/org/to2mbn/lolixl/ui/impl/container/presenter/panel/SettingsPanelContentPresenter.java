@@ -1,9 +1,9 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import org.apache.felix.scr.annotations.Component;
 import org.to2mbn.lolixl.ui.SettingsCategoriesManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panelcontent.SettingsContentPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.SettingsContentPanelView;
 
 @Component
 public class SettingsPanelContentPresenter extends Presenter<SettingsContentPanelView> implements SettingsCategoriesManagingService {

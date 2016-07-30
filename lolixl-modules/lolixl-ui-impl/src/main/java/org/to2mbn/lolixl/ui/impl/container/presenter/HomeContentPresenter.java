@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.content;
+package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -11,10 +11,9 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.HiddenTilesPanelContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.TileManagingPanelContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.view.content.HomeContentView;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.HiddenTilesPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.TileManagingPanelContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.utils.FXUtils;
 
 import java.util.LinkedList;

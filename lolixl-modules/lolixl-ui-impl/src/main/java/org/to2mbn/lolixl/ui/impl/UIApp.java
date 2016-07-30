@@ -16,13 +16,16 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
+import org.to2mbn.lolixl.i18n.LocaleChangedEvent;
 import org.to2mbn.lolixl.ui.*;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultTitleBarPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent.*;
+import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.*;
 import org.to2mbn.lolixl.ui.impl.theme.DefaultTheme;
 import org.to2mbn.lolixl.ui.impl.theme.management.InstalledThemeMemento;
 import org.to2mbn.lolixl.ui.theme.Theme;
@@ -51,7 +54,7 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	@Reference
 	private ThemeLoadingService themeLoadingService;
 
-	private Set<Theme> installedThemes = new HashSet<>();
+	private final Set<Theme> installedThemes = new HashSet<>();
 
 	private Stage mainStage;
 	private Scene mainScene;
@@ -92,6 +95,9 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		ctx.registerService(SideBarTileService.class, homeContentPresenter, null);
 		ctx.registerService(SideBarPanelDisplayService.class, sideBarPresenter, null);
 		ctx.registerService(SettingsCategoriesManagingService.class, settingsPanelContentPresenter, null);
+		// Register i18n listeners
+		Dictionary<String, String> property = new Hashtable<>(Collections.singletonMap(EventConstants.EVENT_TOPIC, LocaleChangedEvent.TOPIC_LOCALE_CHANGED));
+		ctx.registerService(EventHandler.class, themesContentPanelPresenter, property);
 
 		LOGGER.info("Initializing JavaFX");
 		new JFXPanel(); // init JavaFX
@@ -173,13 +179,17 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 		Thread.currentThread().setContextClassLoader(resourceLoader);
 		mainScene.getStylesheets().retainAll(DEFAULT_METRO_STYLE_SHEET);
 		mainScene.getStylesheets().addAll(theme.getStyleSheets());
-		installedThemes.add(theme);
+		synchronized (installedThemes) {
+			installedThemes.add(theme);
+		}
 		LOGGER.info("Installed theme '" + themeId + "'");
 	}
 
 	public void uninstallTheme(Theme theme) {
 		mainScene.getStylesheets().removeAll(theme.getStyleSheets());
-		installedThemes.remove(theme);
+		synchronized (installedThemes) {
+			installedThemes.remove(theme);
+		}
 		LOGGER.info("Uninstalled theme '" + theme.getId() + "'");
 	}
 
@@ -192,7 +202,9 @@ public class UIApp implements ConfigurationCategory<InstalledThemeMemento> {
 	}
 
 	public boolean isThemeInstalled(Theme theme) {
-		return installedThemes.contains(Objects.requireNonNull(theme));
+		synchronized (installedThemes) {
+			return installedThemes.contains(Objects.requireNonNull(theme));
+		}
 	}
 
 	private void start(Stage primaryStage) {

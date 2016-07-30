@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import org.to2mbn.lolixl.core.config.Configuration;
 import java.util.Map;

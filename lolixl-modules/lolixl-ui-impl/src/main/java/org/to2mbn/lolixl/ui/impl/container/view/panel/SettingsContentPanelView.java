@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.view.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.view.panel;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;

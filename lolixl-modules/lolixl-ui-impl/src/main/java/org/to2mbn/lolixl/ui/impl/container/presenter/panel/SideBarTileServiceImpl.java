@@ -1,18 +1,6 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
-import static java.lang.String.format;
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
-import static java.util.stream.Collectors.*;
-import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.application.Platform;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
@@ -25,7 +13,21 @@ import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import javafx.application.Platform;
+
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toConcurrentMap;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 
 @Service({ SideBarTileService.class })
 @Component(immediate = true)

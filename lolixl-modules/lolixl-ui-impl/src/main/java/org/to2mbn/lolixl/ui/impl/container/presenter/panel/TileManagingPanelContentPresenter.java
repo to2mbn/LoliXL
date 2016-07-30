@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -8,8 +8,8 @@ import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.TileListCell;
 import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.presenter.content.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panelcontent.TileManagingPanelContentView;
+import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.TileManagingPanelContentView;
 import org.to2mbn.lolixl.utils.ObservableContext;
 
 import java.util.List;

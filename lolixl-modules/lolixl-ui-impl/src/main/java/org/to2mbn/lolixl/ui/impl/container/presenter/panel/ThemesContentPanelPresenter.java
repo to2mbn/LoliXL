@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -9,10 +9,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.osgi.service.event.Event;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.UIApp;
-import org.to2mbn.lolixl.ui.impl.container.view.panelcontent.ThemesContentPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.ThemesContentPanelView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.exception.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.loading.ThemeLoadingService;
@@ -25,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelView> implements EventHandler<ActionEvent> {
+public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/themes_panel.fxml";
 
 	@Reference
@@ -135,5 +136,10 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 		List<String> authors = (List<String>) theme.getMeta().get(Theme.PROPERTY_KEY_AUTHORS);
 		view.themeAuthorsLabel.setText(authors.stream().reduce("", (string, author) -> string + ", " + author));
 		view.themeDescriptionLabel.setText((String) theme.getMeta().get(Theme.PROPERTY_KEY_DESCRIPTION));
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+
 	}
 }

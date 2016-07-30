@@ -1,8 +1,8 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panelcontent;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import javafx.scene.control.Label;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panelcontent.GameVersionsContentPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.GameVersionsContentPanelView;
 
 public class GameVersionsPanelContentPresenter extends Presenter<GameVersionsContentPanelView> {
 	// TODO

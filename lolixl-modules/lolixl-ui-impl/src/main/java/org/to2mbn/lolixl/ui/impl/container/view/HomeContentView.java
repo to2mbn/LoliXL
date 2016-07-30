@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.view.content;
+package org.to2mbn.lolixl.ui.impl.container.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
