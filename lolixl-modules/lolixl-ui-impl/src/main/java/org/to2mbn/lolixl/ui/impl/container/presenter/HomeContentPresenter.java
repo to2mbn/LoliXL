@@ -17,6 +17,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	@Override
 	public void postInitialize() {
+
 	}
 
 	@Override

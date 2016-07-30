@@ -12,6 +12,9 @@ public class HomeContentView extends View {
 	public BorderPane rootContainer;
 
 	@FXML
+	public BorderPane tileRootContainer;
+
+	@FXML
 	public VBox tileContainer;
 
 	@FXML
