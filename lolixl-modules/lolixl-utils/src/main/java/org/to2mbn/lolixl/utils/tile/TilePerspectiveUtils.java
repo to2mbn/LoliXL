@@ -34,6 +34,6 @@ public class TilePerspectiveUtils {
 				return new PerspectiveTransform(2D, 2D, width - 2D, 2D, width - 4D, height - 4D, 2D, height - 2D);
 			}
 		}
-		throw new Error(); // impossible
+		throw new IllegalArgumentException("tile's height or width can not be zero");
 	}
 }
