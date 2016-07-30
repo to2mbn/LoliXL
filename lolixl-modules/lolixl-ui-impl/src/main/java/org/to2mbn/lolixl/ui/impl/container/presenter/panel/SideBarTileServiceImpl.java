@@ -39,12 +39,12 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
-	SideBarTileList tiles;
-	int maxShownTiles = 4; // TODO calculate by height
+	private SideBarTileList tiles;
+	private volatile int maxShownTiles;
 
-	ObservableContext observableContext;
-	BundleContext bundleContext;
-	ServiceTracker<SidebarTileElement, SidebarTileElement> serviceTracker;
+	private ObservableContext observableContext;
+	private BundleContext bundleContext;
+	private ServiceTracker<SidebarTileElement, SidebarTileElement> serviceTracker;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -261,6 +261,14 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 		}
 		observableContext.notifyChanged();
 		return result;
+	}
+
+	@Override
+	public void setMaxShownTiles(int newMaxShownTiles) {
+		if (maxShownTiles != newMaxShownTiles) {
+			maxShownTiles = newMaxShownTiles;
+			observableContext.notifyChanged();
+		}
 	}
 
 	@Override

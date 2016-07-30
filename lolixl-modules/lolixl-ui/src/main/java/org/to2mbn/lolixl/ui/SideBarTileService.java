@@ -54,4 +54,6 @@ public interface SideBarTileService {
 	 */
 	int moveTile(SidebarTileElement element, int offset);
 
+	void setMaxShownTiles(int maxShown);
+
 }
