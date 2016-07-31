@@ -139,6 +139,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 					} else {
 						// 过去设置过这个Theme，遵循过去的设置
 					}
+					observableContext.notifyChanged();
 				}
 				return service;
 			}
@@ -170,6 +171,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 									}
 								}
 							}
+							observableContext.notifyChanged();
 							break;
 						}
 					}
