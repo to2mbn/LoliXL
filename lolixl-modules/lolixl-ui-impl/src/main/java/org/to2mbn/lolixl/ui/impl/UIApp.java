@@ -35,7 +35,7 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.panel.SettingsPanelContentP
 import org.to2mbn.lolixl.ui.impl.container.presenter.panel.ThemesContentPanelPresenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.panel.TileManagingPanelContentPresenter;
 import org.to2mbn.lolixl.ui.impl.theme.DefaultTheme;
-import org.to2mbn.lolixl.ui.impl.theme.ThemeMemento;
+import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration;
 import org.to2mbn.lolixl.ui.theme.InvalidThemeException;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
@@ -58,7 +58,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component(immediate = true)
-public class UIApp implements ConfigurationCategory<ThemeMemento> {
+public class UIApp implements ConfigurationCategory<ThemeConfiguration> {
 	private static final Logger LOGGER = Logger.getLogger(UIApp.class.getCanonicalName());
 
 	private static final String DEFAULT_METRO_STYLE_SHEET = "/ui/css/metro.css";
@@ -75,7 +75,7 @@ public class UIApp implements ConfigurationCategory<ThemeMemento> {
 	private Scene mainScene;
 
 	private ObservableContext observableContext;
-	private ThemeMemento memento;
+	private ThemeConfiguration memento;
 
 	private DefaultFramePresenter framePresenter;
 	private DefaultTitleBarPresenter titleBarPresenter;
@@ -90,7 +90,7 @@ public class UIApp implements ConfigurationCategory<ThemeMemento> {
 	@Activate
 	public void active(ComponentContext compCtx) {
 		LOGGER.info("Initializing UI");
-		memento = new ThemeMemento();
+		memento = new ThemeConfiguration();
 
 		// Create presenters
 		framePresenter = new DefaultFramePresenter();
@@ -137,18 +137,18 @@ public class UIApp implements ConfigurationCategory<ThemeMemento> {
 	}
 
 	@Override
-	public ThemeMemento store() {
+	public ThemeConfiguration store() {
 		return memento;
 	}
 
 	@Override
-	public void restore(ThemeMemento _memento) {
+	public void restore(ThemeConfiguration _memento) {
 		memento.lastLoadedThemePaths = _memento.lastLoadedThemePaths;
 		memento.lastInstalledThemeIds = _memento.lastInstalledThemeIds;
 	}
 
 	@Override
-	public Class<? extends ThemeMemento> getMementoType() {
+	public Class<? extends ThemeConfiguration> getMementoType() {
 		return memento.getClass();
 	}
 

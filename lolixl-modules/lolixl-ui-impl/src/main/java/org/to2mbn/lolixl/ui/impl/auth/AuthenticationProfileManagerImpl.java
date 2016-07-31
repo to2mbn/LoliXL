@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.impl.auth;
+package org.to2mbn.lolixl.ui.impl.auth;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.*;
@@ -26,17 +26,20 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileEvent;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import com.google.gson.JsonSyntaxException;
+import javafx.scene.layout.Region;
 
 @Service({ AuthenticationProfileManager.class })
 @Component(immediate = true)
-public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager {
+public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager, ConfigurationCategory<AuthenticationProfileList> {
 
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationProfileManagerImpl.class.getCanonicalName());
 
@@ -49,16 +52,15 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	private BundleContext bundleContext;
 
 	private Path profileBaseDir = Paths.get(".lolixl", "auth", "profiles");
-	private Path profilesListFile = Paths.get(".lolixl", "auth", "profiles-list.json");
 
-	private AuthenticationProfileList profiles;
+	private AuthenticationProfileList profiles = new AuthenticationProfileList();
 
 	private ServiceTracker<AuthenticationService, AuthenticationService> serviceTracker;
+	private ObservableContext observableContext;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
 		bundleContext = compCtx.getBundleContext();
-		tryReadProfilesListFile();
 		serviceTracker = new ServiceTracker<>(bundleContext, AuthenticationService.class, new ServiceTrackerCustomizer<AuthenticationService, AuthenticationService>() {
 
 			@Override
@@ -83,24 +85,6 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 				bundleContext.ungetService(reference);
 			}
 		});
-		serviceTracker.open(true);
-	}
-
-	private void tryReadProfilesListFile() {
-		if (Files.isRegularFile(profilesListFile)) {
-			try {
-				profiles = GsonUtils.fromJson(profilesListFile, AuthenticationProfileList.class);
-				LOGGER.fine(() -> format("Loaded auth profiles list: %s", profiles.entries));
-			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, format("Couldn't read auth profiles list [%s]", profilesListFile), e);
-			}
-		}
-		if (profiles == null) {
-			profiles = new AuthenticationProfileList();
-		}
-		if (profiles.entries == null) {
-			profiles.entries = new CopyOnWriteArrayList<>();
-		}
 	}
 
 	@Deactivate
@@ -150,9 +134,9 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		updateProfile(AuthenticationProfileEvent.TYPE_CREATE, entry);
 
 		localIOPool.submit(() -> {
-			saveProfilesList();
 			saveProfile(entry);
 		});
+		observableContext.notifyChanged();
 
 		return entry.profile;
 	}
@@ -170,13 +154,13 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 					LOGGER.fine(() -> format("Removed auth profile %s", entry));
 
 					localIOPool.submit(() -> {
-						saveProfilesList();
 						try {
 							Files.deleteIfExists(getProfileLocation(entry.uuid));
 						} catch (Exception e) {
 							LOGGER.log(Level.WARNING, format("Couldn't delete auth profile file for [%s]", entry.uuid), e);
 						}
 					});
+					observableContext.notifyChanged();
 					return;
 				}
 			}
@@ -198,17 +182,6 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private void updateProfile(int type, AuthenticationProfileEntry entry) {
 		eventAdmin.postEvent(new AuthenticationProfileEvent(type, entry.profile, entry.serviceRef));
-	}
-
-	private void saveProfilesList() {
-		try {
-			synchronized (profiles) {
-				GsonUtils.toJson(profilesListFile, profiles);
-				LOGGER.fine("Save auth profiles list");
-			}
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, format("Couldn't save auth profiles list to [%s]", profilesListFile), e);
-		}
 	}
 
 	private void saveProfile(AuthenticationProfileEntry entry) {
@@ -268,5 +241,44 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private Path getProfileLocation(UUID uuid) {
 		return profileBaseDir.resolve(uuid.toString() + ".json");
+	}
+
+	@Override
+	public void setObservableContext(ObservableContext ctx) {
+		this.observableContext = ctx;
+	}
+
+	@Override
+	public AuthenticationProfileList store() {
+		return profiles;
+	}
+
+	@Override
+	public void restore(AuthenticationProfileList memento) {
+		this.profiles = memento;
+		if (profiles == null) {
+			profiles = new AuthenticationProfileList();
+		}
+		if (profiles.entries == null) {
+			profiles.entries = new CopyOnWriteArrayList<>();
+		}
+		serviceTracker.open(true);
+	}
+
+	@Override
+	public Class<? extends AuthenticationProfileList> getMementoType() {
+		return AuthenticationProfileList.class;
+	}
+
+	@Override
+	public String getLocalizedName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Region createConfiguringPanel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

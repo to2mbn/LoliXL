@@ -10,7 +10,8 @@ import javafx.scene.image.Image;
 
 @Service({ Theme.class })
 @Properties({
-		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.impl.theme.default")
+		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.impl.theme.default"),
+		@Property(name = Theme.PROPERTY_THEME_TYPE, value = Theme.TYPE_THEME_PACKAGE)
 })
 @Component(immediate = true)
 public class DefaultTheme implements Theme {
