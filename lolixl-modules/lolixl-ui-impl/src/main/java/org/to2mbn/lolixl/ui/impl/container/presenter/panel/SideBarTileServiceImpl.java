@@ -23,7 +23,6 @@ import org.to2mbn.lolixl.utils.ServiceUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import static java.lang.String.format;
@@ -287,9 +286,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 		if (tiles == null) {
 			tiles = new SideBarTileList();
-		}
-		if (tiles.entries == null) {
-			tiles.entries = new Vector<>();
 		}
 		tiles.tagNameMapping = tiles.entries.stream()
 				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));

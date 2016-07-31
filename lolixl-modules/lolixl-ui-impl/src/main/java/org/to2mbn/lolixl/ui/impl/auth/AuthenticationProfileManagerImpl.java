@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -258,9 +257,6 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		this.profiles = memento;
 		if (profiles == null) {
 			profiles = new AuthenticationProfileList();
-		}
-		if (profiles.entries == null) {
-			profiles.entries = new CopyOnWriteArrayList<>();
 		}
 		serviceTracker.open(true);
 	}
