@@ -1,16 +1,11 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
-import static java.util.stream.Collectors.*;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
+import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -18,12 +13,19 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings.ThemesSettingsPanelPresenter;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import javafx.scene.layout.Region;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * <pre>
@@ -50,6 +52,9 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private ObservableContext observableContext;
 
 	private ThemeConfiguration config;
+
+	@Reference
+	private ThemesSettingsPanelPresenter presenter;
 
 	public ThemeServiceImpl() {
 		themeTypeOrder = new HashMap<>();
@@ -278,7 +283,6 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	@Override
 	public Region createConfiguringPanel() {
-		// TODO Auto-generated method stub
-		return null;
+		return presenter.getView().rootContainer;
 	}
 }

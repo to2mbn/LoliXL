@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,23 +13,22 @@ import org.osgi.service.event.Event;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.UIApp;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.ThemesContentPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesSettingsPanelView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
-public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
+public class ThemesSettingsPanelPresenter extends Presenter<ThemesSettingsPanelView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/themes_panel.fxml";
 
 	@Reference
-	private ThemeService themeLoadingService;
+	private ThemeService themeService;
 
 	private UIApp uiApp;
 	private Map<Tile, Theme> tileThemeMap = new HashMap<>();
@@ -56,16 +55,11 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 		StackPane imgContainer = (StackPane) clickedTile.getGraphic();
 		Theme theme = tileThemeMap.get(clickedTile);
 		if (!uiApp.isThemeInstalled(theme)) {
-			try {
-				uiApp.installTheme(tileThemeMap.get(clickedTile));
-			} catch (InvalidThemeException e) {
-				// TODO
-				return;
-			}
+			themeService.enable(theme);
 			imgContainer.setAlignment(Pos.CENTER_LEFT);
 			imgContainer.getChildren().add(themeInstalledMark);
 		} else {
-			uiApp.uninstallTheme(theme);
+			themeService.disable(theme);
 			imgContainer.getChildren().remove(themeInstalledMark);
 		}
 	}
@@ -85,11 +79,7 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 		File file = chooser.showOpenDialog(uiApp.getMainStage());
 		if (file != null) {
 			Optional<Theme> loaded = null;
-			try {
-				loaded = themeLoadingService.loadAndPublish(file.toURI().toURL());
-			} catch (IOException | InvalidThemeException e) {
-				// TODO
-			}
+			// TODO: Load an zipped theme package
 			if (loaded.isPresent()) {
 				refreshThemeTiles();
 			}
@@ -98,15 +88,15 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 
 	private void addTileForTheme(Theme theme) {
 		Tile tile = makeTile();
-		tile.setText(theme.getId());
+		tile.setText();
 		tile.setOnMouseMoved(event -> updateThemeInfoLabels(theme));
 		tile.setOnAction(this);
 
 		StackPane imgContainer = new StackPane();
 		imgContainer.resize(100, 100);
 		Image icon;
-		if (theme.getMeta().containsKey(Theme.PROPERTY_KEY_ICON_LOCATION)) {
-			icon = new Image(theme.getResourceLoader().getResourceAsStream((String) theme.getMeta().get(Theme.PROPERTY_KEY_ICON_LOCATION)));
+		if (theme.getIcon() != null) {
+			icon = theme.getIcon();
 		} else {
 			icon = new Image(getClass().getResourceAsStream("/ui/img/theme_empty_icon.png"));
 		}
@@ -131,14 +121,13 @@ public class ThemesContentPanelPresenter extends Presenter<ThemesContentPanelVie
 	}
 
 	private void updateThemeInfoLabels(Theme theme) {
-		view.themeNameLabel.setText(theme.getId());
-		List<String> authors = (List<String>) theme.getMeta().get(Theme.PROPERTY_KEY_AUTHORS);
-		view.themeAuthorsLabel.setText(authors.stream().reduce("", (string, author) -> string + ", " + author));
-		view.themeDescriptionLabel.setText((String) theme.getMeta().get(Theme.PROPERTY_KEY_DESCRIPTION));
+		view.themeNameLabel.setText(theme.getId()); // TODO
+		view.themeAuthorsLabel.setText(Stream.of(theme.getAuthors()).reduce("", (string, author) -> string + ", " + author));
+		view.themeDescriptionLabel.setText(theme.getDescription());
 	}
 
 	@Override
 	public void handleEvent(Event event) {
-
+		// TODO: 这是药丸
 	}
 }

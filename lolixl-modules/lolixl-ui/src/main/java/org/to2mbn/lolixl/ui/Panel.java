@@ -2,7 +2,6 @@ package org.to2mbn.lolixl.ui;
 
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
 
 public interface Panel {
 
@@ -19,6 +18,9 @@ public interface Panel {
 	String getTitle();
 	void setTitle(String title);
 
+	Runnable getShowOperation();
+	void setShowOperation(Runnable onShow);
+
 	Runnable getHideOperation();
 	/**
 	 * 设置将关闭面板时的动作。
@@ -29,9 +31,6 @@ public interface Panel {
 
 	Parent getContent();
 	void setContent(Parent content);
-
-	PanelContentPresenter<?> getPresenter();
-	void setPresenter(PanelContentPresenter<?> presenter);
 
 	/**
 	 * 需要在JavaFX线程运行

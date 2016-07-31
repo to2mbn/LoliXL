@@ -3,16 +3,15 @@ package org.to2mbn.lolixl.ui.impl.component.model;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.Panel;
-import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {
 	private Image icon = null;
 	private String title = "";
+	private Runnable showOperation = () -> {};
 	private Runnable hideOperation = () -> {};
 	private Parent content = null;
-	private PanelContentPresenter<?> presenter = null;
 
 	private final Consumer<Panel> onShow;
 	private final Runnable onClose;
@@ -43,6 +42,16 @@ public class PanelImpl implements Panel {
 	}
 
 	@Override
+	public Runnable getShowOperation() {
+		return showOperation;
+	}
+
+	@Override
+	public void setShowOperation(Runnable onShow) {
+		showOperation = onShow;
+	}
+
+	@Override
 	public Runnable getHideOperation() {
 		return hideOperation;
 	}
@@ -63,22 +72,10 @@ public class PanelImpl implements Panel {
 	}
 
 	@Override
-	public PanelContentPresenter<?> getPresenter() {
-		return presenter;
-	}
-
-	@Override
-	public void setPresenter(PanelContentPresenter<?> _presenter) {
-		presenter = _presenter;
-	}
-
-	@Override
 	public void show() {
 		FXUtils.checkFxThread();
+		showOperation.run();
 		onShow.accept(this);
-		if (presenter != null) {
-			presenter.onPanelShown();
-		}
 	}
 
 	@Override
@@ -86,8 +83,5 @@ public class PanelImpl implements Panel {
 		FXUtils.checkFxThread();
 		hideOperation.run();
 		onClose.run();
-		if (presenter != null) {
-			presenter.onPanelClosed();
-		}
 	}
 }

@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
-import static java.util.stream.Collectors.*;
-import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,10 +17,10 @@ import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.SideBarTileService.StackingStatus;
 import org.to2mbn.lolixl.ui.component.Tile;
-import org.to2mbn.lolixl.ui.component.TileListCell;
-import org.to2mbn.lolixl.ui.container.panelcontent.PanelContentPresenter;
+import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.TileManagingPanelContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import java.util.logging.Logger;
 
 @Service({ EventHandler.class })
 @Properties({
@@ -29,7 +28,7 @@ import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
 })
 @Component(immediate = true)
-public class TileManagingPanelContentPresenter extends PanelContentPresenter<TileManagingPanelContentView> implements EventHandler {
+public class TileManagingPanelContentPresenter extends Presenter<TileManagingPanelContentView> implements EventHandler {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";
 	
@@ -48,10 +47,8 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 
 	@Override
 	public void postInitialize() {
-		view.listView.setCellFactory(view -> new TileListCell());
 		view.upButton.setOnAction(this::onUpButtonClicked);
 		view.downButton.setOnAction(this::onDownButtonClicked);
-
 		tiles = FXCollections.observableArrayList();
 	}
 
@@ -60,8 +57,8 @@ public class TileManagingPanelContentPresenter extends PanelContentPresenter<Til
 		return FXML_LOCATION;
 	}
 
-	@Override
-	public void onPanelShown() {
+	// TODO: call from tile
+	public void onShown() {
 		refreshTiles();
 	}
 
