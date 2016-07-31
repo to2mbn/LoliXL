@@ -12,18 +12,16 @@ import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
-import org.to2mbn.lolixl.i18n.LocaleChangedEvent;
 import org.to2mbn.lolixl.i18n.LocalizationService;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 @Component(immediate = true)
 @Service({ LocalizationService.class })
@@ -58,16 +56,24 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 			}
 			return false;
 		}
-
 	}
 
 	private static final Logger LOGGER = Logger.getLogger(LocalizationServiceImpl.class.getCanonicalName());
 
-	@Reference
-	private EventAdmin eventAdmin;
+	private class LocaleProperty extends SimpleObjectProperty<Locale> {
 
-	@Property
-	private volatile Locale currentLocale;
+		public LocaleProperty() {
+			super(LocalizationServiceImpl.this, "locale", Locale.getDefault());
+		}
+
+		@Override
+		public void fireValueChangedEvent() {
+			super.fireValueChangedEvent();
+		}
+
+	}
+
+	private LocaleProperty currentLocale = new LocaleProperty();
 
 	private Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 	private BundleContext bundleContext;
@@ -79,7 +85,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	public void active(ComponentContext compCtx) {
 		public_instance = this;
 		bundleContext = compCtx.getBundleContext();
-		currentLocale = Locale.getDefault();
+		currentLocale.set(Locale.getDefault());
 		LOGGER.info("Using locale " + currentLocale);
 		tracker = new ServiceTracker<>(bundleContext, LocalizationProvider.class, this);
 		tracker.open(true);
@@ -91,23 +97,15 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 		tracker.close();
 	}
 
+
 	@Override
-	public Locale getCurrentLocale() {
+	public ObjectProperty<Locale> localeProperty() {
 		return currentLocale;
 	}
 
 	@Override
-	public void setCurrentLocale(Locale locale) {
-		Objects.requireNonNull(locale);
-		LOGGER.info("Changing locale to " + locale);
-		currentLocale = locale;
-		eventAdmin.postEvent(new LocaleChangedEvent(locale));
-	}
-
-	@Override
 	public void refresh() {
-		LOGGER.info("Refreshing locale: " + currentLocale);
-		eventAdmin.postEvent(new LocaleChangedEvent(currentLocale));
+		currentLocale.fireValueChangedEvent();
 	}
 
 	@Override

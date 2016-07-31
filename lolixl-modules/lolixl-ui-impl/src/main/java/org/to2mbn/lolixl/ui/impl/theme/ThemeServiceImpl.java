@@ -23,6 +23,7 @@ import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
+import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 
 /**
@@ -273,7 +274,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	}
 
 	@Override
-	public String getLocalizedName() {
+	public ObservableStringValue getLocalizedName() {
 		// TODO Auto-generated method stub
 		return null;
 	}

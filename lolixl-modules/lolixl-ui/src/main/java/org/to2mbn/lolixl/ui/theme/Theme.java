@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.ui.theme;
 
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 
 public interface Theme extends DisplayableItem {
 
@@ -21,11 +23,11 @@ public interface Theme extends DisplayableItem {
 		return null;
 	}
 
-	default String[] getAuthors() {
+	default ObservableValue<ObservableStringValue[]> getAuthors() {
 		return null;
 	}
 
-	default String getDescription() {
+	default ObservableStringValue getDescription() {
 		return null;
 	}
 

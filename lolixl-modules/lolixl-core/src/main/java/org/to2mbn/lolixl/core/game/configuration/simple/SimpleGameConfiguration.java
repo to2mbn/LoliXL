@@ -19,6 +19,10 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.configuration.GameConfiguration;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.utils.MemoryTools;
+import org.to2mbn.lolixl.utils.ObservableContext;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 
 public class SimpleGameConfiguration implements GameConfiguration {
 
@@ -27,32 +31,32 @@ public class SimpleGameConfiguration implements GameConfiguration {
 
 	private String alias;
 
-	public RuntimeDirectoryStrategy runtimeDirStrategy = RuntimeDirectoryStrategy.DEFAULT;
-	public String customizedRuntimeDir;
+	private RuntimeDirectoryStrategy runtimeDirStrategy = RuntimeDirectoryStrategy.DEFAULT;
+	private String customizedRuntimeDir;
 
-	public MemoryStrategy xmxStrategy = MemoryStrategy.AUTOMATIC;
-	public int customizedXmx;
+	private MemoryStrategy xmxStrategy = MemoryStrategy.AUTOMATIC;
+	private int customizedXmx;
 
-	public MemoryStrategy xmsStrategy = MemoryStrategy.UNDEFINED;
-	public int customizedXms;
+	private MemoryStrategy xmsStrategy = MemoryStrategy.UNDEFINED;
+	private int customizedXms;
 
-	public JavaPathStrategy javaPathStrategy = JavaPathStrategy.AUTOMATIC;
-	public String customizedJavaPath;
+	private JavaPathStrategy javaPathStrategy = JavaPathStrategy.AUTOMATIC;
+	private String customizedJavaPath;
 
-	public Set<DefaultArgumentOption> defaultArgumentOptions;
+	private Set<DefaultArgumentOption> defaultArgumentOptions;
 
-	public boolean disableOSXArguments = false;
+	private boolean disableOSXArguments = false;
 
-	public String server;
+	private String server;
 
-	public WindowSizeStrategy windowSizeStrategy = WindowSizeStrategy.DEFAULT;
-	public int customizedWindowWidth;
-	public int customizedWindowHeight;
+	private WindowSizeStrategy windowSizeStrategy = WindowSizeStrategy.DEFAULT;
+	private int customizedWindowWidth;
+	private int customizedWindowHeight;
 
-	public List<String> customizedJvmArguments;
-	public List<String> customizedMinecraftArguments;
-	public Map<String, String> customizedCommandlineVariables;
-	public Set<String> customizedClasspath;
+	private List<String> customizedJvmArguments;
+	private List<String> customizedMinecraftArguments;
+	private Map<String, String> customizedCommandlineVariables;
+	private Set<String> customizedClasspath;
 
 	@Override
 	public LaunchOption process(AuthenticationProfile<?> authentication, GameVersion versionToLaunch) {
@@ -200,13 +204,15 @@ public class SimpleGameConfiguration implements GameConfiguration {
 	}
 
 	@Override
-	public String getAlias() {
-		return alias;
+	public StringProperty aliasProperty() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setObservableContext(ObservableContext ctx) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

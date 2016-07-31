@@ -12,11 +12,6 @@
 	<description>LoliXL I18N module</description>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.service.event</artifactId>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 
 </project>

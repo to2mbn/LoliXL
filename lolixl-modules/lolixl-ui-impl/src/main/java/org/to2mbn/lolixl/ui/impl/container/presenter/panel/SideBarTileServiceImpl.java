@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
 
 import javafx.application.Platform;
+import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -301,7 +302,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	}
 
 	@Override
-	public String getLocalizedName() {
+	public ObservableStringValue getLocalizedName() {
 		return null;
 	}
 

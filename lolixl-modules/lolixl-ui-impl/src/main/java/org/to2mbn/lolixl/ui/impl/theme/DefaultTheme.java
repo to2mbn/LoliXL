@@ -6,6 +6,9 @@ import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.theme.Theme;
+import com.sun.javafx.binding.ObjectConstant;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 
 @Service({ Theme.class })
@@ -22,17 +25,17 @@ public class DefaultTheme implements Theme {
 	}
 
 	@Override
-	public String getLocalizedName() {
+	public ObservableStringValue getLocalizedName() {
 		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.name");
 	}
 
 	@Override
-	public String[] getAuthors() {
-		return new String[] { "LoliXL Developers" };
+	public ObservableValue<ObservableStringValue[]> getAuthors() {
+		return ObjectConstant.valueOf(new ObservableStringValue[] { I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.author.lolixlgroup") });
 	}
 
 	@Override
-	public String getDescription() {
+	public ObservableStringValue getDescription() {
 		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.description");
 	}
 

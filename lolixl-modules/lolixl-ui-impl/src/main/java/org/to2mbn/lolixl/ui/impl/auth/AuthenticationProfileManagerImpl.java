@@ -34,6 +34,7 @@ import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import com.google.gson.JsonSyntaxException;
+import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 
 @Service({ AuthenticationProfileManager.class })
@@ -173,10 +174,12 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	}
 
 	private void doSetObservableContext(AuthenticationProfile<?> profile, AuthenticationProfileEntry entry) {
-		profile.setObservableContext(() -> {
+		ObservableContext observableContext = new ObservableContext();
+		observableContext.addListener(dummy -> {
 			updateProfile(AuthenticationProfileEvent.TYPE_UPDATE, entry);
 			saveProfile(entry);
 		});
+		profile.setObservableContext(observableContext);
 	}
 
 	private void updateProfile(int type, AuthenticationProfileEntry entry) {
@@ -267,7 +270,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	}
 
 	@Override
-	public String getLocalizedName() {
+	public ObservableStringValue getLocalizedName() {
 		// TODO Auto-generated method stub
 		return null;
 	}

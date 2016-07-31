@@ -27,6 +27,7 @@ import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.core.config.ConfigurationManager;
 import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.ObservableContext;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 
@@ -65,18 +66,18 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 				ConfigurationCategory service = bundleContext.getService(reference);
 				Configuration configuration = tryLoadConfiguration(reference, service);
 
-				if (configuration != null) {
-					try {
-						service.restore(configuration);
-					} catch (Exception e) {
-						LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
-					}
-				}
-
-				service.setObservableContext(() -> {
+				ObservableContext observableContext = new ObservableContext();
+				observableContext.addListener(dummy -> {
 					updateConfiguration(reference, service);
 					localIOPool.submit(() -> trySaveConfiguration(reference, service));
 				});
+				service.setObservableContext(observableContext);
+
+				try {
+					service.restore(configuration);
+				} catch (Exception e) {
+					LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
+				}
 
 				updateConfiguration(reference, service);
 

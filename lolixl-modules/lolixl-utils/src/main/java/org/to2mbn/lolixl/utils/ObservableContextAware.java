@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.utils;
 
-public interface Observable {
+public interface ObservableContextAware {
 
 	void setObservableContext(ObservableContext ctx);
 

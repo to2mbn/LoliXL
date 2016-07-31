@@ -1,12 +1,11 @@
 package org.to2mbn.lolixl.i18n;
 
 import java.util.Locale;
+import javafx.beans.property.ObjectProperty;
 
 public interface LocalizationService {
 
-	Locale getCurrentLocale();
-
-	void setCurrentLocale(Locale locale);
+	ObjectProperty<Locale> localeProperty();
 
 	/**
 	 * 刷新当前语言环境。

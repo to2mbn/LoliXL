@@ -1,15 +1,15 @@
 package org.to2mbn.lolixl.core.game.version;
 
 import java.nio.file.Path;
-import java.util.List;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.utils.Aliasable;
+import javafx.collections.ObservableList;
 
 public interface GameVersionProvider extends DisplayableTile, Aliasable {
 
 	String PROPERTY_PROVIDER_LOCATION = "org.to2mbn.lolixl.core.game.version.provider";
 
-	List<GameVersion> getVersions();
+	ObservableList<GameVersion> getVersions();
 	Path getMinecraftDirectory();
 
 }
