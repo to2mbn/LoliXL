@@ -7,9 +7,11 @@ import javafx.beans.value.ObservableListValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import org.to2mbn.lolixl.core.download.notify.DownloadTaskEntry;
@@ -27,13 +29,13 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 	public BorderPane headerContainer;
 
 	@FXML
-	public Label textLabel;
-
-	@FXML
-	public Label progressLabel;
-
-	@FXML
 	public ListView<DownloadTaskEntry> itemContainer;
+
+	@FXML
+	public Button cancelButton;
+
+	@FXML
+	public ProgressBar progressBar;
 
 	private final Timer timer;
 	private final TimerTask updateTask;
@@ -61,6 +63,8 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 				setGraphic(makePaneForEntry(entry));
 			}
 		});
+		cancelButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.cancelbutton.text"));
+		cancelButton.setOnAction(event -> {}); // TODO: cancel the task group
 		startUpdateCycle();
 	}
 
@@ -85,6 +89,7 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 				}
 			}, false);
 		}
+		progressBar.setProgress(taskGroup.getFinishedCount() / taskGroup.getTotalCount());
 	}
 
 	private AnchorPane makePaneForEntry(DownloadTaskEntry entry) {

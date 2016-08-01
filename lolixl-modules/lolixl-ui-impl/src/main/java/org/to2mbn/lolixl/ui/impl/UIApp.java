@@ -135,7 +135,6 @@ public class UIApp {
 		framePresenter.setStage(mainStage);
 		titleBarPresenter.setCloseButtonListener(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
 		titleBarPresenter.setParentStage(mainStage);
-		themesPresenter.setUiApp(this);
 		homeContentPresenter.setDownloadCenterPresenter(downloadCenterPresenter);
 		homeContentPresenter.setSettingsPresenter(settingsPresenter);
 		homeContentPresenter.setTileManagingPresenter(tileManagingPresenter);

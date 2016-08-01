@@ -37,7 +37,7 @@
 }
 
 .button:hover {
-    -fx-border-style: none;
+    -fx-border-style: solid;
     -fx-border-width: 2;
     -fx-border-color: #6f6f6f;
 }
