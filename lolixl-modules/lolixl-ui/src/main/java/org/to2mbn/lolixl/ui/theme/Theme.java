@@ -15,6 +15,10 @@ public interface Theme extends DisplayableItem {
 
 	String[] getStyleSheets();
 
+	default <T extends ThemeFeature> T getFeature(Class<T> feature) {
+		return null;
+	}
+
 	default ClassLoader getResourceLoader() {
 		return getClass().getClassLoader();
 	}
