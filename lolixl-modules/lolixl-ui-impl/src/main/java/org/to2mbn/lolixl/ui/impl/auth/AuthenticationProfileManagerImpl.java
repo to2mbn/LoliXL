@@ -30,6 +30,7 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileEvent;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
+import org.to2mbn.lolixl.ui.impl.auth.AuthenticationProfileList.AuthenticationProfileEntry;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
@@ -37,7 +38,7 @@ import com.google.gson.JsonSyntaxException;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 
-@Service({ AuthenticationProfileManager.class })
+@Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
 @Component(immediate = true)
 public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager, ConfigurationCategory<AuthenticationProfileList> {
 
@@ -257,10 +258,8 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	@Override
 	public void restore(AuthenticationProfileList memento) {
-		this.profiles = memento;
-		if (profiles == null) {
-			profiles = new AuthenticationProfileList();
-		}
+		profiles = new AuthenticationProfileList();
+		profiles.entries.addAll(memento.entries);
 		serviceTracker.open(true);
 	}
 

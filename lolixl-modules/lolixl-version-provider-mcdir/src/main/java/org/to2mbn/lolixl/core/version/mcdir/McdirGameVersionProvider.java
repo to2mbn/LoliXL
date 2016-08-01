@@ -1,7 +1,7 @@
 package org.to2mbn.lolixl.core.version.mcdir;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 
 	@Override
 	public ObservableStringValue getLocalizedName() {
-		if (location.toAbsolutePath().equals(new File(".minecraft").toPath().toAbsolutePath())) {
+		if (isCurrentMcdir()) {
 			return I18N.localize("org.to2mbn.lolixl.core.version.mcdir.default.name");
 		}
 		return StringConstant.valueOf(location.toString());
@@ -79,6 +79,18 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 				versionMapping.put(toAdd, ver);
 				gameVersions.add(ver);
 			}
+		}
+	}
+
+	public boolean isCurrentMcdir() {
+		return location.toAbsolutePath().equals(Paths.get(".minecraft").toAbsolutePath());
+	}
+
+	public int getRanking() {
+		if (isCurrentMcdir()) {
+			return 1;
+		} else {
+			return 0;
 		}
 	}
 

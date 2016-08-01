@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * 
  * @author yushijinhun
  */
-@Service({ ThemeService.class })
+@Service({ ThemeService.class, ConfigurationCategory.class })
 @Properties({
 		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = ThemeServiceImpl.CATEGORY_THEME_CONFIG)
 })
@@ -273,10 +273,8 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	@Override
 	public void restore(ThemeConfiguration memento) {
-		this.config = memento;
-		if (config == null) {
-			config = new ThemeConfiguration();
-		}
+		config = new ThemeConfiguration();
+		config.themes.addAll(memento.themes);
 		serviceTracker.open(true);
 	}
 

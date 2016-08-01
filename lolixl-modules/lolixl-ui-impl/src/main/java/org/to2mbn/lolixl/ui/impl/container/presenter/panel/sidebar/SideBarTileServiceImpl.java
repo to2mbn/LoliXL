@@ -282,11 +282,8 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 	@Override
 	public void restore(SideBarTileList memento) {
-		tiles = memento;
-
-		if (tiles == null) {
-			tiles = new SideBarTileList();
-		}
+		tiles = new SideBarTileList();
+		tiles.entries.addAll(memento.entries);
 		tiles.tagNameMapping = tiles.entries.stream()
 				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
 		tiles.serviceMapping = new ConcurrentHashMap<>();

@@ -179,6 +179,7 @@ public class DownloadCenterImpl implements DownloadCenter, EventHandler, Downloa
 			if (callback != null)
 				callbacks.add(callback);
 			Future<T> cancelableFuture = action.apply(CombinedDownloadCallbacks.group(callbacks));
+			result.cancelCallback = mayInterruptIfRunning -> cancelableFuture.cancel(mayInterruptIfRunning);
 			adapter.setAdaptedCancelable(dummy -> cancelableFuture.cancel(true));
 			submittedFuture = cancelableFuture;
 			return cancelableFuture;
@@ -238,6 +239,7 @@ public class DownloadCenterImpl implements DownloadCenter, EventHandler, Downloa
 			if (callback != null)
 				callbacks.add(callback);
 			Future<T> cancelableFuture = action.apply(DownloadCallbacks.group(callbacks));
+			result.cancelCallback = mayInterruptIfRunning -> cancelableFuture.cancel(mayInterruptIfRunning);
 			adapter.setAdaptedCancelable(dummy -> cancelableFuture.cancel(true));
 			submittedFuture = cancelableFuture;
 			return cancelableFuture;

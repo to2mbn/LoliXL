@@ -73,10 +73,12 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 				});
 				service.setObservableContext(observableContext);
 
-				try {
-					service.restore(configuration);
-				} catch (Exception e) {
-					LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
+				if (configuration != null) {
+					try {
+						service.restore(configuration);
+					} catch (Exception e) {
+						LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
+					}
 				}
 
 				updateConfiguration(reference, service);
