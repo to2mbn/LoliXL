@@ -40,7 +40,7 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 			currentPanel.hide();
 		}
 		currentPanel = panel;
-		Parent pane = panel.getContent();
+		Parent pane = panel.contentProperty().get();
 		pane.setVisible(false);
 		view.sidebarContainer.getChildren().add(pane);
 		Animation animation = generateAnimation(pane);

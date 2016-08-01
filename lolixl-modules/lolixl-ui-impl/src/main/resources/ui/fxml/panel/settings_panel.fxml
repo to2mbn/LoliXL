@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane id="settings-panel-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.SettingsPanelContentView">
+<BorderPane id="settings-panel-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView">
    <left>
       <ListView id="settings-panel-category-container" fx:id="categoryContainer" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </left>

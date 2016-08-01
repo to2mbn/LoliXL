@@ -14,7 +14,7 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
-import org.to2mbn.lolixl.ui.impl.component.view.ContentPanelView;
+import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.io.IOException;
@@ -117,7 +117,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private void displayPanelEntry(Panel model) {
 		PanelEntry entry;
 		try {
-			entry = new PanelEntry(model, new ContentPanelView(model));
+			entry = new PanelEntry(model, new PanelView(model));
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

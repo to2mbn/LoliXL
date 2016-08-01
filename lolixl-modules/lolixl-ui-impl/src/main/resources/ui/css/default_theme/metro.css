@@ -9,7 +9,7 @@
 */
 
 .root {
-    -fx-font-family: "Segoe UI", "Microsoft Yahei", "Hiragino Sans GB", "WenQuanYi Zen Hei", Arial, sans-serif;
+    -fx-font-family: "Segoe UI", "Microsoft Yahei", "Ubuntu", "Hiragino Sans GB", "WenQuanYi Zen Hei", Arial, sans-serif;
 }
 
 .background {
@@ -254,7 +254,7 @@
     -fx-padding: 0.0em 0.333333em 0.0em 0.333333em; /*0 4 0 4 */
     -fx-border-style: solid;
     -fx-background-color: #c2c2c2;
-    -fx-border-width: 0.5px;
+    -fx-border-width: 0.5;
 }
 
 /*******************************************************************************

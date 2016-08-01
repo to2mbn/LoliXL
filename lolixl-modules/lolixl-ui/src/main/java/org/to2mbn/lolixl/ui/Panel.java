@@ -1,7 +1,9 @@
 package org.to2mbn.lolixl.ui;
 
-import javafx.scene.Parent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 
 public interface Panel {
 
@@ -12,25 +14,15 @@ public interface Panel {
 	 * 打开/关闭 时使用 滑入/滑出 特效
 	 */
 
-	Image getIcon();
-	void setIcon(Image icon);
+	ObjectProperty<Image> iconProperty();
 
-	String getTitle();
-	void setTitle(String title);
+	StringProperty titleProperty();
 
-	Runnable getShowOperation();
-	void setShowOperation(Runnable onShow);
+	ObjectProperty<Runnable> onShownProperty();
 
-	Runnable getHideOperation();
-	/**
-	 * 设置将关闭面板时的动作。
-	 *
-	 * @param onHide 将关闭面板时的动作，null代表使用默认动作
-	 */
-	void setHideOperation(Runnable onHide);
+	ObjectProperty<Runnable> onClosedProperty();
 
-	Parent getContent();
-	void setContent(Parent content);
+	ObjectProperty<Region> contentProperty();
 
 	/**
 	 * 需要在JavaFX线程运行

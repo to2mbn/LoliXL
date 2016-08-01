@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane id="download-group-info-panel-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemInfoView">
+   <top>
+      <BorderPane id="download-group-info-panel-header-containr" fx:id="headerContainer" prefHeight="50.0" BorderPane.alignment="CENTER">
+         <left>
+            <Label id="download-group-info-panel-text-label" fx:id="textLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="2.0" />
+               </BorderPane.margin>
+            </Label>
+         </left>
+         <right>
+            <Label id="download-group-info-panel-progress-label" fx:id="progressLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" textAlignment="RIGHT" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets right="2.0" />
+               </BorderPane.margin>
+            </Label>
+         </right>
+      </BorderPane>
+   </top>
+   <center>
+      <ListView BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

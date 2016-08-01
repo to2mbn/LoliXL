@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles;
 
 import static java.util.stream.Collectors.toList;
 import javafx.application.Platform;
@@ -18,7 +18,7 @@ import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.SideBarTileService.StackingStatus;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.TileManagingPanelContentView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import java.util.logging.Logger;
 
@@ -28,11 +28,11 @@ import java.util.logging.Logger;
 		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
 })
 @Component(immediate = true)
-public class TileManagingPanelContentPresenter extends Presenter<TileManagingPanelContentView> implements EventHandler {
+public class TileManagingPresenter extends Presenter<TileManagingView> implements EventHandler {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";
 	
-	private static final Logger LOGGER = Logger.getLogger(TileManagingPanelContentPresenter.class.getCanonicalName());
+	private static final Logger LOGGER = Logger.getLogger(TileManagingPresenter.class.getCanonicalName());
 
 	@Reference
 	private SideBarTileService tileService;
@@ -42,7 +42,7 @@ public class TileManagingPanelContentPresenter extends Presenter<TileManagingPan
 	@Override
 	public void handleEvent(Event event) {
 		LOGGER.fine(() -> "Event-driven tiles refreshing: " + event);
-		Platform.runLater(() -> refreshTiles());
+		Platform.runLater(this::refreshTiles);
 	}
 
 	@Override
@@ -57,7 +57,6 @@ public class TileManagingPanelContentPresenter extends Presenter<TileManagingPan
 		return FXML_LOCATION;
 	}
 
-	// TODO: call from tile
 	public void onShown() {
 		refreshTiles();
 	}

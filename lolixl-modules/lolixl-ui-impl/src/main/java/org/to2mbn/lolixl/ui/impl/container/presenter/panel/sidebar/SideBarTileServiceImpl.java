@@ -1,5 +1,7 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toConcurrentMap;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
@@ -17,8 +19,8 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panel.SideBarTileList.TileEntry;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import java.util.ArrayList;
@@ -26,9 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toConcurrentMap;
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 
 @Service({ SideBarTileService.class, ConfigurationCategory.class })
 @Properties({
@@ -57,10 +56,10 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 				Platform.runLater(() -> {
 					String tagName = ServiceUtils.getIdProperty(SidebarTileElement.PROPERTY_TAG_NAME, reference, service);
 					synchronized (tiles.entries) {
-						TileEntry entry = tiles.tagNameMapping.get(tagName);
+						SideBarTileList.TileEntry entry = tiles.tagNameMapping.get(tagName);
 						if (entry == null) {
 							LOGGER.fine("Loading new tile: " + tagName);
-							entry = new TileEntry();
+							entry = new SideBarTileList.TileEntry();
 							entry.tagName = tagName;
 							tiles.tagNameMapping.put(tagName, entry);
 							tiles.entries.add(entry);
@@ -84,7 +83,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 			public void removedService(ServiceReference<SidebarTileElement> reference, SidebarTileElement service) {
 				Platform.runLater(() -> {
 					synchronized (tiles.entries) {
-						TileEntry entry = tiles.serviceMapping.remove(service);
+						SideBarTileList.TileEntry entry = tiles.serviceMapping.remove(service);
 						if (entry == null) {
 							LOGGER.warning(format("Tile service %s is going to be removed, but no tile entry for it is found"));
 						} else {
@@ -132,7 +131,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 		int size = 0;
 		synchronized (tiles.entries) {
-			for (TileEntry ele : tiles.entries) {
+			for (SideBarTileList.TileEntry ele : tiles.entries) {
 				if (ele.tileElement != null) {
 					if (size < maxShownTiles) {
 						if (includeShown) {
@@ -157,7 +156,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 		int idx = 0;
 		synchronized (tiles.entries) {
-			for (TileEntry ele : tiles.entries) {
+			for (SideBarTileList.TileEntry ele : tiles.entries) {
 				if (ele.tileElement != null) {
 					if (ele.tileElement == element) {
 						return idx < maxShownTiles ? StackingStatus.SHOWN : StackingStatus.HIDDEN;
@@ -175,7 +174,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	public String getTagName(SidebarTileElement element) {
 		Objects.requireNonNull(element);
 
-		TileEntry entry = tiles.serviceMapping.get(element);
+		SideBarTileList.TileEntry entry = tiles.serviceMapping.get(element);
 		if (entry != null) {
 			return entry.tagName;
 		}
@@ -186,7 +185,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	public Tile getTileComponent(SidebarTileElement element) {
 		Objects.requireNonNull(element);
 
-		TileEntry entry = tiles.serviceMapping.get(element);
+		SideBarTileList.TileEntry entry = tiles.serviceMapping.get(element);
 		if (entry != null) {
 			return entry.tileComponent;
 		}
@@ -197,7 +196,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	public SidebarTileElement getTileByComponent(Tile component) {
 		Objects.requireNonNull(component);
 
-		TileEntry entry = tiles.componentMapping.get(component);
+		SideBarTileList.TileEntry entry = tiles.componentMapping.get(component);
 		if (entry != null) {
 			return entry.tileElement;
 		}
@@ -212,7 +211,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 		int result;
 
 		synchronized (tiles.entries) {
-			List<TileEntry> entries = tiles.entries;
+			List<SideBarTileList.TileEntry> entries = tiles.entries;
 			int idxSrc = entries.indexOf(element);
 			if (idxSrc == -1 || offset == 0) {
 				return 0;
@@ -250,7 +249,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 			if (idxDest == idxSrc) {
 				return 0;
 			}
-			TileEntry entry = entries.get(idxSrc);
+			SideBarTileList.TileEntry entry = entries.get(idxSrc);
 			entries.remove(idxSrc);
 			if (idxDest > idxSrc) {
 				entries.add(idxDest - 1, entry);

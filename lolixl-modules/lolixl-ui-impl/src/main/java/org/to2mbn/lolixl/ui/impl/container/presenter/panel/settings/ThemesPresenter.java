@@ -13,7 +13,7 @@ import org.osgi.service.event.Event;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.UIApp;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesSettingsPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import java.io.File;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
-public class ThemesSettingsPanelPresenter extends Presenter<ThemesSettingsPanelView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
+public class ThemesPresenter extends Presenter<ThemesView> implements EventHandler<ActionEvent>, org.osgi.service.event.EventHandler {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/themes_panel.fxml";
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<fx:root id="download-group-item-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="840.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemView">
+   <left>
+      <ImageView id="download-group-item-icon-view" fx:id="iconView" fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="5.0" />
+         </BorderPane.margin>
+      </ImageView>
+   </left>
+   <center>
+      <BorderPane id="download-group-item-info-container" fx:id="infoContainer" BorderPane.alignment="CENTER">
+         <bottom>
+            <HBox id="download-group-item-tag-container" fx:id="tagContainer" prefHeight="30.0" spacing="5.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </BorderPane.margin>
+            </HBox>
+         </bottom>
+         <left>
+            <Label id="download-group-item-name-label" fx:id="nameLabel" prefHeight="30.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </BorderPane.margin>
+            </Label>
+         </left>
+      </BorderPane>
+   </center>
+   <right>
+      <Label id="download-group-item-status-label" fx:id="statusLabel" alignment="CENTER_RIGHT" prefHeight="60.0" BorderPane.alignment="CENTER" />
+   </right>
+</fx:root>

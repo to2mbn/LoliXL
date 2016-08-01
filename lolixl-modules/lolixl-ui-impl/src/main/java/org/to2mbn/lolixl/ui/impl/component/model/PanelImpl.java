@@ -1,87 +1,70 @@
 package org.to2mbn.lolixl.ui.impl.component.model;
 
-import javafx.scene.Parent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {
-	private Image icon = null;
-	private String title = "";
-	private Runnable showOperation = () -> {};
-	private Runnable hideOperation = () -> {};
-	private Parent content = null;
+	private final Consumer<Panel> internalOnShow;
+	private final Runnable internalOnClose;
 
-	private final Consumer<Panel> onShow;
-	private final Runnable onClose;
+	private final ObjectProperty<Image> iconProperty;
+	private final StringProperty titleProperty;
+	private final ObjectProperty<Runnable> onShownProperty, onClosedProperty;
+	private final ObjectProperty<Region> contentProperty;
 
 	public PanelImpl(Consumer<Panel> _onShow, Runnable _onClose) {
-		onShow = _onShow;
-		onClose = _onClose;
+		internalOnShow = _onShow;
+		internalOnClose = _onClose;
+		iconProperty = new SimpleObjectProperty<>(null);
+		titleProperty = new SimpleStringProperty("");
+		onShownProperty = new SimpleObjectProperty<>(() -> {});
+		onClosedProperty = new SimpleObjectProperty<>(() -> {});
+		contentProperty = new SimpleObjectProperty<>(null);
 	}
 
 	@Override
-	public Image getIcon() {
-		return icon;
+	public ObjectProperty<Image> iconProperty() {
+		return iconProperty;
 	}
 
 	@Override
-	public void setIcon(Image _icon) {
-		icon = _icon;
+	public StringProperty titleProperty() {
+		return titleProperty;
 	}
 
 	@Override
-	public String getTitle() {
-		return title;
+	public ObjectProperty<Runnable> onShownProperty() {
+		return onShownProperty;
 	}
 
 	@Override
-	public void setTitle(String _title) {
-		title = _title;
+	public ObjectProperty<Runnable> onClosedProperty() {
+		return onClosedProperty;
 	}
 
 	@Override
-	public Runnable getShowOperation() {
-		return showOperation;
-	}
-
-	@Override
-	public void setShowOperation(Runnable onShow) {
-		showOperation = onShow;
-	}
-
-	@Override
-	public Runnable getHideOperation() {
-		return hideOperation;
-	}
-
-	@Override
-	public void setHideOperation(Runnable _hideOperation) {
-		hideOperation = _hideOperation;
-	}
-
-	@Override
-	public Parent getContent() {
-		return content;
-	}
-
-	@Override
-	public void setContent(Parent _content) {
-		content = _content;
+	public ObjectProperty<Region> contentProperty() {
+		return contentProperty;
 	}
 
 	@Override
 	public void show() {
 		FXUtils.checkFxThread();
-		showOperation.run();
-		onShow.accept(this);
+		onShownProperty.get().run();
+		internalOnShow.accept(this);
 	}
 
 	@Override
 	public void hide() {
 		FXUtils.checkFxThread();
-		hideOperation.run();
-		onClose.run();
+		onClosedProperty.get().run();
+		internalOnClose.run();
 	}
 }

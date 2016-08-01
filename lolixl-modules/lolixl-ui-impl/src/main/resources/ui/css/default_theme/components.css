@@ -1,7 +1,6 @@
 #default-frame-root-container {
     -fx-border-width: 0.4;
     -fx-border-color: black;
-    -fx-effect: dropshadow(three-pass-box, black, 0, 0.5);
 }
 
 #default-frame-shadow-container,
@@ -24,7 +23,7 @@
 
 #default-title-bar {
     -fx-background-color: #b85658;
-    -fx-text-fill: white;
+    -fx-text-fill: whitesmoke;
 }
 
 #default-title-bar-unfocused {
@@ -36,7 +35,7 @@
  * Panel
  */
 #content-panel-title-label {
-    -fx-text-fill: white;
+    -fx-text-fill: whitesmoke;
     -fx-font-size: 26;
 }
 
@@ -50,5 +49,16 @@
 }
 
 #tile {
-    -fx-text-fill: white;
+    -fx-text-fill: whitesmoke;
+}
+
+#download-group-item-name-label {
+    -fx-font-size: 24;
+    -fx-text-fill: whitesmoke;
+}
+
+#download-group-item-status-label {
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+    -fx-text-fill: whitesmoke;
 }

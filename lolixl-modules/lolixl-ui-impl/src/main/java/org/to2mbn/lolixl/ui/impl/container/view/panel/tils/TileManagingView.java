@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.view.panel;
+package org.to2mbn.lolixl.ui.impl.container.view.panel.tils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,7 +9,7 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.TileListCell;
 import org.to2mbn.lolixl.ui.container.view.View;
 
-public class TileManagingPanelContentView extends View {
+public class TileManagingView extends View {
 	@FXML
 	public BorderPane rootContainer;
 

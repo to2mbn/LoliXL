@@ -3,4 +3,4 @@
 <?import javafx.scene.layout.FlowPane?>
 
 
-<FlowPane id="hidden-tiles-panel-tiles-container" fx:id="tilesContainer" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.HiddenTilesPanelContentView" />
+<FlowPane id="hidden-tiles-panel-tiles-container" fx:id="tilesContainer" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.tils.HiddenTilesView" />

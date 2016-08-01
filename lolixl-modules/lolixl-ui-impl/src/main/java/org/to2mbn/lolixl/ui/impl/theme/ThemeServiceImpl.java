@@ -13,7 +13,7 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings.ThemesSettingsPanelPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings.ThemesPresenter;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
@@ -55,7 +55,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private ThemeConfiguration config;
 
 	@Reference
-	private ThemesSettingsPanelPresenter presenter;
+	private ThemesPresenter presenter;
 
 	public ThemeServiceImpl() {
 		themeTypeOrder = new HashMap<>();

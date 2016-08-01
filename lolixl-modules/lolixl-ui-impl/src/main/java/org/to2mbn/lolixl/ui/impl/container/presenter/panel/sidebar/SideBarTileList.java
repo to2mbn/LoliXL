@@ -1,13 +1,13 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
+import org.to2mbn.lolixl.core.config.Configuration;
+import org.to2mbn.lolixl.ui.component.Tile;
+import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import org.to2mbn.lolixl.core.config.Configuration;
-import org.to2mbn.lolixl.ui.component.Tile;
-import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 
 public class SideBarTileList implements Configuration {
 

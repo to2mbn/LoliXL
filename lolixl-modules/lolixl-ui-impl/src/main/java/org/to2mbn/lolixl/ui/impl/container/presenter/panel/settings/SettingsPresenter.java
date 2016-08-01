@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import javafx.application.Platform;
 import org.apache.felix.scr.annotations.Component;
@@ -10,12 +10,12 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SettingsCategoriesManagingService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.SettingsPanelContentView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Component
-public class SettingsPanelContentPresenter extends Presenter<SettingsPanelContentView> implements SettingsCategoriesManagingService {
+public class SettingsPresenter extends Presenter<SettingsView> implements SettingsCategoriesManagingService {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/settings_panel.fxml";
 
 	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;
@@ -35,7 +35,7 @@ public class SettingsPanelContentPresenter extends Presenter<SettingsPanelConten
 			public ConfigurationCategory addingService(ServiceReference<ConfigurationCategory> reference) {
 				ConfigurationCategory category = ctx.getService(reference);
 				categories.addLast(category);
-				Platform.runLater(SettingsPanelContentPresenter.this::refreshCategories);
+				Platform.runLater(SettingsPresenter.this::refreshCategories);
 				return category;
 			}
 
@@ -57,7 +57,6 @@ public class SettingsPanelContentPresenter extends Presenter<SettingsPanelConten
 		});
 	}
 
-	// TODO: call from tile
 	public void onShown() {
 		refreshCategories();
 	}

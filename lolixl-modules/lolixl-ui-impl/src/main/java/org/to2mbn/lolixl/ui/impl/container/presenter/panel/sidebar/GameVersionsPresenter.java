@@ -1,10 +1,10 @@
-package org.to2mbn.lolixl.ui.impl.container.presenter.panel;
+package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
 import javafx.scene.control.Label;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.GameVersionsContentPanelView;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
 
-public class GameVersionsPanelContentPresenter extends Presenter<GameVersionsContentPanelView> {
+public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 	// TODO
 	public static class GameVersionCategory {
 		private String alias;

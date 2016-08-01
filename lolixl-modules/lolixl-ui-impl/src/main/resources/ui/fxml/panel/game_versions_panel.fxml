@@ -3,4 +3,4 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox id="game-versions-versions-container" fx:id="versionsContainer" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.GameVersionsContentPanelView" />
+<VBox id="game-versions-versions-container" fx:id="versionsContainer" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView" />
