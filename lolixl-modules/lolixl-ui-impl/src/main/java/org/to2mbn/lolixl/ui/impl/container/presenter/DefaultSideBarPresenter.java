@@ -5,6 +5,7 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.Parent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
@@ -13,15 +14,17 @@ import org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView;
 import java.util.Objects;
 import java.util.Optional;
 
-@Component
+@Service({ SideBarPanelDisplayService.class })
+@Component(immediate = true)
 public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> implements SideBarPanelDisplayService {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_side_bar.fxml";
+
+	private static final String FXML_LOCATION = "/ui/fxml/container/default_side_bar.fxml";
 
 	private Panel currentPanel;
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	@Override

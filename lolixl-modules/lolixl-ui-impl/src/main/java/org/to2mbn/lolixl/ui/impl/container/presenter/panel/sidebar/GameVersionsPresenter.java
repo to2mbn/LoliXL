@@ -15,10 +15,10 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		}
 	}
 
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/game_versions_panel.fxml";
+	private static final String FXML_LOCATION = "/ui/fxml/panel/game_versions_panel.fxml";
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 }

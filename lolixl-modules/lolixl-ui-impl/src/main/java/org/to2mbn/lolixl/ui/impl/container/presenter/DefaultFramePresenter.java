@@ -9,6 +9,7 @@ import javafx.scene.layout.Background;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
@@ -24,9 +25,11 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Component
+@Service({ BackgroundService.class, PanelDisplayService.class })
+@Component(immediate = true)
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_frame.fxml";
+
+	private static final String FXML_LOCATION = "/ui/fxml/container/default_frame.fxml";
 
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
 
@@ -45,7 +48,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
@@ -40,8 +42,13 @@ import java.util.logging.Logger;
  * @author yushijinhun
  */
 @Service({ ThemeService.class })
+@Properties({
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = ThemeServiceImpl.CATEGORY_THEME_CONFIG)
+})
 @Component(immediate = true)
 public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<ThemeConfiguration> {
+
+	public static final String CATEGORY_THEME_CONFIG = "org.to2mbn.lolixl.ui.impl.theme.config";
 
 	private static final Logger LOGGER = Logger.getLogger(ThemeServiceImpl.class.getCanonicalName());
 

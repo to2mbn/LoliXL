@@ -14,16 +14,16 @@ public class SettingsView extends View {
 	public BorderPane rootContainer;
 
 	@FXML
-	public ListView<ConfigurationCategory> categoryContainer;
+	public ListView<ConfigurationCategory<?>> categoryContainer;
 
 	@FXML
 	public StackPane contentContainer;
 
 	@FXML
 	private void initialize() {
-		categoryContainer.setCellFactory(list -> new ListCell<ConfigurationCategory>() {
+		categoryContainer.setCellFactory(list -> new ListCell<ConfigurationCategory<?>>() {
 			@Override
-			public void updateItem(ConfigurationCategory category, boolean empty) {
+			public void updateItem(ConfigurationCategory<?> category, boolean empty) {
 				super.updateItem(category, empty);
 				textProperty().bind(category.getLocalizedName());
 				ImageView iconView = new ImageView();

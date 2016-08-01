@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import javafx.application.Platform;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -14,16 +15,18 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-@Component
+@Service({ SettingsCategoriesManagingService.class })
+@Component(immediate = true)
 public class SettingsPresenter extends Presenter<SettingsView> implements SettingsCategoriesManagingService {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/settings_panel.fxml";
+
+	private static final String FXML_LOCATION = "/ui/fxml/panel/settings_panel.fxml";
 
 	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;
-	private Deque<ConfigurationCategory> categories;
+	private Deque<ConfigurationCategory<?>> categories;
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	@Override
@@ -31,9 +34,10 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Settin
 		categories = new ConcurrentLinkedDeque<>();
 		BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		serviceTracker = new ServiceTracker<>(ctx, ConfigurationCategory.class, new ServiceTrackerCustomizer<ConfigurationCategory, ConfigurationCategory>() {
+
 			@Override
 			public ConfigurationCategory addingService(ServiceReference<ConfigurationCategory> reference) {
-				ConfigurationCategory category = ctx.getService(reference);
+				ConfigurationCategory<?> category = ctx.getService(reference);
 				categories.addLast(category);
 				Platform.runLater(SettingsPresenter.this::refreshCategories);
 				return category;
@@ -62,7 +66,6 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Settin
 	}
 
 	private void refreshCategories() {
-		view.categoryContainer.getItems().clear();
-		view.categoryContainer.getItems().addAll(categories);
+		view.categoryContainer.getItems().setAll(categories);
 	}
 }

@@ -8,7 +8,7 @@ import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
 import java.util.function.Consumer;
 
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/container/default_title_bar.fxml";
+	private static final String FXML_LOCATION = "/ui/fxml/container/default_title_bar.fxml";
 
 	private Consumer<MouseEvent> closeButtonListener;
 	private Stage parentStage;
@@ -33,7 +33,7 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 
 	@Override
 	protected String getFxmlLocation() {
-		return LOCATION_OF_FXML;
+		return FXML_LOCATION;
 	}
 
 	private void onCloseButtonClicked(MouseEvent event) {
