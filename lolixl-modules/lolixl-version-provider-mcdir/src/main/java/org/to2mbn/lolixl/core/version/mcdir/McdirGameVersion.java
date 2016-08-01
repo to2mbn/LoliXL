@@ -7,11 +7,16 @@ import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
-import javafx.scene.control.Button;
+import org.to2mbn.lolixl.ui.component.Tile;
+import com.sun.javafx.binding.StringConstant;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
 
 public class McdirGameVersion implements GameVersion {
 
-	private String alias;
+	private StringProperty aliasProperty = new SimpleStringProperty();
+
 	private String version;
 	private Path mcdir;
 
@@ -21,8 +26,8 @@ public class McdirGameVersion implements GameVersion {
 	}
 
 	@Override
-	public String getVersionNumber() {
-		return version;
+	public ObservableStringValue getVersionNumber() {
+		return StringConstant.valueOf(version);
 	}
 
 	@Override
@@ -40,25 +45,14 @@ public class McdirGameVersion implements GameVersion {
 	}
 
 	@Override
-	public Button createTile() {
+	public Tile createTile() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getLocalizedName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getAlias() {
-		return alias;
-	}
-
-	@Override
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public StringProperty aliasProperty() {
+		return aliasProperty;
 	}
 
 }

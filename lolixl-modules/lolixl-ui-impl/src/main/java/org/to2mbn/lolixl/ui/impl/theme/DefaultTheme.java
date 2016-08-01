@@ -7,6 +7,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import com.sun.javafx.binding.ObjectConstant;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
@@ -40,7 +41,7 @@ public class DefaultTheme implements Theme {
 	}
 
 	@Override
-	public Image getIcon() {
+	public ObservableObjectValue<Image> getIcon() {
 		// TODO Use an icon here
 		return null;
 	}

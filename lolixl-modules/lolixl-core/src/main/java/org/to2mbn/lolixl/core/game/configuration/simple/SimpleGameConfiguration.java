@@ -3,8 +3,6 @@ package org.to2mbn.lolixl.core.game.configuration.simple;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,50 +18,62 @@ import org.to2mbn.lolixl.core.game.configuration.GameConfiguration;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.utils.MemoryTools;
 import org.to2mbn.lolixl.utils.ObservableContext;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SetProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 
 public class SimpleGameConfiguration implements GameConfiguration {
 
 	private static final Logger LOGGER = Logger.getLogger(SimpleGameConfiguration.class.getCanonicalName());
 	private static final long serialVersionUID = 1L;
 
-	private String alias;
+	private StringProperty aliasProperty = new SimpleStringProperty();
 
-	private RuntimeDirectoryStrategy runtimeDirStrategy = RuntimeDirectoryStrategy.DEFAULT;
-	private String customizedRuntimeDir;
+	private ObjectProperty<RuntimeDirectoryStrategy> runtimeDirStrategyProperty = new SimpleObjectProperty<>(RuntimeDirectoryStrategy.DEFAULT);
+	private StringProperty customizedRuntimeDirProperty = new SimpleStringProperty();
 
-	private MemoryStrategy xmxStrategy = MemoryStrategy.AUTOMATIC;
-	private int customizedXmx;
+	private ObjectProperty<MemoryStrategy> xmxStrategyProperty = new SimpleObjectProperty<>(MemoryStrategy.AUTOMATIC);
+	private IntegerProperty customizedXmxProperty = new SimpleIntegerProperty();
 
-	private MemoryStrategy xmsStrategy = MemoryStrategy.UNDEFINED;
-	private int customizedXms;
+	private ObjectProperty<MemoryStrategy> xmsStrategyProperty = new SimpleObjectProperty<>(MemoryStrategy.UNDEFINED);
+	private IntegerProperty customizedXmsProperty = new SimpleIntegerProperty();
 
-	private JavaPathStrategy javaPathStrategy = JavaPathStrategy.AUTOMATIC;
-	private String customizedJavaPath;
+	private ObjectProperty<JavaPathStrategy> javaPathStrategyProperty = new SimpleObjectProperty<>(JavaPathStrategy.AUTOMATIC);
+	private StringProperty customizedJavaPathProperty = new SimpleStringProperty();
 
-	private Set<DefaultArgumentOption> defaultArgumentOptions;
+	private SetProperty<DefaultArgumentOption> defaultArgumentOptionsProperty = new SimpleSetProperty<>();
 
-	private boolean disableOSXArguments = false;
+	private BooleanProperty disableOSXArgumentsProperty = new SimpleBooleanProperty(false);
 
-	private String server;
+	private StringProperty serverProperty = new SimpleStringProperty();
 
-	private WindowSizeStrategy windowSizeStrategy = WindowSizeStrategy.DEFAULT;
-	private int customizedWindowWidth;
-	private int customizedWindowHeight;
+	private ObjectProperty<WindowSizeStrategy> windowSizeStrategyProperty = new SimpleObjectProperty<>(WindowSizeStrategy.DEFAULT);
+	private IntegerProperty customizedWindowWidthProperty = new SimpleIntegerProperty();
+	private IntegerProperty customizedWindowHeightProperty = new SimpleIntegerProperty();
 
-	private List<String> customizedJvmArguments;
-	private List<String> customizedMinecraftArguments;
-	private Map<String, String> customizedCommandlineVariables;
-	private Set<String> customizedClasspath;
+	private ListProperty<String> customizedJvmArgumentsProperty = new SimpleListProperty<>();
+	private ListProperty<String> customizedMinecraftArgumentsProperty = new SimpleListProperty<>();
+	private MapProperty<String, String> customizedCommandlineVariablesProperty = new SimpleMapProperty<>();
+	private SetProperty<String> customizedClasspathProperty = new SimpleSetProperty<>();
 
 	@Override
 	public LaunchOption process(AuthenticationProfile<?> authentication, GameVersion versionToLaunch) {
 		LaunchOption option = new LaunchOption(versionToLaunch.getLaunchableVersion(), authentication.getAuthenticator(), new MinecraftDirectory(versionToLaunch.getMinecraftDirectory().toFile()));
 
-		switch (runtimeDirStrategy) {
+		switch (runtimeDirStrategyProperty.get()) {
 			case CUSTOMIZED:
+				String customizedRuntimeDir = customizedRuntimeDirProperty.get();
 				if (customizedRuntimeDir == null)
 					throw new IllegalArgumentException("customizedRuntimeDir is not set");
 				option.setRuntimeDirectory(new MinecraftDirectory(customizedRuntimeDir));
@@ -77,7 +87,7 @@ public class SimpleGameConfiguration implements GameConfiguration {
 				break;
 		}
 
-		switch (xmxStrategy) {
+		switch (xmxStrategyProperty.get()) {
 			case AUTOMATIC:
 				int xmxToSet;
 				try {
@@ -90,7 +100,7 @@ public class SimpleGameConfiguration implements GameConfiguration {
 				break;
 
 			case CUSTOMIZED:
-				option.setMaxMemory(customizedXmx);
+				option.setMaxMemory(customizedXmxProperty.get());
 				break;
 
 			case UNDEFINED:
@@ -98,19 +108,20 @@ public class SimpleGameConfiguration implements GameConfiguration {
 				break;
 		}
 
-		switch (xmsStrategy) {
+		switch (xmsStrategyProperty.get()) {
 			case AUTOMATIC:
 			case UNDEFINED:
 				option.setMinMemory(0);
 				break;
 
 			case CUSTOMIZED:
-				option.setMinMemory(customizedXms);
+				option.setMinMemory(customizedXmsProperty.get());
 				break;
 		}
 
-		switch (javaPathStrategy) {
+		switch (javaPathStrategyProperty.get()) {
 			case CUSTOMIZED:
+				String customizedJavaPath = customizedJavaPathProperty.get();
 				if (customizedJavaPath == null)
 					throw new IllegalArgumentException("customizedJavaPath is not set");
 				option.setJavaEnvironment(new JavaEnvironment(new File(customizedJavaPath)));
@@ -122,25 +133,23 @@ public class SimpleGameConfiguration implements GameConfiguration {
 
 		Set<String> automaticJvmArgs = new LinkedHashSet<>();
 
-		if (defaultArgumentOptions != null) {
-			for (DefaultArgumentOption defaultArgumentOption : defaultArgumentOptions) {
-				switch (defaultArgumentOption) {
-					case FML_IGNORE_INVALID_MINECRAFT_CERTIFICATES:
-						automaticJvmArgs.add(ExtraArgumentsTemplates.FML_IGNORE_INVALID_MINECRAFT_CERTIFICATES);
-						break;
+		for (DefaultArgumentOption defaultArgumentOption : defaultArgumentOptionsProperty) {
+			switch (defaultArgumentOption) {
+				case FML_IGNORE_INVALID_MINECRAFT_CERTIFICATES:
+					automaticJvmArgs.add(ExtraArgumentsTemplates.FML_IGNORE_INVALID_MINECRAFT_CERTIFICATES);
+					break;
 
-					case FML_IGNORE_PATCH_DISCREPANCISE:
-						automaticJvmArgs.add(ExtraArgumentsTemplates.FML_IGNORE_PATCH_DISCREPANCISE);
-						break;
+				case FML_IGNORE_PATCH_DISCREPANCISE:
+					automaticJvmArgs.add(ExtraArgumentsTemplates.FML_IGNORE_PATCH_DISCREPANCISE);
+					break;
 
-					default:
-						LOGGER.warning("Unknown DefaultArgumentOption: " + defaultArgumentOption);
-						break;
-				}
+				default:
+					LOGGER.warning("Unknown DefaultArgumentOption: " + defaultArgumentOption);
+					break;
 			}
 		}
 
-		if (!disableOSXArguments && Platform.CURRENT == Platform.OSX) {
+		if (!disableOSXArgumentsProperty.get() && Platform.CURRENT == Platform.OSX) {
 			automaticJvmArgs.add(ExtraArgumentsTemplates.OSX_DOCK_NAME);
 			try {
 				automaticJvmArgs.add(ExtraArgumentsTemplates.OSX_DOCK_ICON(option.getMinecraftDirectory(), option.getVersion()));
@@ -149,31 +158,20 @@ public class SimpleGameConfiguration implements GameConfiguration {
 			}
 		}
 
-		if (customizedJvmArguments != null) {
-			automaticJvmArgs.removeAll(customizedJvmArguments);
-		}
-
+		automaticJvmArgs.removeAll(customizedJvmArgumentsProperty);
 		option.extraJvmArguments().addAll(automaticJvmArgs);
+		option.extraJvmArguments().addAll(customizedJvmArgumentsProperty);
 
-		if (customizedJvmArguments != null) {
-			option.extraJvmArguments().addAll(customizedJvmArguments);
-		}
+		option.extraMinecraftArguments().addAll(customizedMinecraftArgumentsProperty);
 
-		if (customizedMinecraftArguments != null) {
-			option.extraMinecraftArguments().addAll(customizedMinecraftArguments);
-		}
+		option.commandlineVariables().putAll(customizedCommandlineVariablesProperty);
 
-		if (customizedCommandlineVariables != null) {
-			option.commandlineVariables().putAll(customizedCommandlineVariables);
-		}
+		customizedClasspathProperty.stream()
+				.map(File::new)
+				.forEach(option.extraClasspath()::add);
 
-		if (customizedClasspath != null) {
-			customizedClasspath.stream()
-					.map(File::new)
-					.forEach(option.extraClasspath()::add);
-		}
-
-		if (server != null) {
+		String server = serverProperty.getValueSafe().trim();
+		if (!server.isEmpty()) {
 			int idxColon = server.lastIndexOf(':');
 			String host = server.substring(0, idxColon);
 			int port = 0;
@@ -187,9 +185,9 @@ public class SimpleGameConfiguration implements GameConfiguration {
 			option.setServerInfo(new ServerInfo(host, port));
 		}
 
-		switch (windowSizeStrategy) {
+		switch (windowSizeStrategyProperty.get()) {
 			case FULLSCREEN:
-				option.setWindowSize(new WindowSize(customizedWindowWidth, customizedWindowHeight));
+				option.setWindowSize(new WindowSize(customizedWindowWidthProperty.get(), customizedWindowHeightProperty.get()));
 				break;
 
 			case CUSTOMIZED:
@@ -204,15 +202,102 @@ public class SimpleGameConfiguration implements GameConfiguration {
 	}
 
 	@Override
-	public StringProperty aliasProperty() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setObservableContext(ObservableContext ctx) {
+		ctx.bind(aliasProperty,
+				runtimeDirStrategyProperty,
+				customizedRuntimeDirProperty,
+				xmxStrategyProperty,
+				customizedXmxProperty,
+				xmsStrategyProperty,
+				customizedXmsProperty,
+				javaPathStrategyProperty,
+				customizedJavaPathProperty,
+				defaultArgumentOptionsProperty,
+				disableOSXArgumentsProperty,
+				serverProperty,
+				windowSizeStrategyProperty,
+				customizedWindowWidthProperty,
+				customizedWindowHeightProperty,
+				customizedJvmArgumentsProperty,
+				customizedMinecraftArgumentsProperty,
+				customizedCommandlineVariablesProperty,
+				customizedClasspathProperty);
 	}
 
 	@Override
-	public void setObservableContext(ObservableContext ctx) {
-		// TODO Auto-generated method stub
-
+	public StringProperty aliasProperty() {
+		return aliasProperty;
 	}
 
+	public ObjectProperty<RuntimeDirectoryStrategy> runtimeDirStrategyProperty() {
+		return runtimeDirStrategyProperty;
+	}
+
+	public StringProperty customizedRuntimeDirProperty() {
+		return customizedRuntimeDirProperty;
+	}
+
+	public ObjectProperty<MemoryStrategy> xmxStrategyProperty() {
+		return xmxStrategyProperty;
+	}
+
+	public IntegerProperty customizedXmxProperty() {
+		return customizedXmxProperty;
+	}
+
+	public ObjectProperty<MemoryStrategy> xmsStrategyProperty() {
+		return xmsStrategyProperty;
+	}
+
+	public IntegerProperty customizedXmsProperty() {
+		return customizedXmsProperty;
+	}
+
+	public ObjectProperty<JavaPathStrategy> javaPathStrategyProperty() {
+		return javaPathStrategyProperty;
+	}
+
+	public StringProperty customizedJavaPathProperty() {
+		return customizedJavaPathProperty;
+	}
+
+	public SetProperty<DefaultArgumentOption> defaultArgumentOptionsProperty() {
+		return defaultArgumentOptionsProperty;
+	}
+
+	public BooleanProperty disableOSXArgumentsProperty() {
+		return disableOSXArgumentsProperty;
+	}
+
+	public StringProperty serverProperty() {
+		return serverProperty;
+	}
+
+	public ObjectProperty<WindowSizeStrategy> windowSizeStrategyProperty() {
+		return windowSizeStrategyProperty;
+	}
+
+	public IntegerProperty customizedWindowWidthProperty() {
+		return customizedWindowWidthProperty;
+	}
+
+	public IntegerProperty customizedWindowHeightProperty() {
+		return customizedWindowHeightProperty;
+	}
+
+	public ListProperty<String> customizedJvmArgumentsProperty() {
+		return customizedJvmArgumentsProperty;
+	}
+
+	public ListProperty<String> customizedMinecraftArgumentsProperty() {
+		return customizedMinecraftArgumentsProperty;
+	}
+
+	public MapProperty<String, String> customizedCommandlineVariablesProperty() {
+		return customizedCommandlineVariablesProperty;
+	}
+
+	public SetProperty<String> customizedClasspathProperty() {
+		return customizedClasspathProperty;
+	}
 }

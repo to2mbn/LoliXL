@@ -6,6 +6,7 @@ import org.apache.felix.scr.annotations.Deactivate;
 import org.osgi.service.component.ComponentContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import javafx.beans.property.Property;
 
 @Component
 public class GsonFactory {
@@ -15,6 +16,7 @@ public class GsonFactory {
 	@Activate
 	public void activate(ComponentContext compCtx) {
 		instance = new GsonBuilder()
+				.registerTypeAdapter(Property.class, new PropertyTypeAdapter())
 				.setPrettyPrinting()
 				.create();
 		compCtx.getBundleContext().registerService(Gson.class, instance, null);

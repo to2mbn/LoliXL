@@ -63,7 +63,7 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	private class LocaleProperty extends SimpleObjectProperty<Locale> {
 
 		public LocaleProperty() {
-			super(LocalizationServiceImpl.this, "locale", Locale.getDefault());
+			super(Locale.getDefault());
 		}
 
 		@Override
