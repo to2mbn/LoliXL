@@ -4,16 +4,18 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
-import javafx.scene.Parent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.BundleContext;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
+import org.to2mbn.lolixl.ui.impl.UIApp;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
@@ -38,7 +40,12 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private boolean isDragging = false;
 	// for resizeable:
 	private double lastResizeX, lastResizeY;
-	private Stage stage;
+
+	public DefaultFramePresenter(BundleContext ctx) {
+		super(ctx);
+		ctx.registerService(BackgroundService.class, this, null);
+		ctx.registerService(PanelDisplayService.class, this, null);
+	}
 
 	@Override
 	public void postInitialize() {
@@ -81,7 +88,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	/**
 	 * 需要在JavaFX线程下运行
 	 */
-	public void setTitleBar(Parent titleBar) {
+	public void setTitleBar(Region titleBar) {
 		preCheck(titleBar);
 		if (view.titleBarPane != null) {
 			view.titleBarPane.getChildren().add(titleBar);
@@ -91,7 +98,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	/**
 	 * 需要在JavaFX线程下运行
 	 */
-	public void setSidebar(Parent sidebar) {
+	public void setSidebar(Region sidebar) {
 		preCheck(sidebar);
 		if (view.sidebarPane != null) {
 			view.sidebarPane.getChildren().add(sidebar);
@@ -101,15 +108,11 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	/**
 	 * 需要在JavaFX线程下运行
 	 */
-	public void setContent(Parent content) {
+	public void setContent(Region content) {
 		preCheck(content);
 		if (view.contentPane != null) {
 			view.contentPane.getChildren().add(content);
 		}
-	}
-
-	public void setStage(Stage _stage) {
-		stage = _stage;
 	}
 
 	private <T> void preCheck(T obj) {
@@ -162,7 +165,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		animation.play();
 	}
 
-	private ParallelTransition generateAnimation(Parent pane, boolean reverse) {
+	private ParallelTransition generateAnimation(Region pane, boolean reverse) {
 		// 移动动画
 		TranslateTransition tran = new TranslateTransition(Duration.seconds(1), pane);
 		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 5;
@@ -172,8 +175,8 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 		// 渐变动画
 		FadeTransition fade = new FadeTransition(Duration.seconds(1), pane);
-		fade.setFromValue(reverse ? 0.5 : 1);
-		fade.setToValue(reverse ? 1 : 0.5);
+		fade.setFromValue(reverse ? 0.5 : pane.getOpacity());
+		fade.setToValue(reverse ? pane.getOpacity() : 0.5);
 
 		ParallelTransition parallel = new ParallelTransition(tran, fade);
 		parallel.setCycleCount(Animation.INDEFINITE);
@@ -191,6 +194,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		});
 		view.titleBarPane.setOnMouseDragged(event -> {
 			if (isDragging) {
+				Stage stage = UIApp.mainStageProperty().get();
 				stage.setX(event.getScreenX() - lastDragX);
 				stage.setY(event.getScreenY() - lastDragY);
 			}
@@ -232,9 +236,9 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private static class PanelEntry {
 		private final Panel model;
-		private final Parent view;
+		private final Region view;
 
-		private PanelEntry(Panel _model, Parent _view) {
+		private PanelEntry(Panel _model, Region _view) {
 			model = _model;
 			view = _view;
 		}

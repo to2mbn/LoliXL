@@ -64,7 +64,7 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 			}
 		});
 		cancelButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.cancelbutton.text"));
-		cancelButton.setOnAction(event -> {}); // TODO: cancel the task group
+		cancelButton.setOnAction(event -> group.cancel(true));
 		startUpdateCycle();
 	}
 

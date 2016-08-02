@@ -3,9 +3,11 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.scene.image.ImageView;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.osgi.framework.BundleContext;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
+import org.to2mbn.lolixl.ui.PresenterManagementService;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
@@ -28,11 +30,11 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	@Reference
 	private PanelDisplayService panelDisplayService;
 
-	private DownloadCenterPresenter downloadCenterPresenter;
-	private SettingsPresenter settingsPresenter;
-	private TileManagingPresenter tileManagingPresenter;
+	@Reference
+	private PresenterManagementService presenterService;
 
-	private Tile downloadCenterTile = getValue(() -> {
+	public Tile downloadCenterTile = getValue(() -> {
+		DownloadCenterPresenter downloadCenterPresenter = presenterService.getPresenter(DownloadCenterPresenter.class);
 		Panel panel = panelDisplayService.newPanel();
 		panel.titleProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.downloads.title"));
 		panel.iconProperty().set(null); // TODO
@@ -45,7 +47,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		return tile;
 	});
 
-	private Tile settingsTile = getValue(() -> {
+	public Tile settingsTile = getValue(() -> {
+		SettingsPresenter settingsPresenter = presenterService.getPresenter(SettingsPresenter.class);
 		Panel panel = panelDisplayService.newPanel();
 		panel.titleProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.settings.title"));
 		panel.iconProperty().set(null); // TODO
@@ -57,7 +60,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		return tile;
 	});
 
-	private Tile tileManagementTile = getValue(() -> {
+	public Tile tileManagementTile = getValue(() -> {
+		TileManagingPresenter tileManagingPresenter = presenterService.getPresenter(TileManagingPresenter.class);
 		Panel panel = panelDisplayService.newPanel();
 		panel.titleProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.tiles.management.title"));
 		panel.iconProperty().set(null); // TODO
@@ -69,6 +73,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		return tile;
 	});
 
+	public HomeContentPresenter(BundleContext ctx) {
+		super(ctx);
+	}
+
 	@Override
 	public void postInitialize() {
 		view.tileContainer.getChildren().addAll(downloadCenterTile, settingsTile);
@@ -78,18 +86,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	@Override
 	protected String getFxmlLocation() {
 		return LOCATION_OF_FXML;
-	}
-
-	public void setDownloadCenterPresenter(DownloadCenterPresenter presenter) {
-		downloadCenterPresenter = presenter;
-	}
-
-	public void setSettingsPresenter(SettingsPresenter presenter) {
-		settingsPresenter = presenter;
-	}
-
-	public void setTileManagingPresenter(TileManagingPresenter presenter) {
-		tileManagingPresenter = presenter;
 	}
 
 	private <T> T getValue(Supplier<T> supplier) {

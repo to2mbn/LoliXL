@@ -6,10 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
@@ -20,24 +18,29 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.logging.Logger;
 
-@Service({ EventHandler.class })
-@Properties({
-		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
-		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
-})
-@Component(immediate = true)
+@Component
 public class TileManagingPresenter extends Presenter<TileManagingView> implements EventHandler {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";
-	
+
 	private static final Logger LOGGER = Logger.getLogger(TileManagingPresenter.class.getCanonicalName());
 
 	@Reference
 	private SideBarTileService tileService;
 
 	private ObservableList<Tile> tiles;
+
+	public TileManagingPresenter(BundleContext ctx) {
+		super(ctx);
+		Dictionary<String, Object> properties = new Hashtable<>();
+		properties.put(EventConstants.EVENT_TOPIC, ConfigurationEvent.TOPIC_CONFIGURATION);
+		properties.put(EventConstants.EVENT_FILTER, "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")");
+		ctx.registerService(EventHandler.class, this, properties);
+	}
 
 	@Override
 	public void handleEvent(Event event) {
