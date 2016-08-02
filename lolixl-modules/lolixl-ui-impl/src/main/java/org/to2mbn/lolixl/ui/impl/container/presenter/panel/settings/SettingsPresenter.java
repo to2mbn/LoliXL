@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import javafx.application.Platform;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -14,18 +15,16 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-@Component
+@SuppressWarnings("rawtypes")
+
+@Service({ SettingsCategoriesManagingService.class })
+@Component(immediate = true)
 public class SettingsPresenter extends Presenter<SettingsView> implements SettingsCategoriesManagingService {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/settings_panel.fxml";
 
 	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;
 	private Deque<ConfigurationCategory<?>> categories;
-
-	public SettingsPresenter(BundleContext ctx) {
-		super(ctx);
-		ctx.registerService(SettingsCategoriesManagingService.class, this, null);
-	}
 
 	@Override
 	protected String getFxmlLocation() {

@@ -1,30 +1,22 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.downloads;
 
 import javafx.application.Platform;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.osgi.framework.BundleContext;
 import org.to2mbn.lolixl.core.download.notify.DownloadCenterNotifier;
 import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
-import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
-import org.to2mbn.lolixl.ui.PresenterManagementService;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadCenterAlertView;
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemInfoView;
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemView;
-import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,15 +38,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 	@Reference
 	private SideBarAlertService alertService;
 
-	@Reference
-	private PresenterManagementService presenterService;
-
-	private final ReadOnlyIntegerWrapper taskCountProperty;
-
-	public DownloadCenterPresenter(BundleContext ctx) {
-		super(ctx);
-		taskCountProperty = new ReadOnlyIntegerWrapper(0);
-	}
+	private final ReadOnlyIntegerWrapper taskCountProperty = new ReadOnlyIntegerWrapper(0);
 
 	@Override
 	protected String getFxmlLocation() {
@@ -75,7 +59,6 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 			}
 		};
 		itemMapping = new ConcurrentHashMap<>();
-		registerAlert();
 	}
 
 	public void startUpdateCycle() {
@@ -138,33 +121,5 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 				}
 			}, false);
 		}
-	}
-
-	private void registerAlert() {
-		DownloadCenterAlertView view;
-		try {
-			view = new DownloadCenterAlertView();
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		Tile downloadCenterTile = presenterService.getPresenter(HomeContentPresenter.class).downloadCenterTile;
-		view.iconView.imageProperty(); // TODO
-		view.msgLabel.textProperty().bind(new StringBinding() {
-			ObservableStringValue i18n =
-					I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.panel.downloads.alert.msg", taskCountProperty.getReadOnlyProperty());
-
-			{
-				bind(i18n);
-			}
-
-			@Override
-			protected String computeValue() {
-				return i18n.get();
-			}
-		});
-		Tile alertTile = new Tile();
-		alertTile.setGraphic(view);
-		alertTile.setOnAction(downloadCenterTile.getOnAction()::handle);
-		alertService.addAlert(alertTile);
 	}
 }

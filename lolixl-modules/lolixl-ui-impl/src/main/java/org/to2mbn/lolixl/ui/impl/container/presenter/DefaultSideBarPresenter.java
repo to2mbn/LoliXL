@@ -10,7 +10,7 @@ import javafx.scene.Parent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.osgi.framework.BundleContext;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
@@ -25,24 +25,18 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 
-@Component
+@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class })
+@Component(immediate = true)
 public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> implements SideBarPanelDisplayService, SideBarAlertService {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_side_bar.fxml";
 
-	private final Deque<Tile> bottomAlerts;
+	private final Deque<Tile> bottomAlerts = new ConcurrentLinkedDeque<>();
 
 	private Panel currentPanel;
 
 	@Reference(target = "(usage=cpu_compute)")
 	private ExecutorService cpuComputePool;
-
-	public DefaultSideBarPresenter(BundleContext ctx) {
-		super(ctx);
-		ctx.registerService(SideBarPanelDisplayService.class, this, null);
-		ctx.registerService(SideBarAlertService.class, this, null);
-		bottomAlerts = new ConcurrentLinkedDeque<>();
-	}
 
 	@Override
 	protected String getFxmlLocation() {
@@ -99,7 +93,7 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 					last = current;
 
 					try {
-						Thread.currentThread().sleep(5000L); // TODO: make it configurable
+						Thread.sleep(5000L); // TODO: make it configurable
 					} catch (InterruptedException e) {
 						// ignore
 					}

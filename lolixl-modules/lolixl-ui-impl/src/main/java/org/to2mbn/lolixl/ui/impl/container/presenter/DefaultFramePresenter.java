@@ -9,13 +9,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.framework.BundleContext;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.UIApp;
+import org.to2mbn.lolixl.ui.impl.MainStage;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
@@ -33,6 +33,18 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_frame.fxml";
 
+	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "+" + MainStage.MAIN_STAGE_ID + ")")
+	private Stage stage;
+
+	@Reference
+	private DefaultTitleBarPresenter titleBarPresenter;
+
+	@Reference
+	private DefaultSideBarPresenter sideBarPresenter;
+
+	@Reference
+	private HomeContentPresenter homeContentPresenter;
+
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
 
 	// for draggable:
@@ -41,16 +53,14 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	// for resizeable:
 	private double lastResizeX, lastResizeY;
 
-	public DefaultFramePresenter(BundleContext ctx) {
-		super(ctx);
-		ctx.registerService(BackgroundService.class, this, null);
-		ctx.registerService(PanelDisplayService.class, this, null);
-	}
-
 	@Override
 	public void postInitialize() {
 		makeDraggable();
 		makeResizeable();
+
+		view.titleBarPane.getChildren().add(titleBarPresenter.getView().rootContainer);
+		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
+		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
 	}
 
 	@Override
@@ -83,36 +93,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	@Override
 	public Panel[] getOpenedPanels() {
 		return panels.stream().map(entry -> entry.model).toArray(Panel[]::new);
-	}
-
-	/**
-	 * 需要在JavaFX线程下运行
-	 */
-	public void setTitleBar(Region titleBar) {
-		preCheck(titleBar);
-		if (view.titleBarPane != null) {
-			view.titleBarPane.getChildren().add(titleBar);
-		}
-	}
-
-	/**
-	 * 需要在JavaFX线程下运行
-	 */
-	public void setSidebar(Region sidebar) {
-		preCheck(sidebar);
-		if (view.sidebarPane != null) {
-			view.sidebarPane.getChildren().add(sidebar);
-		}
-	}
-
-	/**
-	 * 需要在JavaFX线程下运行
-	 */
-	public void setContent(Region content) {
-		preCheck(content);
-		if (view.contentPane != null) {
-			view.contentPane.getChildren().add(content);
-		}
 	}
 
 	private <T> void preCheck(T obj) {
@@ -194,7 +174,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		});
 		view.titleBarPane.setOnMouseDragged(event -> {
 			if (isDragging) {
-				Stage stage = UIApp.mainStageProperty().get();
 				stage.setX(event.getScreenX() - lastDragX);
 				stage.setY(event.getScreenY() - lastDragY);
 			}
