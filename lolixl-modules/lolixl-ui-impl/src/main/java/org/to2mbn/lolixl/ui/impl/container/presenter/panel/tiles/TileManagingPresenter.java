@@ -22,7 +22,7 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import java.util.logging.Logger;
 
-@Service({ EventHandler.class })
+@Service({ EventHandler.class, TileManagingPresenter.class })
 @Properties({
 		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
 		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")

@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.scene.image.ImageView;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
@@ -19,7 +20,8 @@ import java.util.function.Supplier;
  * 设计之路真是任重而道远啊
  */
 //设你妈的计 -- yushijinhun
-@Component
+@Service({ HomeContentPresenter.class })
+@Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";

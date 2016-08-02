@@ -1,9 +1,13 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
 import javafx.scene.control.Label;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
 
+@Service({ GameVersionsPresenter.class })
+@Component(immediate = true)
 public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 	// TODO
 	public static class GameVersionCategory {

@@ -3,10 +3,14 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
 import java.util.function.Consumer;
 
+@Service({ DefaultTitleBarPresenter.class })
+@Component(immediate = true)
 public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_title_bar.fxml";
 

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 @SuppressWarnings("rawtypes")
 
-@Service({ SettingsCategoriesManagingService.class })
+@Service({ SettingsCategoriesManagingService.class, SettingsPresenter.class })
 @Component(immediate = true)
 public class SettingsPresenter extends Presenter<SettingsView> implements SettingsCategoriesManagingService {
 

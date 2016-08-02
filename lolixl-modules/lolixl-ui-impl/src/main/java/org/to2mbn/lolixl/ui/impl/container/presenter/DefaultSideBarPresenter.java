@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 
-@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class })
+@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class, DefaultSideBarPresenter.class })
 @Component(immediate = true)
 public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> implements SideBarPanelDisplayService, SideBarAlertService {
 

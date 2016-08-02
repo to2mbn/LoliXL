@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.core.download.notify.DownloadCenterNotifier;
 import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.ui.Panel;
@@ -24,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
+@Service({ DownloadCenterPresenter.class })
+@Component(immediate = true)
 public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 	private static final Logger LOGGER = Logger.getLogger(DownloadCenterPresenter.class.getCanonicalName());
 	private static final String FXML_LOCATION = "/ui/fxml/panel/download_center_panel.fxml";

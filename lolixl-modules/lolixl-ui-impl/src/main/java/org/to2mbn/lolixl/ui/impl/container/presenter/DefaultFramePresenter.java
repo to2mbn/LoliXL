@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Service({ BackgroundService.class, PanelDisplayService.class })
+@Service({ BackgroundService.class, PanelDisplayService.class, DefaultFramePresenter.class })
 @Component(immediate = true)
 public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
 
