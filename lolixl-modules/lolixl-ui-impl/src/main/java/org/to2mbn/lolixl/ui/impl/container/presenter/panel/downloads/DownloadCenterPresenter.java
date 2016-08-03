@@ -5,9 +5,11 @@ import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.download.notify.DownloadCenterNotifier;
 import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.i18n.I18N;
@@ -45,17 +47,22 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	private final ReadOnlyIntegerWrapper taskCountProperty = new ReadOnlyIntegerWrapper(0);
 
+	private Timer timer;
+	private TimerTask updateTask;
+	private Map<DownloadTaskGroup, DownloadTaskGroupItemView> itemMapping = new ConcurrentHashMap<>();
+
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+	}
+
 	@Override
 	protected String getFxmlLocation() {
 		return FXML_LOCATION;
 	}
 
-	private Timer timer;
-	private TimerTask updateTask;
-	private Map<DownloadTaskGroup, DownloadTaskGroupItemView> itemMapping = new ConcurrentHashMap<>();
-
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 		timer = new Timer(false);
 		updateTask = new TimerTask() {
 			@Override

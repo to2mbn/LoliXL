@@ -4,13 +4,13 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Duration;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
@@ -19,7 +19,6 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -37,6 +36,11 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 
 	@Reference(target = "(usage=cpu_compute)")
 	private ExecutorService cpuComputePool;
+
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+	}
 
 	@Override
 	protected String getFxmlLocation() {
@@ -66,11 +70,14 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	}
 
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 		startAlertDisplayWorkCycle();
 	}
 
 	private void startAlertDisplayWorkCycle() {
+		/*
+		// FIXME: Change to non-blocking mode, and run on JFX thread (use a timer?)
+		
 		cpuComputePool.execute(() -> {
 			while (true) {
 				ObservableList<Node> children = view.functionalTileBottomContainer.getChildren();
@@ -89,9 +96,9 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 					}
 					current.setVisible(true);
 					in.play();
-
+		
 					last = current;
-
+		
 					try {
 						Thread.sleep(5000L); // TODO: make it configurable
 					} catch (InterruptedException e) {
@@ -100,6 +107,7 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 				}
 			}
 		});
+		*/
 	}
 
 	private Animation generateAlertAnimation(Tile alert, boolean goOff) {

@@ -33,6 +33,8 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Activate
 	public void active(ComponentContext compCtx) {
+		super.active();
+
 		bundleContext = compCtx.getBundleContext();
 		serviceTracker = new ObservableServiceTracker(bundleContext, ConfigurationCategory.class);
 		serviceTracker.open(true);
@@ -49,7 +51,7 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 	}
 
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 		view.categoryContainer.setItems(serviceTracker.getServiceList());
 
 		view.categoryContainer.selectionModelProperty().addListener((observable, oldValue, newValue) -> {

@@ -2,11 +2,13 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.to2mbn.lolixl.core.config.ConfigurationEvent;
@@ -15,7 +17,7 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeServiceImpl;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 
-@Service({ org.osgi.service.event.EventHandler.class, ThemesPresenter.class })
+@Service({ org.osgi.service.event.EventHandler.class })
 @Properties({
 		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
 		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + ThemeServiceImpl.CATEGORY_THEME_CONFIG + ")")
@@ -28,13 +30,18 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 	@Reference
 	private ThemeService themeService;
 
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+	}
+
 	@Override
 	protected String getFxmlLocation() {
 		return FXML_LOCATION;
 	}
 
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 	}
 
 	@Override

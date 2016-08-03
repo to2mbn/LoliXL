@@ -3,8 +3,10 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.beans.binding.Bindings;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultTitleBarView;
 import java.util.function.Consumer;
@@ -17,8 +19,13 @@ public class DefaultTitleBarPresenter extends Presenter<DefaultTitleBarView> {
 	private Consumer<MouseEvent> closeButtonListener;
 	private Stage parentStage;
 
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+	}
+
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 		view.minimizeButton.setOnMouseClicked(this::onMinimizeButtonClicked);
 		view.closeButton.setOnMouseClicked(this::onCloseButtonClicked);
 		view.rootContainer.idProperty().bind(Bindings

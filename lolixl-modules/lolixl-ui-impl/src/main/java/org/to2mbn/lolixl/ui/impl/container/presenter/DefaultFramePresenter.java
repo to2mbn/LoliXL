@@ -8,9 +8,11 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
@@ -53,8 +55,13 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	// for resizeable:
 	private double lastResizeX, lastResizeY;
 
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+	}
+
 	@Override
-	public void postInitialize() {
+	protected void initializePresenter() {
 		makeDraggable();
 		makeResizeable();
 
