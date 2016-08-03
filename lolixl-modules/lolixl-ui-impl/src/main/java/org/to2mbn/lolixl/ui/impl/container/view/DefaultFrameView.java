@@ -7,9 +7,6 @@ import org.to2mbn.lolixl.ui.container.view.View;
 
 public class DefaultFrameView extends View {
 	@FXML
-	public StackPane shadowContainer;
-
-	@FXML
 	public BorderPane rootContainer;
 
 	@FXML

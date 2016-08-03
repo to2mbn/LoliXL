@@ -41,11 +41,6 @@
 
 #content-panel-previous-button {
     -fx-text-fill: transparent;
-    -fx-background-image: "/ui/img/previous_button.png";
-}
-
-#content-panel-previous-button:hover {
-    -fx-background-image: "/ui/img/previous_button_hover.png";
 }
 
 #tile {
