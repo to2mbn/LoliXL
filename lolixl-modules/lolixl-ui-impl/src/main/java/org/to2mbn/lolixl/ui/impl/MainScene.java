@@ -37,7 +37,7 @@ public class MainScene {
 
 			LOGGER.fine("Creating main scene");
 			Scene m_scene = new Scene(defaultFramePresenter.getView().shadowContainer);
-			// Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
+			Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
 			m_scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 			stage.setScene(m_scene);
 			stage.show();
