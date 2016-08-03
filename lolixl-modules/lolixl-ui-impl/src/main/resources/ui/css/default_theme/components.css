@@ -62,3 +62,13 @@
     -fx-font-weight: bold;
     -fx-text-fill: whitesmoke;
 }
+
+#displayable-item-tile-text-label {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: whitesmoke;
+}
+
+#displayable-item-tile-root-container {
+    -fx-background-color: transparent;
+}
