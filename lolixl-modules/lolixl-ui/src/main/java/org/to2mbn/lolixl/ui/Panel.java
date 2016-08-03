@@ -1,7 +1,10 @@
 package org.to2mbn.lolixl.ui;
 
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 
@@ -32,4 +35,14 @@ public interface Panel {
 	 * 需要在JavaFX线程运行
 	 */
 	void hide();
+
+	default void bindItem(DisplayableItem item) {
+		titleProperty().bind(item.getLocalizedName());
+		iconProperty().bind(item.getIcon());
+	}
+
+	default void bindButton(ButtonBase button) {
+		button.addEventHandler(ActionEvent.ACTION, e -> show());
+	}
+
 }

@@ -151,19 +151,24 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 	}
 
 	@Override
-	public Optional<Configuration> getConfiguration(String category) {
+	public Optional<ConfigurationCategory<?>> getCategory(String category) {
 		Objects.requireNonNull(category);
 		for (ServiceReference<ConfigurationCategory> reference : serviceTracker.getServiceReferences()) {
 			ConfigurationCategory<?> service = bundleContext.getService(reference);
 			try {
 				if (category.equals(getCategoryName(reference, service))) {
-					return Optional.ofNullable(service.store());
+					return Optional.of(service);
 				}
 			} finally {
 				bundleContext.ungetService(reference);
 			}
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Configuration> getConfiguration(String category) {
+		return getCategory(category).map(ConfigurationCategory::store);
 	}
 
 }

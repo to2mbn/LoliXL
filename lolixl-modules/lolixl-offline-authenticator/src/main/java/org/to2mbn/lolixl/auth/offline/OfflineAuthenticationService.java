@@ -7,7 +7,6 @@ import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.i18n.I18N;
-import org.to2mbn.lolixl.ui.component.Tile;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.image.Image;
@@ -31,12 +30,6 @@ public class OfflineAuthenticationService implements AuthenticationService {
 
 	@Override
 	public ObservableObjectValue<Image> getIcon() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Tile createTile() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,12 +3,14 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.downloads;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.core.download.notify.DownloadCenterNotifier;
 import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
+import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
@@ -17,6 +19,7 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemInfoView;
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView;
+import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Timer;
@@ -25,9 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Service({ DownloadCenterPresenter.class })
+@Service({ SidebarTileElement.class })
 @Component(immediate = true)
-public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
+public class DownloadCenterPresenter extends Presenter<DownloadCenterView> implements SidebarTileElement {
 	private static final Logger LOGGER = Logger.getLogger(DownloadCenterPresenter.class.getCanonicalName());
 	private static final String FXML_LOCATION = "/ui/fxml/panel/download_center_panel.fxml";
 
@@ -49,7 +52,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 
 	private Timer timer;
 	private TimerTask updateTask;
-	private Map<DownloadTaskGroup, DownloadTaskGroupItemView> itemMapping;
+	private Map<DownloadTaskGroup, DownloadTaskGroupItemView> itemMapping = new ConcurrentHashMap<>();
 
 	@Override
 	public void postInitialize() {
@@ -60,7 +63,6 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 				Platform.runLater(DownloadCenterPresenter.this::updateStatus);
 			}
 		};
-		itemMapping = new ConcurrentHashMap<>();
 	}
 
 	public void startUpdateCycle() {
@@ -124,4 +126,25 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> {
 			}, false);
 		}
 	}
+
+	@Override
+	public ObservableStringValue getLocalizedName() {
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.container.downloads.title");
+	}
+
+	@Override
+	public Tile createTile() {
+		Tile tile = SidebarTileElement.super.createTile();
+
+		Panel panel = displayService.newPanel();
+		panel.bindItem(this);
+		panel.bindButton(tile);
+
+		panel.contentProperty().set(view.rootContainer);
+		panel.onShownProperty().set(this::startUpdateCycle);
+		panel.onClosedProperty().set(this::resumeUpdateCycle);
+
+		return tile;
+	}
+
 }

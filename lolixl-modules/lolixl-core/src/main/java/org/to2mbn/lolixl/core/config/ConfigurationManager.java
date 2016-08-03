@@ -6,4 +6,6 @@ public interface ConfigurationManager {
 
 	Optional<Configuration> getConfiguration(String category);
 
+	Optional<ConfigurationCategory<?>> getCategory(String category);
+
 }

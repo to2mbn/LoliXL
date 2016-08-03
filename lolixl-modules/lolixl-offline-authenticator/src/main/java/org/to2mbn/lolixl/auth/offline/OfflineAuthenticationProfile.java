@@ -7,7 +7,6 @@ import javafx.scene.layout.Region;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
-import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.utils.ObservableContext;
 
 public class OfflineAuthenticationProfile implements AuthenticationProfile<OfflineAuthenticationMemento> {
@@ -39,12 +38,6 @@ public class OfflineAuthenticationProfile implements AuthenticationProfile<Offli
 	@Override
 	public ObservableStringValue getUsername() {
 		return username;
-	}
-
-	@Override
-	public Tile createTile() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

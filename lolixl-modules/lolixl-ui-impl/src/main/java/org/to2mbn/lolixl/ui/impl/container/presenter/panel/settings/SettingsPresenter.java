@@ -1,30 +1,47 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
-import javafx.application.Platform;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.SettingsCategoriesManagingService;
+import org.to2mbn.lolixl.i18n.I18N;
+import org.to2mbn.lolixl.ui.Panel;
+import org.to2mbn.lolixl.ui.PanelDisplayService;
+import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
-import java.util.Deque;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.ObservableServiceTracker;
+import javafx.beans.value.ObservableStringValue;
 
-@SuppressWarnings("rawtypes")
-
-@Service({ SettingsCategoriesManagingService.class, SettingsPresenter.class })
+@Service({ SidebarTileElement.class })
 @Component(immediate = true)
-public class SettingsPresenter extends Presenter<SettingsView> implements SettingsCategoriesManagingService {
+public class SettingsPresenter extends Presenter<SettingsView> implements SidebarTileElement {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/settings_panel.fxml";
 
-	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;
-	private Deque<ConfigurationCategory<?>> categories;
+	@Reference
+	private PanelDisplayService displayService;
+
+	private BundleContext bundleContext;
+	private ObservableServiceTracker<ConfigurationCategory<?>> serviceTracker;
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Activate
+	public void active(ComponentContext compCtx) {
+		bundleContext = compCtx.getBundleContext();
+		serviceTracker = new ObservableServiceTracker(bundleContext, ConfigurationCategory.class);
+		serviceTracker.open(true);
+	}
+
+	@Deactivate
+	public void deactive() {
+		serviceTracker.close();
+	}
 
 	@Override
 	protected String getFxmlLocation() {
@@ -33,28 +50,8 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Settin
 
 	@Override
 	public void postInitialize() {
-		categories = new ConcurrentLinkedDeque<>();
-		BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		serviceTracker = new ServiceTracker<>(ctx, ConfigurationCategory.class, new ServiceTrackerCustomizer<ConfigurationCategory, ConfigurationCategory>() {
+		view.categoryContainer.setItems(serviceTracker.getServiceList());
 
-			@Override
-			public ConfigurationCategory addingService(ServiceReference<ConfigurationCategory> reference) {
-				ConfigurationCategory<?> category = ctx.getService(reference);
-				categories.addLast(category);
-				Platform.runLater(SettingsPresenter.this::refreshCategories);
-				return category;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory service) {}
-
-			@Override
-			public void removedService(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory service) {
-				categories.remove(service);
-				ctx.ungetService(reference);
-			}
-		});
-		serviceTracker.open();
 		view.categoryContainer.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
 				view.contentContainer.getChildren().clear();
@@ -63,11 +60,22 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Settin
 		});
 	}
 
-	public void onShown() {
-		refreshCategories();
+	@Override
+	public ObservableStringValue getLocalizedName() {
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.container.tiles.management.title");
 	}
 
-	private void refreshCategories() {
-		view.categoryContainer.getItems().setAll(categories);
+	@Override
+	public Tile createTile() {
+		Tile tile = SidebarTileElement.super.createTile();
+
+		Panel panel = displayService.newPanel();
+		panel.bindButton(tile);
+		panel.bindItem(this);
+
+		panel.contentProperty().set(view.rootContainer);
+
+		return tile;
 	}
+
 }

@@ -11,7 +11,6 @@ import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.core.game.version.GameVersionProvider;
 import org.to2mbn.lolixl.i18n.I18N;
-import org.to2mbn.lolixl.ui.component.Tile;
 import com.sun.javafx.binding.StringConstant;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -43,12 +42,6 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 	@Override
 	public ObservableList<GameVersion> getVersions() {
 		return gameVersionsReadOnlyView;
-	}
-
-	@Override
-	public Tile createTile() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
