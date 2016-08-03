@@ -3,7 +3,10 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toConcurrentMap;
 import javafx.application.Platform;
+import javafx.beans.binding.ListBinding;
 import javafx.beans.value.ObservableStringValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -41,6 +44,25 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	private SideBarTileList tiles;
 	private volatile int maxShownTiles;
 
+	private ObservableList<SidebarTileElement> shownTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+	private ObservableList<SidebarTileElement> hiddenTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+	private ObservableList<SidebarTileElement> allTilesReadOnlyView = new ListBinding<SidebarTileElement>() {
+
+		{
+			bind(shownTiles, hiddenTiles);
+		}
+
+		@Override
+		protected ObservableList<SidebarTileElement> computeValue() {
+			List<SidebarTileElement> result = new ArrayList<>();
+			result.addAll(shownTiles);
+			result.addAll(hiddenTiles);
+			return FXCollections.unmodifiableObservableList(FXCollections.observableList(result));
+		}
+	};
+	private ObservableList<SidebarTileElement> shownTilesReadOnlyView = FXCollections.unmodifiableObservableList(shownTiles);
+	private ObservableList<SidebarTileElement> hiddenTilesReadOnlyView = FXCollections.unmodifiableObservableList(hiddenTiles);
+
 	private ObservableContext observableContext;
 	private BundleContext bundleContext;
 	private ServiceTracker<SidebarTileElement, SidebarTileElement> serviceTracker;
@@ -70,6 +92,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 						entry.tileComponent = service.createTile();
 						tiles.serviceMapping.put(service, entry);
 						tiles.componentMapping.put(entry.tileComponent, entry);
+						updateTiles();
 					}
 					observableContext.notifyChanged();
 				});
@@ -92,6 +115,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 							entry.tileComponent = null;
 							entry.tileElement = null;
 						}
+						updateTiles();
 					}
 				});
 				bundleContext.ungetService(reference);
@@ -105,10 +129,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	}
 
 	@Override
-	public List<SidebarTileElement> getTiles(StackingStatus... types) {
-		checkFxThread();
-		Objects.requireNonNull(types);
-
+	public ObservableList<SidebarTileElement> getTiles(StackingStatus... types) {
 		boolean includeShown = false;
 		boolean includeHidden = false;
 		for (StackingStatus type : types) {
@@ -123,30 +144,35 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 					break;
 			}
 		}
-
-		List<SidebarTileElement> result = new ArrayList<>();
 		if (!includeShown && !includeHidden) {
-			return result;
+			return FXCollections.emptyObservableList();
+		} else if (includeShown && !includeHidden) {
+			return shownTilesReadOnlyView;
+		} else if (!includeShown && includeHidden) {
+			return hiddenTilesReadOnlyView;
+		} else if (includeShown && includeHidden) {
+			return allTilesReadOnlyView;
 		}
+		throw new AssertionError("unreachable statement");
+	}
+
+	private void updateTiles() {
+		List<SidebarTileElement> shown = new ArrayList<>();
+		List<SidebarTileElement> hidden = new ArrayList<>();
 
 		int size = 0;
-		synchronized (tiles.entries) {
-			for (SideBarTileList.TileEntry ele : tiles.entries) {
-				if (ele.tileElement != null) {
-					if (size < maxShownTiles) {
-						if (includeShown) {
-							result.add(ele.tileElement);
-						}
-					} else {
-						if (includeHidden) {
-							result.add(ele.tileElement);
-						}
-					}
-					size++;
+		for (SideBarTileList.TileEntry ele : tiles.entries) {
+			if (ele.tileElement != null) {
+				if (size < maxShownTiles) {
+					shown.add(ele.tileElement);
+				} else {
+					hidden.add(ele.tileElement);
 				}
+				size++;
 			}
 		}
-		return result;
+		shownTiles.setAll(shown);
+		hiddenTiles.setAll(hiddenTiles);
 	}
 
 	@Override

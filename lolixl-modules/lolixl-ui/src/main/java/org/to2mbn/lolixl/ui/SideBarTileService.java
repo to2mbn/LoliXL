@@ -1,8 +1,8 @@
 package org.to2mbn.lolixl.ui;
 
-import java.util.List;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import javafx.collections.ObservableList;
 
 public interface SideBarTileService {
 
@@ -23,7 +23,7 @@ public interface SideBarTileService {
 	 * @param types
 	 * @return
 	 */
-	List<SidebarTileElement> getTiles(StackingStatus... types);
+	ObservableList<SidebarTileElement> getTiles(StackingStatus... types);
 
 	/**
 	 * 返回 {@code element} 的堆叠状态，若不存在于磁贴集合中则 {@code null} 。
