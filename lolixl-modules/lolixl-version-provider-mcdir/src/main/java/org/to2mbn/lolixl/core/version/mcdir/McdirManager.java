@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -43,9 +44,11 @@ public class McdirManager implements ConfigurationCategory<McdirList> {
 	}
 
 	@Override
-	public void restore(McdirList memento) {
-		mcdirList.mcdirs.addAll(memento.mcdirs);
-		mcdirList.mcdirs.forEach(this::registerMcdir);
+	public void restore(Optional<McdirList> optionalMemento) {
+		optionalMemento.ifPresent(memento -> {
+			mcdirList.mcdirs.addAll(memento.mcdirs);
+			mcdirList.mcdirs.forEach(this::registerMcdir);
+		});
 	}
 
 	@Override

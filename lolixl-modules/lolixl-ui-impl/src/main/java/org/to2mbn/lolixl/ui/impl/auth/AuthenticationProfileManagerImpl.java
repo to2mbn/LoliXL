@@ -231,7 +231,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	// 因为单独写会造成类型推断失败
 	// 所以抽一个方法出来
 	private <T extends java.io.Serializable> void loadAuthProfileMemo(AuthenticationProfile<T> profile, Path path) throws JsonSyntaxException, IOException {
-		profile.restore(GsonUtils.fromJson(path, profile.getMementoType()));
+		profile.restore(Optional.ofNullable(GsonUtils.fromJson(path, profile.getMementoType())));
 	}
 
 	private void unloadAuthProfile(AuthenticationProfileEntry entry) {
@@ -262,9 +262,8 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	}
 
 	@Override
-	public void restore(AuthenticationProfileList memento) {
-		profiles = new AuthenticationProfileList();
-		profiles.entries.addAll(memento.entries);
+	public void restore(Optional<AuthenticationProfileList> optionalMemento) {
+		optionalMemento.ifPresent(memento -> profiles.entries.addAll(memento.entries));
 		serviceTracker.open(true);
 	}
 

@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
+import java.util.Optional;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
@@ -21,8 +22,8 @@ public class OfflineAuthenticationProfile implements AuthenticationProfile<Offli
 	}
 
 	@Override
-	public void restore(OfflineAuthenticationMemento memento) {
-		username.set(memento.username);
+	public void restore(Optional<OfflineAuthenticationMemento> optionalMemento) {
+		optionalMemento.ifPresent(memento -> username.set(memento.username));
 	}
 
 	@Override

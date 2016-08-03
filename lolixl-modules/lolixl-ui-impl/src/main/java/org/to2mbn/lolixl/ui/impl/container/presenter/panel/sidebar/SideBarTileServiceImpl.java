@@ -6,6 +6,7 @@ import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
@@ -22,10 +23,10 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.application.Platform;
-import javafx.beans.binding.ListBinding;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,25 +41,12 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
-	private SideBarTileList tiles;
+	private SideBarTileList tiles = new SideBarTileList();
 	private volatile int maxShownTiles;
 
 	private ObservableList<SidebarTileElement> shownTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<SidebarTileElement> hiddenTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
-	private ObservableList<SidebarTileElement> allTilesReadOnlyView = new ListBinding<SidebarTileElement>() {
-
-		{
-			bind(shownTiles, hiddenTiles);
-		}
-
-		@Override
-		protected ObservableList<SidebarTileElement> computeValue() {
-			List<SidebarTileElement> result = new ArrayList<>();
-			result.addAll(shownTiles);
-			result.addAll(hiddenTiles);
-			return FXCollections.unmodifiableObservableList(FXCollections.observableList(result));
-		}
-	};
+	private ObservableList<SidebarTileElement> allTilesReadOnlyView = new LinkedObservableList<>(shownTiles, hiddenTiles);
 	private ObservableList<SidebarTileElement> shownTilesReadOnlyView = FXCollections.unmodifiableObservableList(shownTiles);
 	private ObservableList<SidebarTileElement> hiddenTilesReadOnlyView = FXCollections.unmodifiableObservableList(hiddenTiles);
 
@@ -280,12 +268,13 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	}
 
 	@Override
-	public void restore(SideBarTileList memento) {
-		tiles = new SideBarTileList();
-		tiles.entries.addAll(memento.entries);
-		tiles.tagNameMapping = tiles.entries.stream()
-				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
-		tiles.serviceMapping = new ConcurrentHashMap<>();
+	public void restore(Optional<SideBarTileList> optionalMemento) {
+		optionalMemento.ifPresent(memento -> {
+			tiles.entries.addAll(memento.entries);
+			tiles.tagNameMapping = tiles.entries.stream()
+					.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
+			tiles.serviceMapping = new ConcurrentHashMap<>();
+		});
 
 		serviceTracker.open(true);
 	}

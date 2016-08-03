@@ -1,13 +1,14 @@
 package org.to2mbn.lolixl.ui.theme;
 
-import java.util.List;
+import javafx.collections.ObservableList;
 
 public interface ThemeService {
 
 	void enable(Theme theme);
 	void disable(Theme theme);
 
-	List<Theme> getEnabledThemes();
-	List<Theme> getDisabledThemes();
+	ObservableList<Theme> getEnabledThemes();
+	ObservableList<Theme> getDisabledThemes();
+	ObservableList<Theme> getAllThemes();
 
 }

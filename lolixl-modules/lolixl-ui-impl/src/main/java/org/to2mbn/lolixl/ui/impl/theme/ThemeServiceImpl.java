@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
 import static java.util.stream.Collectors.toList;
+import java.util.ArrayList;
+import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -15,19 +17,24 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings.ThemesPresenter;
+import org.to2mbn.lolixl.ui.impl.MainScene;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
+import org.to2mbn.lolixl.utils.CollectionUtils;
+import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.beans.value.ObservableStringValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -52,6 +59,9 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	private static final Logger LOGGER = Logger.getLogger(ThemeServiceImpl.class.getCanonicalName());
 
+	@Reference(target = "(" + MainScene.PROPERTY_SCENE_ID + "=" + MainScene.MAIN_SCENE_ID + ")")
+	private Scene scene;
+
 	private Map<String, Integer> themeTypeOrder;
 	private Comparator<ThemeEntry> themeComparator;
 
@@ -59,10 +69,13 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private BundleContext bundleContext;
 	private ObservableContext observableContext;
 
-	private ThemeConfiguration config;
+	private ThemeConfiguration config = new ThemeConfiguration();
 
-	@Reference
-	private ThemesPresenter presenter;
+	private ObservableList<Theme> enabledThemes = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+	private ObservableList<Theme> disabledThemes = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+	private ObservableList<Theme> allTilesReadOnlyView = new LinkedObservableList<>(enabledThemes, disabledThemes);
+	private ObservableList<Theme> enabledThemesReadOnlyView = FXCollections.unmodifiableObservableList(enabledThemes);
+	private ObservableList<Theme> disabledThemesReadOnlyView = FXCollections.unmodifiableObservableList(disabledThemes);
 
 	public ThemeServiceImpl() {
 		themeTypeOrder = new HashMap<>();
@@ -152,7 +165,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 					} else {
 						// 过去设置过这个Theme，遵循过去的设置
 					}
-					observableContext.notifyChanged();
+					updateThemesList();
 				}
 				return service;
 			}
@@ -184,7 +197,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 									}
 								}
 							}
-							observableContext.notifyChanged();
+							updateThemesList();
 							break;
 						}
 					}
@@ -234,31 +247,39 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 				if (entry.theme == theme && entry.enabled != enable) {
 					LOGGER.fine((enable ? "Enabling" : "Disabling") + " theme " + entry.id);
 					entry.enabled = enable;
-					observableContext.notifyChanged();
+					updateThemesList();
 				}
 			}
 		}
 	}
 
-	@Override
-	public List<Theme> getEnabledThemes() {
-		return getThemes(true);
+	private void updateThemesList() {
+		List<Theme> newEnabled = new ArrayList<>();
+		List<Theme> newDisabled = new ArrayList<>();
+		config.themes.stream()
+				.filter(entry -> entry.theme != null)
+				.sorted()
+				.forEach(entry -> (entry.enabled ? newEnabled : newDisabled).add(entry.theme));
+		enabledThemes.setAll(newEnabled);
+		disabledThemes.setAll(newDisabled);
+
+		processThemesUpdate();
+		observableContext.notifyChanged();
 	}
 
 	@Override
-	public List<Theme> getDisabledThemes() {
-		return getThemes(false);
+	public ObservableList<Theme> getEnabledThemes() {
+		return enabledThemesReadOnlyView;
 	}
 
-	private List<Theme> getThemes(boolean enabled) {
-		synchronized (config.themes) {
-			return config.themes.stream()
-					.filter(entry -> entry.theme != null)
-					.filter(entry -> entry.enabled == enabled)
-					.sorted(themeComparator)
-					.map(entry -> entry.theme)
-					.collect(toList());
-		}
+	@Override
+	public ObservableList<Theme> getDisabledThemes() {
+		return disabledThemesReadOnlyView;
+	}
+
+	@Override
+	public ObservableList<Theme> getAllThemes() {
+		return allTilesReadOnlyView;
 	}
 
 	@Override
@@ -272,9 +293,8 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	}
 
 	@Override
-	public void restore(ThemeConfiguration memento) {
-		config = new ThemeConfiguration();
-		config.themes.addAll(memento.themes);
+	public void restore(Optional<ThemeConfiguration> optionalMemento) {
+		optionalMemento.ifPresent(memento -> config.themes.addAll(memento.themes));
 		serviceTracker.open(true);
 	}
 
@@ -291,6 +311,27 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	@Override
 	public Region createConfiguringPanel() {
-		return presenter.getView().rootContainer;
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	private List<Theme> lastEnabledThemes = new ArrayList<>();
+
+	private void processThemesUpdate() {
+		CollectionUtils.diff(lastEnabledThemes, enabledThemes,
+				installed -> {
+					LOGGER.fine("Loading theme " + installed);
+					ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
+					Thread.currentThread().setContextClassLoader(installed.getResourceLoader());
+					scene.getStylesheets().addAll(installed.getStyleSheets());
+					Thread.currentThread().setContextClassLoader(ctxLoader);
+				},
+				uninstalled -> {
+					LOGGER.fine("Unloading theme " + uninstalled);
+					scene.getStylesheets().removeAll(uninstalled.getStyleSheets());
+				});
+		lastEnabledThemes.clear();
+		lastEnabledThemes.addAll(enabledThemes);
+	}
+
 }
