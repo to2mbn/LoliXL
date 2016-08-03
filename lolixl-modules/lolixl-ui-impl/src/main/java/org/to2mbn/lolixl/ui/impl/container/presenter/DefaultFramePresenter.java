@@ -4,8 +4,10 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
@@ -68,6 +70,8 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		view.titleBarPane.getChildren().add(titleBarPresenter.getView().rootContainer);
 		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
+
+		view.shadowContainer.setEffect(new DropShadow());
 	}
 
 	@Override

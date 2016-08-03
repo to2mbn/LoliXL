@@ -17,9 +17,6 @@
          <center>
             <StackPane id="default-frame-content-container" fx:id="contentPane" prefHeight="440.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
          </center>
-         <effect>
-            <DropShadow spread="0.5" />
-         </effect>
       </BorderPane>
    </children>
    <padding>
