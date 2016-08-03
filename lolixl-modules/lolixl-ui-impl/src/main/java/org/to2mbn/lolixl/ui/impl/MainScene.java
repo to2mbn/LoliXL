@@ -1,9 +1,8 @@
 package org.to2mbn.lolixl.ui.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -11,9 +10,10 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @Component
 public class MainScene {
@@ -36,7 +36,7 @@ public class MainScene {
 		Scene scene = AsyncUtils.asyncRun(() -> {
 
 			LOGGER.fine("Creating main scene");
-			Scene m_scene = new Scene(defaultFramePresenter.getView().rootContainer);
+			Scene m_scene = new Scene(defaultFramePresenter.getView().shadowContainer);
 			// Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
 			m_scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 			stage.setScene(m_scene);

@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.BorderPane?>
 
 
-<fx:root id="download-center-alert-root-container" prefHeight="45.0" prefWidth="245.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadCenterAlertView">
+<fx:root id="download-center-alert-root-container" prefHeight="45.0" prefWidth="245.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <Label id="download-center-alert-msg-label" fx:id="msgLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
    </center>
