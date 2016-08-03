@@ -2,12 +2,12 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toConcurrentMap;
-import javafx.application.Platform;
-import javafx.beans.binding.ListBinding;
-import javafx.beans.value.ObservableStringValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.layout.Region;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -21,16 +21,15 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
-import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.beans.binding.ListBinding;
+import javafx.beans.value.ObservableStringValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.layout.Region;
 
 @Service({ SideBarTileService.class, ConfigurationCategory.class })
 @Properties({
@@ -89,9 +88,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 							LOGGER.fine("Loading old tile: " + tagName);
 						}
 						entry.tileElement = service;
-						entry.tileComponent = service.createTile();
 						tiles.serviceMapping.put(service, entry);
-						tiles.componentMapping.put(entry.tileComponent, entry);
 						updateTiles();
 					}
 					observableContext.notifyChanged();
@@ -110,9 +107,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 						if (entry == null) {
 							LOGGER.warning(format("Tile service %s is going to be removed, but no tile entry for it is found"));
 						} else {
-							tiles.componentMapping.remove(entry.tileComponent);
 							tiles.tagNameMapping.remove(entry.tagName);
-							entry.tileComponent = null;
 							entry.tileElement = null;
 						}
 						updateTiles();
@@ -208,28 +203,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	}
 
 	@Override
-	public Tile getTileComponent(SidebarTileElement element) {
-		Objects.requireNonNull(element);
-
-		SideBarTileList.TileEntry entry = tiles.serviceMapping.get(element);
-		if (entry != null) {
-			return entry.tileComponent;
-		}
-		return null;
-	}
-
-	@Override
-	public SidebarTileElement getTileByComponent(Tile component) {
-		Objects.requireNonNull(component);
-
-		SideBarTileList.TileEntry entry = tiles.componentMapping.get(component);
-		if (entry != null) {
-			return entry.tileElement;
-		}
-		return null;
-	}
-
-	@Override
 	public int moveTile(SidebarTileElement element, int offset) {
 		checkFxThread();
 		Objects.requireNonNull(element);
@@ -313,7 +286,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 		tiles.tagNameMapping = tiles.entries.stream()
 				.collect(toConcurrentMap(entry -> entry.tagName, entry -> entry));
 		tiles.serviceMapping = new ConcurrentHashMap<>();
-		tiles.componentMapping = new ConcurrentHashMap<>();
 
 		serviceTracker.open(true);
 	}

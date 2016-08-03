@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
 import org.to2mbn.lolixl.core.config.Configuration;
-import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import java.io.Serializable;
 import java.util.List;
@@ -17,7 +16,6 @@ public class SideBarTileList implements Configuration {
 
 		public String tagName;
 		public volatile transient SidebarTileElement tileElement;
-		public volatile transient Tile tileComponent;
 
 	}
 
@@ -26,6 +24,5 @@ public class SideBarTileList implements Configuration {
 	public List<TileEntry> entries = new Vector<>();
 	public transient Map<String, TileEntry> tagNameMapping = new ConcurrentHashMap<>();
 	public transient Map<SidebarTileElement, TileEntry> serviceMapping = new ConcurrentHashMap<>();
-	public transient Map<Tile, TileEntry> componentMapping = new ConcurrentHashMap<>();
 
 }

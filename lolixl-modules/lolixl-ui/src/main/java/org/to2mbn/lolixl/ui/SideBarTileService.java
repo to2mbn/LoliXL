@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.ui;
 
-import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import javafx.collections.ObservableList;
 
@@ -40,10 +39,6 @@ public interface SideBarTileService {
 	 * @return
 	 */
 	String getTagName(SidebarTileElement element);
-
-	Tile getTileComponent(SidebarTileElement element);
-
-	SidebarTileElement getTileByComponent(Tile component);
 
 	/**
 	 * 移动给定磁贴。

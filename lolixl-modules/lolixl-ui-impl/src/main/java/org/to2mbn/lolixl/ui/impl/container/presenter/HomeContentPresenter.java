@@ -17,7 +17,10 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 
 @Service({ HomeContentPresenter.class, EventHandler.class })
-@Properties({ @Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION), @Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")") })
+@Properties({
+		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
+		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
+})
 @Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> implements EventHandler {
 
@@ -44,7 +47,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	public void setManagementTile(Tile tile) {
 		view.tileRootContainer.setBottom(tile);
 	}
-
 
 	@Override
 	public void handleEvent(Event event) {

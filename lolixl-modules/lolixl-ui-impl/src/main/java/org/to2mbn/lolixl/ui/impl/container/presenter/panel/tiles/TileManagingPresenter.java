@@ -1,10 +1,10 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles;
 
-import static java.util.stream.Collectors.toList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -28,6 +28,7 @@ import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.CollectionUtils;
 import java.util.logging.Logger;
 
 @Service({ EventHandler.class })
@@ -51,7 +52,8 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	@Reference
 	private SideBarTileService tileService;
 
-	private ObservableList<Tile> tiles;
+	private Map<SidebarTileElement, Tile> service2component = new ConcurrentHashMap<>();
+	private Map<Tile, SidebarTileElement> component2service = new ConcurrentHashMap<>();
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -68,7 +70,6 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	protected void initializePresenter() {
 		view.upButton.setOnAction(this::onUpButtonClicked);
 		view.downButton.setOnAction(this::onDownButtonClicked);
-		tiles = FXCollections.observableArrayList();
 		bindManagementTile();
 	}
 
@@ -78,9 +79,20 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	}
 
 	private void refreshTiles() {
-		tiles.setAll(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN).stream()
-				.map(tileService::getTileComponent)
-				.collect(toList()));
+		List<SidebarTileElement> elements = tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN);
+		CollectionUtils.diff(service2component.keySet(), elements,
+				added -> {
+					Tile component = added.createTile();
+					service2component.put(added, component);
+					component2service.put(component, added);
+				},
+				removed -> {
+					Tile component = service2component.remove(removed);
+					component2service.remove(component);
+				});
+		view.listView.getItems().setAll(elements.stream()
+				.map(service2component::get)
+				.toArray(Tile[]::new));
 	}
 
 	private void onUpButtonClicked(ActionEvent event) {
@@ -94,7 +106,7 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	}
 
 	private void moveTile(Tile tile, int offset) {
-		SidebarTileElement entry = tileService.getTileByComponent(tile);
+		SidebarTileElement entry = component2service.get(tile);
 		if (entry != null) {
 			tileService.moveTile(entry, offset);
 		}
@@ -110,7 +122,6 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 		Panel panel = panelDisplayService.newPanel();
 		panel.bindButton(tile);
 		panel.bindItem(this);
-		panel.onShownProperty().set(this::refreshTiles);
 		homeContentPresenter.setManagementTile(tile);
 	}
 

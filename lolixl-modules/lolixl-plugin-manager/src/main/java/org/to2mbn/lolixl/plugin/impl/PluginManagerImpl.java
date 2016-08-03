@@ -121,7 +121,7 @@ public class PluginManagerImpl implements PluginManager {
 
 	private CompletableFuture<Void> downloadArtifact(MavenArtifact artifact) {
 		synchronized (inProgressDownloads) {
-			CompletableFuture<Void> future = inProgressDownloads.get(inProgressDownloads);
+			CompletableFuture<Void> future = inProgressDownloads.get(artifact);
 			if (future == null) {
 				future = localPluginRepo.downloadBundle(remotePluginRepo, artifact)
 						.whenComplete((result, ex) -> {
