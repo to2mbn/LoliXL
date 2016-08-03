@@ -2,40 +2,32 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
-import javafx.collections.ListChangeListener;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
-import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Service({ HomeContentPresenter.class, EventHandler.class })
-@Properties({
-		@Property(name = EventConstants.EVENT_TOPIC, value = ConfigurationEvent.TOPIC_CONFIGURATION),
-		@Property(name = EventConstants.EVENT_FILTER, value = "(" + ConfigurationEvent.KEY_CATEGORY + "=" + SideBarTileService.CATEGORY_SIDEBAR_TILES + ")")
-})
+@Service({ HomeContentPresenter.class })
 @Component(immediate = true)
-public class HomeContentPresenter extends Presenter<HomeContentView> implements EventHandler {
+public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";
 
 	@Reference
 	private SideBarTileService tileService;
+
+	private MappedObservableList<SidebarTileElement, Tile> tilesMapping;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -47,6 +39,20 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 		return FXML_LOCATION;
 	}
 
+	@Override
+	protected void initializePresenter() {
+		tilesMapping = new MappedObservableList<>(tileService.getTiles(SideBarTileService.StackingStatus.SHOWN), element -> {
+			Tile tile = element.createTile();
+			tile.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
+
+			});
+			tile.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
+
+			});
+			return tile;
+		});
+	}
+
 	/**
 	 * Lazy-bind for tileManagementTile.
 	 *
@@ -54,27 +60,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> implements 
 	 */
 	public void setManagementTile(Tile tile) {
 		view.tileRootContainer.setBottom(tile);
-	}
-
-	@Override
-	public void handleEvent(Event event) {
-		refreshShownTiles();
-	}
-
-	private void refreshShownTiles() {
-		// FIXME: 简直日了狗 在idea下用lambda会报错
-		tileService.getTiles(SideBarTileService.StackingStatus.SHOWN).addListener(new ListChangeListener<SidebarTileElement>() {
-			@Override
-			public void onChanged(Change<? extends SidebarTileElement> change) {
-				change.getAddedSubList().forEach(ele -> {
-					Tile tile = ele.createTile();
-					tile.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
-					});
-					tile.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-					});
-				});
-			}
-		});
 	}
 
 	private static class SideBarTileAnimationHandler {
