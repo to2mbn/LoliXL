@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter;
 
+import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.input.MouseEvent;
@@ -43,12 +44,18 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	protected void initializePresenter() {
 		tilesMapping = new MappedObservableList<>(tileService.getTiles(SideBarTileService.StackingStatus.SHOWN), element -> {
 			Tile tile = element.createTile();
+			TileAnimationHandler animationHandler = new TileAnimationHandler(tile);
 			tile.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
-
+				if (!animationHandler.isPlaying.get()) {
+					animationHandler.runRollOutAnimation();
+				}
 			});
 			tile.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
-
+				if (animationHandler.isPlaying.get()) {
+					animationHandler.cancelAndFallback();
+				}
 			});
+			tile.setLayoutX(tile.getLayoutX() + tile.getWidth() - tile.getHeight());
 			return tile;
 		});
 	}
@@ -62,12 +69,12 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		view.tileRootContainer.setBottom(tile);
 	}
 
-	private static class SideBarTileAnimationHandler {
+	private static class TileAnimationHandler {
 		private final Tile tile;
 		private final AtomicBoolean isPlaying = new AtomicBoolean(false);
 		private final AtomicReference<Transition> currentAnimation = new AtomicReference<>(null);
 
-		private SideBarTileAnimationHandler(Tile _tile) {
+		private TileAnimationHandler(Tile _tile) {
 			tile = _tile;
 		}
 
@@ -77,11 +84,25 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			tran.setFromX(x + tile.getWidth());
 			tran.setToX(x);
 			tran.setOnFinished(event -> isPlaying.set(false));
+			currentAnimation.set(tran);
+			isPlaying.set(true);
 			tran.play();
 		}
 
 		private void cancelAndFallback() {
-			// TODO
+			Transition tran = currentAnimation.get();
+			if (tran != null) {
+				Duration time = tran.getCurrentTime();
+				tran.stop();
+				tran.setInterpolator(new Interpolator() {
+					@Override
+					protected double curve(double t) {
+						return -t;
+					}
+				});
+				tran.play();
+				tran.jumpTo(tran.getTotalDuration().subtract(time));
+			}
 		}
 	}
 }

@@ -4,11 +4,11 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.Panel;
@@ -18,11 +18,12 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView;
-import java.util.Deque;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
 
 @Service({ SideBarPanelDisplayService.class, SideBarAlertService.class, DefaultSideBarPresenter.class })
 @Component(immediate = true)
@@ -30,12 +31,11 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_side_bar.fxml";
 
-	private final Deque<Tile> bottomAlerts = new ConcurrentLinkedDeque<>();
+	private final List<Tile> alerts = new Vector<>();
+	private final Timer timer = new Timer(true);
 
 	private Panel currentPanel;
-
-	@Reference(target = "(usage=cpu_compute)")
-	private ExecutorService cpuComputePool;
+	private int currentAlertIdx;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -60,13 +60,13 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	@Override
 	public void addAlert(Tile alert) {
 		Objects.requireNonNull(alert);
-		bottomAlerts.addLast(alert);
+		alerts.add(alert);
 	}
 
 	@Override
 	public void removeAlert(Tile alert) {
 		Objects.requireNonNull(alert);
-		bottomAlerts.remove(alert);
+		alerts.remove(alert);
 	}
 
 	@Override
@@ -75,39 +75,34 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	}
 
 	private void startAlertDisplayWorkCycle() {
-		/*
-		// FIXME: Change to non-blocking mode, and run on JFX thread (use a timer?)
-		
-		cpuComputePool.execute(() -> {
-			while (true) {
-				ObservableList<Node> children = view.functionalTileBottomContainer.getChildren();
-				Iterator<Tile> paddingAlerts = bottomAlerts.iterator();
-				Tile last = null;
-				while (paddingAlerts.hasNext()) {
-					Tile current = paddingAlerts.next();
-					Animation in = generateAlertAnimation(current, false);
-					current.setVisible(false);
-					children.add(current);
-					if (last != null) {
-						Animation out = generateAlertAnimation(last, true);
-						int lastIdx = children.indexOf(last);
-						out.setOnFinished(event -> children.remove(lastIdx));
-						out.play();
-					}
-					current.setVisible(true);
-					in.play();
-		
-					last = current;
-		
-					try {
-						Thread.sleep(5000L); // TODO: make it configurable
-					} catch (InterruptedException e) {
-						// ignore
-					}
-				}
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				nextAlert();
 			}
-		});
-		*/
+		}, 0, 8000); // make period configurable
+	}
+
+	private void nextAlert() {
+		if (alerts.isEmpty()) {
+			return;
+		}
+		if (currentAlertIdx >= alerts.size()) {
+			currentAlertIdx = 0;
+		}
+		List<Node> children = view.functionalTileBottomContainer.getChildren();
+		Tile current = currentAlertIdx <= 0 ? null : alerts.get(currentAlertIdx - 1);
+		Tile next = alerts.get(currentAlertIdx);
+		if (current != null) {
+			Animation out = generateAlertAnimation(current, true);
+			out.setOnFinished(event -> children.remove(current));
+			out.play();
+		}
+		Animation in = generateAlertAnimation(next, false);
+		next.setVisible(false);
+		children.add(next);
+		in.play();
+		next.setVisible(true);
 	}
 
 	private Animation generateAlertAnimation(Tile alert, boolean goOff) {
