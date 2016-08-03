@@ -2,8 +2,8 @@ package org.to2mbn.lolixl.ui.impl.component.view.panel;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -15,11 +15,14 @@ import java.io.IOException;
 public class PanelView extends BorderPane {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
 
+	private static final Image PREVIOUS_BUTTON_IMG = new Image("/ui/img/previous_button.png");
+	private static final Image PREVIOUS_BUTTON_HOVER_IMG = new Image("/ui/img/previous_button_hover.png");
+
 	@FXML
 	public HBox headerContainer;
 
 	@FXML
-	public Button previousButton;
+	public ImageView previousButton;
 
 	@FXML
 	public ImageView iconView;
@@ -43,20 +46,23 @@ public class PanelView extends BorderPane {
 
 	private void initComponent() {
 		FXUtils.checkFxThread();
+		previousButton.setImage(PREVIOUS_BUTTON_IMG); // TODO: css
+		previousButton.setOnMouseMoved(event -> previousButton.setImage(PREVIOUS_BUTTON_HOVER_IMG));
+		previousButton.setOnMouseExited(event -> previousButton.setImage(PREVIOUS_BUTTON_IMG));
+		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());
 		paneContainer.centerProperty().bind(panel.contentProperty());
 		iconView.imageProperty().bind(panel.iconProperty());
 		iconView.imageProperty().addListener(((observable, oldValue, newValue) -> checkEmptyIcon()));
 		checkEmptyIcon();
-		previousButton.setOnAction(event -> panel.hide());
 	}
 
 	private void checkEmptyIcon() {
 		if (iconView.getImage() == null) {
-			paneContainer.getChildren().remove(iconView);
+			headerContainer.getChildren().remove(iconView);
 		} else if (!paneContainer.getChildren().contains(iconView)) {
-			paneContainer.getChildren().add(iconView);
+			headerContainer.getChildren().add(iconView);
 		}
 	}
 }

@@ -36,7 +36,7 @@ public class MainScene {
 		Scene scene = AsyncUtils.asyncRun(() -> {
 
 			LOGGER.fine("Creating main scene");
-			Scene m_scene = new Scene(defaultFramePresenter.getView().shadowContainer);
+			Scene m_scene = new Scene(defaultFramePresenter.getView().rootContainer);
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
 			m_scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 			stage.setScene(m_scene);

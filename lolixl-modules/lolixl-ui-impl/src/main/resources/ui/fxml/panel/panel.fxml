@@ -11,7 +11,7 @@
    <top>
       <HBox id="content-panel-header-container" fx:id="headerContainer" prefHeight="50.0" prefWidth="850.0" spacing="2.0" BorderPane.alignment="CENTER">
          <children>
-            <Button id="content-panel-previous-button" fx:id="previousButton" mnemonicParsing="false" prefHeight="45.0" prefWidth="45.0" />
+            <ImageView id="content-panel-previous-button" fx:id="previousButton" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView id="content-panel-icon-view" fx:id="iconView" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
             <Label id="content-panel-title-label" fx:id="titleLabel" prefHeight="45.0" prefWidth="750.0" />
          </children>

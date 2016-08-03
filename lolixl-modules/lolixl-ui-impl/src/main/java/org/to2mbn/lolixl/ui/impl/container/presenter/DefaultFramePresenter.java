@@ -7,7 +7,6 @@ import javafx.animation.TranslateTransition;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
@@ -71,7 +70,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
 
-		view.shadowContainer.setEffect(new DropShadow());
+		view.rootContainer.setEffect(new DropShadow());
 	}
 
 	@Override
@@ -139,7 +138,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		}
 		PanelEntry entry = panels.poll();
 		Animation animation = generateAnimation(entry.view, true);
-		if (panels.size() == 1) {
+		if (panels.size() <= 0) {
 			animation.setOnFinished(event -> {
 				// 先隐藏面板
 				entry.view.setVisible(false);
@@ -158,22 +157,20 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private ParallelTransition generateAnimation(Region pane, boolean reverse) {
 		// 移动动画
-		TranslateTransition tran = new TranslateTransition(Duration.seconds(1), pane);
-		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 5;
+		TranslateTransition tran = new TranslateTransition(Duration.millis(200), pane);
+		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 7;
 		double toX = view.sidebarPane.getLayoutX();
 		tran.setFromX(reverse ? toX : fromX);
 		tran.setToX(reverse ? fromX : toX);
 
 		// 渐变动画
-		FadeTransition fade = new FadeTransition(Duration.seconds(1), pane);
-		fade.setFromValue(reverse ? 0.5 : pane.getOpacity());
-		fade.setToValue(reverse ? pane.getOpacity() : 0.5);
+		FadeTransition fade = new FadeTransition(Duration.millis(100), pane);
+		fade.setFromValue(reverse ? pane.getOpacity() : 0.3);
+		fade.setToValue(reverse ? 0.3 : pane.getOpacity());
 
 		ParallelTransition parallel = new ParallelTransition(tran, fade);
-		parallel.setCycleCount(Animation.INDEFINITE);
 		return parallel;
 	}
-
 
 	private void makeDraggable() {
 		view.titleBarPane.setOnMousePressed(event -> {
@@ -195,33 +192,17 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	}
 
 	private void makeResizeable() {
-		// TODO: no need for ubuntu
-		view.shadowContainer.setOnMousePressed(event -> {
-			if (!isDragging && checkIfOnEdge(event.getSceneX(), event.getSceneY())) {
-				lastResizeX = event.getSceneX();
-				lastResizeY = event.getSceneY();
-			}
-		});
-		view.shadowContainer.setOnMouseDragged(event -> {
-			if (!isDragging && !checkMinSize()) {
-				double height = view.shadowContainer.getHeight();
-				double width = view.shadowContainer.getWidth();
-				view.shadowContainer.resize(width + event.getSceneX() - lastResizeX, height + event.getSceneY() - lastResizeY);
-			}
-		});
+		// TODO
 	}
 
 	private boolean checkIfOnEdge(double x, double y) {
-		if (x >= 3 && x <= view.shadowContainer.getWidth() - 3) {
-			return (y >= 3 && y <= 12) || (y >= view.shadowContainer.getHeight() - 12 && y <= view.shadowContainer.getHeight() - 3);
-		} else if (y >= 3 && y <= view.shadowContainer.getHeight() - 3) {
-			return (x >= 3 && x <= 12) || (x >= view.shadowContainer.getWidth() - 12 && x <= view.shadowContainer.getWidth() - 3);
+		// FIXME
+		if (x >= 3 && x <= view.rootContainer.getWidth() - 3) {
+			return (y >= 3 && y <= 12) || (y >= view.rootContainer.getHeight() - 12 && y <= view.rootContainer.getHeight() - 3);
+		} else if (y >= 3 && y <= view.rootContainer.getHeight() - 3) {
+			return (x >= 3 && x <= 12) || (x >= view.rootContainer.getWidth() - 12 && x <= view.rootContainer.getWidth() - 3);
 		}
 		return false;
-	}
-
-	private boolean checkMinSize() {
-		return view.shadowContainer.getHeight() <= view.shadowContainer.getMinHeight() || view.shadowContainer.getWidth() <= view.shadowContainer.getMinWidth();
 	}
 
 	private static class PanelEntry {
