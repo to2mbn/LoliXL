@@ -35,7 +35,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_frame.fxml";
 
-	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "+" + MainStage.MAIN_STAGE_ID + ")")
+	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
 	private Stage stage;
 
 	@Reference

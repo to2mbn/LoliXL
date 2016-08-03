@@ -28,6 +28,7 @@ import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.core.config.ConfigurationManager;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ObservableContext;
+import org.to2mbn.lolixl.utils.ServiceUtils;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 
@@ -126,13 +127,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 	}
 
 	private String getCategoryName(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory<?> service) {
-		String category = (String) reference.getProperty(ConfigurationCategory.PROPERTY_CATEGORY);
-		if (category == null) {
-			LOGGER.warning(format("No PROPERTY_CATEGORY found for %s, using class name", reference));
-			category = service.getClass().getName()
-					.replace('$', '.');
-		}
-		return category;
+		return ServiceUtils.getIdProperty(ConfigurationCategory.PROPERTY_CATEGORY, reference, service);
 	}
 
 	private Path getConfigurationPath(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory<?> service) {

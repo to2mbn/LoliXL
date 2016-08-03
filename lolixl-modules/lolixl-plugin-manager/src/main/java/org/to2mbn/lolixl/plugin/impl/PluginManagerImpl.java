@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.plugin.impl;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +44,8 @@ public class PluginManagerImpl implements PluginManager {
 
 	private Comparator<String> versionComparator = new VersionComparator();
 
+	private Map<MavenArtifact, CompletableFuture<Void>> inProgressDownloads = new HashMap<>();
+
 	@Override
 	public PluginService getService() {
 		return pluginService;
@@ -78,7 +81,7 @@ public class PluginManagerImpl implements PluginManager {
 					Set<MavenArtifact> artifacts = new HashSet<>(description.getDependencies());
 					artifacts.add(description.getArtifact());
 					return CompletableFuture.allOf(artifacts.stream()
-							.map(dependency -> localPluginRepo.downloadBundle(remotePluginRepo, dependency))
+							.map(this::downloadArtifact)
 							.toArray(CompletableFuture[]::new));
 				})
 				.thenCompose(dummy -> pluginService.loadPlugin(artifact));
@@ -114,6 +117,25 @@ public class PluginManagerImpl implements PluginManager {
 					});
 			return null;
 		}, localIOPool);
+	}
+
+	private CompletableFuture<Void> downloadArtifact(MavenArtifact artifact) {
+		synchronized (inProgressDownloads) {
+			CompletableFuture<Void> future = inProgressDownloads.get(inProgressDownloads);
+			if (future == null) {
+				future = localPluginRepo.downloadBundle(remotePluginRepo, artifact)
+						.whenComplete((result, ex) -> {
+							synchronized (inProgressDownloads) {
+								inProgressDownloads.remove(artifact);
+							}
+						});
+				inProgressDownloads.put(artifact, future);
+				if (future.isCancelled() || future.isCompletedExceptionally() || future.isDone()) { // check again
+					inProgressDownloads.remove(artifact);
+				}
+			}
+			return future;
+		}
 	}
 
 }

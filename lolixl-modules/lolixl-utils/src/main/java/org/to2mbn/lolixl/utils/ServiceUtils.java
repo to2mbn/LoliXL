@@ -15,10 +15,10 @@ public final class ServiceUtils {
 		if (propVal instanceof String) {
 			return (String) propVal;
 		} else if (propVal == null) {
-			LOGGER.warning(format("Property %s of %s is not found", property, reference));
+			LOGGER.warning(format("Property %s of %s is not found", property, service.getClass().getName()));
 		} else {
 			// illegal property type
-			LOGGER.warning(format("Illegal property type %s of %s: expected %s, actual %s", property, reference, String.class.getName(), propVal.getClass().getName()));
+			LOGGER.warning(format("Illegal property type %s of %s: expected %s, actual %s", property, service.getClass().getName(), String.class.getName(), propVal.getClass().getName()));
 		}
 		// fallback
 		return service.getClass().getName().replace('$', '.');

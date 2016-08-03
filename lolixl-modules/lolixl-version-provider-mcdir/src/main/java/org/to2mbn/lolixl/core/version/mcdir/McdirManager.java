@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -19,6 +21,9 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 
 @Service({ ConfigurationCategory.class })
+@Properties({
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = "org.to2mbn.lolixl.core.version.mcdir")
+})
 @Component
 public class McdirManager implements ConfigurationCategory<McdirList> {
 

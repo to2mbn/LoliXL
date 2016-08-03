@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
@@ -39,6 +41,9 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
 
 @Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
+@Properties({
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = "org.to2mbn.lolixl.ui.impl.auth.profiles")
+})
 @Component(immediate = true)
 public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager, ConfigurationCategory<AuthenticationProfileList> {
 
