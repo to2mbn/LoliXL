@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,8 +48,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	private final ReadOnlyIntegerWrapper taskCountProperty = new ReadOnlyIntegerWrapper(0);
 
-	private Timer timer;
-	private TimerTask updateTask;
+	private AtomicReference<Timer> currentTimer = new AtomicReference<>(null);
 	private Map<DownloadTaskGroup, DownloadTaskGroupItemView> itemMapping = new ConcurrentHashMap<>();
 
 	@Activate
@@ -63,21 +63,24 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	@Override
 	protected void initializePresenter() {
-		timer = new Timer(false);
-		updateTask = new TimerTask() {
+	}
+
+	public void startUpdateCycle() {
+		Timer timer = new Timer(true);
+		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				Platform.runLater(DownloadCenterPresenter.this::updateStatus);
 			}
-		};
-	}
-
-	public void startUpdateCycle() {
-		timer.schedule(updateTask, 0, 100);
+		}, 0, 100);
+		currentTimer.set(timer);
 	}
 
 	public void resumeUpdateCycle() {
-		timer.cancel();
+		if (currentTimer.get() != null) {
+			currentTimer.get().cancel();
+			currentTimer.set(null);
+		}
 		itemMapping.forEach(((group, view) -> view.resumeUpdateCycle()));
 	}
 

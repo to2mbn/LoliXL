@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="default-content" fx:id="rootContainer" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.HomeContentView">
+<BorderPane id="default-content" fx:id="rootContainer" prefHeight="440.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.HomeContentView">
    <bottom>
       <AnchorPane fx:id="bottomContainer" prefHeight="50.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -14,9 +15,15 @@
       </AnchorPane>
    </bottom>
    <right>
-      <BorderPane fx:id="tileRootContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="80.0" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="tileRootContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <center>
-            <VBox fx:id="tileContainer" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+            <VBox fx:id="tileContainer" spacing="5.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets top="5.0" />
+               </padding></VBox>
          </center></BorderPane>
    </right>
 </BorderPane>

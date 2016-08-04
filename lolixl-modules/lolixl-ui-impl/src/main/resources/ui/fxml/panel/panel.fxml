@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.GaussianBlur?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 
-<fx:root id="content-panel-root-container" fx:id="rootContainer" prefHeight="440.0" prefWidth="850.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <HBox id="content-panel-header-container" fx:id="headerContainer" prefHeight="50.0" prefWidth="850.0" spacing="2.0" BorderPane.alignment="CENTER">
-         <children>
-            <ImageView id="content-panel-previous-button" fx:id="previousButton" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView id="content-panel-icon-view" fx:id="iconView" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
-            <Label id="content-panel-title-label" fx:id="titleLabel" prefHeight="45.0" prefWidth="750.0" />
-         </children>
-         <padding>
-            <Insets left="2.0" top="2.0" />
-         </padding>
-      </HBox>
-   </top>
-   <center>
-      <BorderPane id="content-panel-content-container" fx:id="paneContainer" prefHeight="390.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
-   </center>
+<fx:root id="panel-root-container" prefHeight="440.0" prefWidth="850.0" type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane id="panel-blur-container" fx:id="blurContainer" prefHeight="440.0" prefWidth="850.0">
+         <effect>
+            <GaussianBlur />
+         </effect>
+      </Pane>
+      <BorderPane id="panel-content-container" fx:id="rootContainer" prefHeight="440.0" prefWidth="850.0">
+         <top>
+            <HBox id="panel-header-container" fx:id="headerContainer" prefHeight="50.0" prefWidth="850.0" spacing="5.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView id="panel-previous-button" fx:id="previousButton" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets left="3.0" top="3.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <ImageView id="panel-icon-view" fx:id="iconView" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets top="3.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Label id="panel-title-label" fx:id="titleLabel" prefHeight="45.0" prefWidth="750.0">
+                     <HBox.margin>
+                        <Insets top="3.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+         </top>
+         <center>
+            <BorderPane id="panel-content-container" fx:id="paneContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="390.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </children>
 </fx:root>

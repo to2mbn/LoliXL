@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
+<StackPane prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
    <children>
       <Pane id="default-sidebar-background-container" fx:id="backgroundContainer">
          <effect>
@@ -21,7 +21,7 @@
          <left>
             <BorderPane id="default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER">
                <top>
-                  <StackPane id="default-sidebar-user-profile-container" fx:id="userProfileContainer" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                  <StackPane id="default-sidebar-user-profile-container" fx:id="userProfileContainer" prefHeight="120.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
                </top>
                <center>
                   <BorderPane id="default-sidebar-functional-tile-container" fx:id="functionalTileContainer" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">

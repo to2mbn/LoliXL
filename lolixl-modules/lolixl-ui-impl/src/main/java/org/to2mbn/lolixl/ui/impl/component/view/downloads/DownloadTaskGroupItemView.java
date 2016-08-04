@@ -14,6 +14,7 @@ import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DownloadTaskGroupItemView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/download_group_item.fxml";
@@ -33,32 +34,35 @@ public class DownloadTaskGroupItemView extends BorderPane {
 	@FXML
 	public Label statusLabel;
 
-	private final Timer timer;
+	private final AtomicReference<Timer> currentTimer;
 	private final DownloadTaskGroup taskGroup;
-	private final TimerTask updateTask;
 
 	public DownloadTaskGroupItemView(DownloadTaskGroup group) throws IOException {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
 		loader.load();
-		timer = new Timer(true);
+		currentTimer = new AtomicReference<>(null);
 		taskGroup = group;
-		updateTask = new TimerTask() {
-			@Override
-			public void run() {
-				Platform.runLater(DownloadTaskGroupItemView.this::updateStatus);
-			}
-		};
 		initComponent(group);
 	}
 
 	public void resumeUpdateCycle() {
-		timer.cancel();
+		if (currentTimer.get() != null) {
+			currentTimer.get().cancel();
+			currentTimer.set(null);
+		}
 	}
 
 	public void startUpdateCycle() {
-		timer.schedule(updateTask, 0, 100);
+		Timer timer = new Timer(true);
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				Platform.runLater(DownloadTaskGroupItemView.this::updateStatus);
+			}
+		}, 0, 100);
+		currentTimer.set(timer);
 	}
 
 	private void initComponent(DownloadTaskGroup group) {

@@ -1,39 +1,13 @@
-#default-frame-root-container {
-    -fx-border-width: 0.4;
-    -fx-border-color: black;
-}
-
 #default-frame-shadow-container,
 #default-sidebar-root-container,
 #default-sidebar-functional-tile-container,
 #default-sidebar-sidebar-container,
 #default-sidebar-user-profile-container,
-#default-sidebar-main-content-container {
+#panel-root-container,
+#panel-content-container {
     -fx-background-color: transparent;
 }
 
-#default-sidebar-background-container {
-    -fx-background-color: #b85658;
-}
-
-#close-window-button:hover, #minimize-window-button:hover {
-    -fx-background-color: #d1d6e1;
-    -fx-tooltip-visible: false;
-}
-
-#default-title-bar {
-    -fx-background-color: #b85658;
-    -fx-text-fill: whitesmoke;
-}
-
-#default-title-bar-unfocused {
-    -fx-background-color: #a5a5a5;
-    -fx-text-fill: #cdcdcd;
-}
-
-/*
- * Panel
- */
 #content-panel-title-label {
     -fx-text-fill: whitesmoke;
     -fx-font-size: 26;

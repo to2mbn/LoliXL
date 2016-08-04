@@ -10,9 +10,6 @@ public class DefaultFrameView extends View {
 	public BorderPane rootContainer;
 
 	@FXML
-	public StackPane titleBarPane;
-
-	@FXML
 	public StackPane sidebarPane;
 
 	@FXML
