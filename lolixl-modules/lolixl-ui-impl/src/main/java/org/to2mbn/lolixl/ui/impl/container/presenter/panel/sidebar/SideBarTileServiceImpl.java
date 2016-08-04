@@ -40,7 +40,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
 	private SideBarTileList tiles = new SideBarTileList();
-	private volatile int maxShownTiles;
+	private volatile int maxShownTiles = 4; // TODO: compute via window height
 
 	private ObservableList<SidebarTileElement> shownTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<SidebarTileElement> hiddenTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());

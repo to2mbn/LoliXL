@@ -62,7 +62,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			LOGGER.fine("Mapping tile [" + tile.getId() + "]");
 			return tile;
 		});
-		tilesMapping.addListener(((observable, oldValue, newValue) -> view.tileContainer.getChildren().setAll(newValue)));
+		tilesMapping.addListener(
+				(observable, oldValue, newValue) -> view.tileContainer.getChildren().setAll(newValue));
 
 	}
 
