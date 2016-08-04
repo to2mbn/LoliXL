@@ -23,7 +23,10 @@ public class ObservableServiceTracker<T> extends ServiceTracker<T, T> {
 
 	public ObservableServiceTracker(BundleContext context, Class<T> clazz, Function<Stream<ServiceReference<T>>, Stream<T>> mapper) {
 		super(context, clazz, null);
-		this.mapper = mapper;
+		this.mapper = mapper == null
+				? stream -> stream
+						.map(this::getService)
+				: mapper;
 	}
 
 	@Override

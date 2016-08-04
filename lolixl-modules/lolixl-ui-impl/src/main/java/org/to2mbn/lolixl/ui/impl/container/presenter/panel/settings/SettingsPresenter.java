@@ -2,20 +2,17 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.i18n.I18N;
+import org.to2mbn.lolixl.ui.ConfigurationCategoryViewManager;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import org.to2mbn.lolixl.utils.ObservableServiceTracker;
 import javafx.beans.value.ObservableStringValue;
 
 @Service({ SidebarTileElement.class })
@@ -27,22 +24,12 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 	@Reference
 	private PanelDisplayService displayService;
 
-	private BundleContext bundleContext;
-	private ObservableServiceTracker<ConfigurationCategory<?>> serviceTracker;
+	@Reference
+	private ConfigurationCategoryViewManager categoryManager;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Activate
 	public void active(ComponentContext compCtx) {
 		super.active();
-
-		bundleContext = compCtx.getBundleContext();
-		serviceTracker = new ObservableServiceTracker(bundleContext, ConfigurationCategory.class);
-		serviceTracker.open(true);
-	}
-
-	@Deactivate
-	public void deactive() {
-		serviceTracker.close();
 	}
 
 	@Override
@@ -52,14 +39,13 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 
 	@Override
 	protected void initializePresenter() {
-		view.categoryContainer.setItems(serviceTracker.getServiceList());
+		view.categoryContainer.setItems(categoryManager.getProviders());
 
 		view.categoryContainer.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
 				view.contentContainer.getChildren().clear();
 			}
-			// FIXME
-//			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
+			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
 		});
 	}
 
