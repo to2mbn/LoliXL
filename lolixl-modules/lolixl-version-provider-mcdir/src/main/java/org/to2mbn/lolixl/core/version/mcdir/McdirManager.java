@@ -18,8 +18,6 @@ import org.to2mbn.lolixl.core.game.version.GameVersionProvider;
 import org.to2mbn.lolixl.core.version.mcdir.McdirList.McdirEntry;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
 import org.to2mbn.lolixl.utils.ObservableContext;
-import javafx.beans.value.ObservableStringValue;
-import javafx.scene.layout.Region;
 
 @Service({ ConfigurationCategory.class })
 @Properties({
@@ -59,18 +57,6 @@ public class McdirManager implements ConfigurationCategory<McdirList> {
 	@Override
 	public Class<? extends McdirList> getMementoType() {
 		return McdirList.class;
-	}
-
-	@Override
-	public ObservableStringValue getLocalizedName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Region createConfiguringPanel() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**

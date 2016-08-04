@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.ui.impl.theme;
 import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import javafx.scene.Scene;
-import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -25,7 +24,6 @@ import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.util.Collection;
@@ -301,18 +299,6 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	@Override
 	public Class<? extends ThemeConfiguration> getMementoType() {
 		return ThemeConfiguration.class;
-	}
-
-	@Override
-	public ObservableStringValue getLocalizedName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Region createConfiguringPanel() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	private List<Theme> lastEnabledThemes = new ArrayList<>();

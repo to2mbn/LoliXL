@@ -25,9 +25,10 @@ public class SettingsView extends View {
 			@Override
 			public void updateItem(ConfigurationCategory<?> category, boolean empty) {
 				super.updateItem(category, empty);
-				textProperty().bind(category.getLocalizedName());
+				//FIXME
+				//				textProperty().bind(category.getLocalizedName());
 				ImageView iconView = new ImageView();
-				iconView.imageProperty().bind(category.getIcon());
+				//				iconView.imageProperty().bind(category.getIcon());
 				setGraphic(iconView);
 			}
 		});

@@ -58,7 +58,8 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 			if (oldValue != null) {
 				view.contentContainer.getChildren().clear();
 			}
-			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
+			// FIXME
+//			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
 		});
 	}
 

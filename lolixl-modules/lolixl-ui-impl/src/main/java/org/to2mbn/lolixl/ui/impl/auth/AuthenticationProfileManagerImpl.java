@@ -37,8 +37,6 @@ import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import com.google.gson.JsonSyntaxException;
-import javafx.beans.value.ObservableStringValue;
-import javafx.scene.layout.Region;
 
 @Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
 @Properties({
@@ -272,15 +270,4 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		return AuthenticationProfileList.class;
 	}
 
-	@Override
-	public ObservableStringValue getLocalizedName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Region createConfiguringPanel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

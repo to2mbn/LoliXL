@@ -27,10 +27,8 @@ import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.layout.Region;
 
 @Service({ SideBarTileService.class, ConfigurationCategory.class })
 @Properties({
@@ -282,16 +280,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	@Override
 	public Class<? extends SideBarTileList> getMementoType() {
 		return SideBarTileList.class;
-	}
-
-	@Override
-	public ObservableStringValue getLocalizedName() {
-		return null;
-	}
-
-	@Override
-	public Region createConfiguringPanel() {
-		return null;
 	}
 
 }
