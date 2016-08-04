@@ -35,6 +35,7 @@ class Main {
 
 	private static void setupSystemProperties() {
 		System.setProperty("org.to2mbn.lolixl.version", Metadata.M2_VERSION);
+		System.setProperty("lolixl.readPluginToMem", "false");
 	}
 
 	private static void setupWorkingDir() throws IOException {

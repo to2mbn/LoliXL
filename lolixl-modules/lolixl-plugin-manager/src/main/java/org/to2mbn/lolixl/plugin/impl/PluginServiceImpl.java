@@ -3,6 +3,9 @@ package org.to2mbn.lolixl.plugin.impl;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.*;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +37,6 @@ import org.to2mbn.lolixl.plugin.DependencyAction;
 import org.to2mbn.lolixl.plugin.LocalPluginRepository;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginDescription;
-import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.PluginService;
 import org.to2mbn.lolixl.plugin.DependencyAction.InstallAction;
 import org.to2mbn.lolixl.plugin.DependencyAction.UninstallAction;
@@ -57,26 +59,30 @@ public class PluginServiceImpl implements PluginService {
 			{ "org.to2mbn.lolixl", "lolixl-utils" }
 	};
 
+	private static boolean shouldLoadToMem() {
+		return "true".equals(System.getProperty("lolixl.readPluginToMem"));
+	}
+
 	private class PluginLoadingProcessor {
 
-		private PluginRepository repository;
+		private LocalPluginRepository repository;
 		private MavenArtifact artifact;
 
 		private Map<MavenArtifact, ArtifactLoader> queried = new ConcurrentHashMap<>();
 
-		public PluginLoadingProcessor(PluginRepository repository, MavenArtifact artifact) {
+		public PluginLoadingProcessor(LocalPluginRepository repository, MavenArtifact artifact) {
 			this.repository = repository;
 			this.artifact = artifact;
 		}
 
 		public CompletableFuture<Plugin> invoke() {
-			return new ArtifactLoader(gpgVerifier, repository, artifact).load()
+			return new ArtifactLoader(gpgVerifier, repository, artifact).load(shouldLoadToMem())
 					.thenCompose(pl -> AsyncUtils.asyncRun(() -> {
 						queried.put(artifact, pl);
 						return CompletableFuture.allOf(
 								pl.getDescription().orElseThrow(() -> new ArtifactNotFoundException(artifact.toString()))
 										.getDependencies().stream()
-										.map(dependency -> new ArtifactLoader(gpgVerifier, repository, dependency).load()
+										.map(dependency -> new ArtifactLoader(gpgVerifier, repository, dependency).load(shouldLoadToMem())
 												.thenAccept(plDependency -> queried.put(dependency, plDependency)))
 										.toArray(CompletableFuture[]::new))
 								.thenCompose(dummy -> AsyncUtils.asyncRun(() -> {
@@ -198,7 +204,8 @@ public class PluginServiceImpl implements PluginService {
 	private void addBundle0(Bundle bundle, MavenArtifact artifact, byte[] data) {
 		artifact2bundle.put(artifact, bundle);
 		bundle2artifact.put(bundle, artifact);
-		artifact2data.put(artifact, data);
+		if (data != null)
+			artifact2data.put(artifact, data);
 	}
 
 	private void addPlugin0(Bundle bundle, PluginDescription description) {
@@ -313,9 +320,19 @@ public class PluginServiceImpl implements PluginService {
 			throw new IllegalStateException(artifact + " is already installed");
 
 		LOGGER.info("Installing " + artifact);
-		byte[] data = loader.getJar();
-		Bundle bundle = bundleContext.installBundle(getBundleURI(artifact), new ByteArrayInputStream(data));
-		addBundle0(bundle, artifact, data);
+
+		Bundle bundle;
+		Optional<byte[]> optionalData = loader.getJar();
+		if (optionalData.isPresent()) {
+			byte[] data = optionalData.get();
+			bundle = bundleContext.installBundle(getBundleURI(artifact), new ByteArrayInputStream(data));
+			addBundle0(bundle, artifact, data);
+		} else {
+			LOGGER.fine("Jar binary data not found for " + artifact + ", loading from given uri");
+			bundle = bundleContext.installBundle(loader.getJarURI().toString());
+			addBundle0(bundle, artifact, null);
+		}
+
 		loader.getDescription().ifPresent(description -> addPlugin0(bundle, description));
 	}
 
@@ -328,8 +345,20 @@ public class PluginServiceImpl implements PluginService {
 
 		LOGGER.info(format("Updating %s -> %s", src, dest));
 		Bundle bundle = getBundle(src).get();
-		byte[] data = loader.getJar();
-		bundle.update(new ByteArrayInputStream(data));
+
+		byte[] data = loader.getJar().orElse(null);
+		InputStream in;
+		if (data != null) {
+			in = new ByteArrayInputStream(data);
+		} else {
+			LOGGER.fine("Jar binary data not found for " + dest + ", updating from given uri");
+			try {
+				in = loader.getJarURI().toURL().openStream();
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		}
+		bundle.update(in);
 
 		PluginImpl oldPlugin = (PluginImpl) bundle2plugin.get(bundle);
 
@@ -364,7 +393,7 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	private String getBundleURI(MavenArtifact artifact) {
-		return "lolixl:bundles/" + artifact;
+		return "lolixl:bundles/" + artifact.getGroupId() + ":" + artifact.getArtifactId();
 	}
 
 	private List<DependencyAction> computeActions(Set<PluginDescription> toInstall, Set<PluginDescription> toUninstall) {

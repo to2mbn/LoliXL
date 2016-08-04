@@ -179,23 +179,58 @@ class InternalBundleRepository {
 			String a = ga.substring(idxMaohao + 1);
 			String v = ga2v.get(ga);
 			String gav = g + ":" + a + ":" + v;
-			String uri = "lolixl:bundles/" + gav;
-			LOGGER.info("Installing bootstrap bundle " + uri);
-			ByteArrayOutputStream buf;
-			try (FileChannel channel = openChannel(g, a, v, null, "jar")) {
-				buf = new ByteArrayOutputStream((int) channel.size());
-				WritableByteChannel out = Channels.newChannel(buf);
-				channel.transferTo(0, channel.size(), out);
+			LOGGER.info("Installing bootstrap bundle " + gav);
+
+			Path localRepoArtifact = getLocalArtifactPath(g, a, v, null, "jar");
+
+			Bundle bundle;
+			if ("true".equals(System.getProperty("lolixl.readPluginToMem"))) {
+				String uri = "lolixl:bundles/" + g + ":" + a;
+				ByteArrayOutputStream buf;
+				try (FileChannel channel = FileChannel.open(localRepoArtifact)) {
+					buf = new ByteArrayOutputStream((int) channel.size());
+					WritableByteChannel out = Channels.newChannel(buf);
+					channel.transferTo(0, channel.size(), out);
+				}
+				byte[] data = buf.toByteArray();
+				gav2bootstrapBundlesData.put(gav, data);
+				bundle = ctx.installBundle(uri, new ByteArrayInputStream(data));
+			} else {
+				bundle = ctx.installBundle(localRepoArtifact.toUri().toString());
 			}
-			byte[] data = buf.toByteArray();
-			gav2bootstrapBundlesData.put(gav, data);
-			Bundle bundle = ctx.installBundle(uri, new ByteArrayInputStream(data));
+
 			bundles.add(bundle);
 			gav2bootstrapBundles.put(gav, bundle);
 		}
 		for (Bundle bundle : bundles) {
 			bundle.start();
 		}
+	}
+
+	//
+
+	private Path getLocalArtifactPath(String groupId, String artifactId, String version, String classifier, String type) {
+		Path p = localRepo;
+		for (String gid : groupId.split("\\."))
+			p = p.resolve(gid);
+		p = p.resolve(artifactId)
+				.resolve(version)
+				.resolve(getArtifactFileName(artifactId, version, classifier, type));
+		return p;
+	}
+
+	private static String getArtifactFileName(String artifactId, String version, String classifier, String type) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(artifactId)
+				.append('-')
+				.append(version);
+		if (classifier != null) {
+			sb.append('-')
+					.append(classifier);
+		}
+		sb.append('.')
+				.append(type == null ? "jar" : type);
+		return sb.toString();
 	}
 
 }
