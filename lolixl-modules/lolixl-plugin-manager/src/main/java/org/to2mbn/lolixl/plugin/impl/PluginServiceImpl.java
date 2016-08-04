@@ -59,7 +59,7 @@ public class PluginServiceImpl implements PluginService {
 			{ "org.to2mbn.lolixl", "lolixl-utils" }
 	};
 
-	private static boolean shouldLoadToMem() {
+	private static boolean shouldReadPluginToMem() {
 		return "true".equals(System.getProperty("lolixl.readPluginToMem"));
 	}
 
@@ -76,13 +76,13 @@ public class PluginServiceImpl implements PluginService {
 		}
 
 		public CompletableFuture<Plugin> invoke() {
-			return new ArtifactLoader(gpgVerifier, repository, artifact).load(shouldLoadToMem())
+			return new ArtifactLoader(gpgVerifier, repository, artifact).load(shouldReadPluginToMem())
 					.thenCompose(pl -> AsyncUtils.asyncRun(() -> {
 						queried.put(artifact, pl);
 						return CompletableFuture.allOf(
 								pl.getDescription().orElseThrow(() -> new ArtifactNotFoundException(artifact.toString()))
 										.getDependencies().stream()
-										.map(dependency -> new ArtifactLoader(gpgVerifier, repository, dependency).load(shouldLoadToMem())
+										.map(dependency -> new ArtifactLoader(gpgVerifier, repository, dependency).load(shouldReadPluginToMem())
 												.thenAccept(plDependency -> queried.put(dependency, plDependency)))
 										.toArray(CompletableFuture[]::new))
 								.thenCompose(dummy -> AsyncUtils.asyncRun(() -> {

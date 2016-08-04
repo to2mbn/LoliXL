@@ -33,9 +33,21 @@ class Main {
 		return configuration;
 	}
 
+	/*
+	 * lolixl.readPluginToMem 在 Intel Core i5-4200H CPU @ 2.80GHz × 4 上的测试结果
+	 * 
+	 * 参数                            t0            t1              T
+	 * lolixl.readPluginToMem=true     23:52:55.456  23:52:57.604    2.148s
+	 * lolixl.readPluginToMem=false    23:54:18.218  23:54:20.133    1.915s
+	 * 
+	 * Notes:
+	 * 若lolixl.readPluginToMem为true，则先将插件jar的数据读入堆内存，再作为bundle加载
+	 * 若lolixl.readPluginToMem为false，则直接将插件从磁盘中作为bundle加载
+	 */
+
 	private static void setupSystemProperties() {
 		System.setProperty("org.to2mbn.lolixl.version", Metadata.M2_VERSION);
-		System.setProperty("lolixl.readPluginToMem", "false");
+		System.setProperty("lolixl.readPluginToMem", "true");
 	}
 
 	private static void setupWorkingDir() throws IOException {

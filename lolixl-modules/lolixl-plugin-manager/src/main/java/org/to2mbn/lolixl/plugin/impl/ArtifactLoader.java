@@ -47,7 +47,7 @@ public class ArtifactLoader {
 		return description;
 	}
 
-	public CompletableFuture<ArtifactLoader> load(boolean loadDirectlyFromFile) {
+	public CompletableFuture<ArtifactLoader> load(boolean readPluginToMem) {
 		if (repository == null)
 			throw new IllegalStateException("Couldn't to load because of missing repository");
 
@@ -55,10 +55,10 @@ public class ArtifactLoader {
 		return CompletableFuture.allOf(
 				repository.getPluginDescription(artifact)
 						.thenAccept(description -> this.description = description),
-				loadDirectlyFromFile
-						? CompletableFuture.completedFuture(null)
-						: readArtifact(null, "jar")
-								.thenAccept(data -> this.jar = data))
+				readPluginToMem
+						? readArtifact(null, "jar")
+								.thenAccept(data -> this.jar = data)
+						: CompletableFuture.completedFuture(null))
 				.thenApply(dummy -> this);
 	}
 
