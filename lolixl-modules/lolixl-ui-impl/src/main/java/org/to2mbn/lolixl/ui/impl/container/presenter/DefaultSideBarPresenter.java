@@ -72,6 +72,7 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	@Override
 	protected void initializePresenter() {
 		startAlertDisplayWorkCycle();
+		// TODO: view.userProfileContainer.getChildren().add();
 	}
 
 	private void startAlertDisplayWorkCycle() {
@@ -80,7 +81,7 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 			public void run() {
 				nextAlert();
 			}
-		}, 0, 8000); // make period configurable
+		}, 0, 8000); // TODO: make period configurable
 	}
 
 	private void nextAlert() {
