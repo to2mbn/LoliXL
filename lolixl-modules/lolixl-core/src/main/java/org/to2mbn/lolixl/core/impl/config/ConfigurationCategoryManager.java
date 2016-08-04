@@ -20,13 +20,12 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.Configuration;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.config.ConfigurationEvent;
 import org.to2mbn.lolixl.core.config.ConfigurationManager;
 import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 
@@ -47,45 +46,30 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 	private Path storeLocation = Paths.get(".lolixl", "config");
 
 	private BundleContext bundleContext;
-	private ServiceTracker<ConfigurationCategory, ConfigurationCategory> serviceTracker;
+	private LambdaServiceTracker<ConfigurationCategory> serviceTracker;
 
 	@Activate
 	public void active(ComponentContext compCtx) throws InvalidSyntaxException {
 		bundleContext = compCtx.getBundleContext();
-		serviceTracker = new ServiceTracker<>(bundleContext, ConfigurationCategory.class, new ServiceTrackerCustomizer<ConfigurationCategory, ConfigurationCategory>() {
+		serviceTracker = new LambdaServiceTracker<>(bundleContext, ConfigurationCategory.class)
+				.whenAdding((reference, service) -> {
+					Configuration configuration = tryLoadConfiguration(reference, service);
 
-			@Override
-			public void modifiedService(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory service) {}
+					ObservableContext observableContext = new ObservableContext();
+					observableContext.addListener(dummy -> {
+						updateConfiguration(reference, service);
+						localIOPool.submit(() -> trySaveConfiguration(reference, service));
+					});
+					service.setObservableContext(observableContext);
 
-			@Override
-			public void removedService(ServiceReference<ConfigurationCategory> reference, ConfigurationCategory service) {
-				bundleContext.ungetService(reference);
-			}
+					try {
+						service.restore(Optional.ofNullable(configuration));
+					} catch (Exception e) {
+						LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
+					}
 
-			@Override
-			public ConfigurationCategory<?> addingService(ServiceReference<ConfigurationCategory> reference) {
-				ConfigurationCategory service = bundleContext.getService(reference);
-				Configuration configuration = tryLoadConfiguration(reference, service);
-
-				ObservableContext observableContext = new ObservableContext();
-				observableContext.addListener(dummy -> {
 					updateConfiguration(reference, service);
-					localIOPool.submit(() -> trySaveConfiguration(reference, service));
 				});
-				service.setObservableContext(observableContext);
-
-				try {
-					service.restore(Optional.ofNullable(configuration));
-				} catch (Exception e) {
-					LOGGER.log(Level.WARNING, format("Couldn't restore configuration [%s] for [%s]", configuration, service), e);
-				}
-
-				updateConfiguration(reference, service);
-
-				return service;
-			}
-
-		});
 		serviceTracker.open(true);
 	}
 

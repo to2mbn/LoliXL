@@ -25,8 +25,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileEvent;
@@ -34,6 +32,7 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.ui.impl.auth.AuthenticationProfileList.AuthenticationProfileEntry;
 import org.to2mbn.lolixl.utils.GsonUtils;
+import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import com.google.gson.JsonSyntaxException;
@@ -59,36 +58,21 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private AuthenticationProfileList profiles = new AuthenticationProfileList();
 
-	private ServiceTracker<AuthenticationService, AuthenticationService> serviceTracker;
+	private LambdaServiceTracker<AuthenticationService> serviceTracker;
 	private ObservableContext observableContext;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
 		bundleContext = compCtx.getBundleContext();
-		serviceTracker = new ServiceTracker<>(bundleContext, AuthenticationService.class, new ServiceTrackerCustomizer<AuthenticationService, AuthenticationService>() {
-
-			@Override
-			public AuthenticationService addingService(ServiceReference<AuthenticationService> reference) {
-				AuthenticationService service = bundleContext.getService(reference);
-				profilesOfService(reference, service)
+		serviceTracker = new LambdaServiceTracker<>(bundleContext, AuthenticationService.class)
+				.whenAdding((reference, service) -> profilesOfService(reference, service)
 						.filter(entry -> entry.profile == null)
 						.forEach(entry -> localIOPool.submit(
-								() -> loadAuthProfile(reference, service, entry)));
-				return service;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference<AuthenticationService> reference, AuthenticationService service) {}
-
-			@Override
-			public void removedService(ServiceReference<AuthenticationService> reference, AuthenticationService service) {
-				profilesOfService(reference, service)
+								() -> loadAuthProfile(reference, service, entry))))
+				.whenRemoving((reference, service) -> profilesOfService(reference, service)
 						.filter(entry -> entry.profile != null)
 						.forEach(entry -> localIOPool.submit(
-								() -> unloadAuthProfile(entry)));
-				bundleContext.ungetService(reference);
-			}
-		});
+								() -> unloadAuthProfile(entry))));
 	}
 
 	@Deactivate
@@ -269,5 +253,4 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	public Class<? extends AuthenticationProfileList> getMementoType() {
 		return AuthenticationProfileList.class;
 	}
-
 }

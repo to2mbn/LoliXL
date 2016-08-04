@@ -5,20 +5,19 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.jmccc.mcdownloader.provider.DownloadInfoProcessor;
 import org.to2mbn.jmccc.mcdownloader.provider.DownloadProviderChain;
 import org.to2mbn.jmccc.mcdownloader.provider.ExtendedDownloadProvider;
 import org.to2mbn.jmccc.mcdownloader.provider.MinecraftDownloadProvider;
 import org.to2mbn.jmccc.util.Builder;
+import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 
 public class OSGiDownloadProviderAdapter {
 
 	private Supplier<List<Builder<MinecraftDownloadProvider>>> headBuilder;
 	private DownloadInfoProcessor downloadInfoProcessor;
 
-	private ServiceTracker<MinecraftDownloadProvider, MinecraftDownloadProvider> serviceTracker;
+	private LambdaServiceTracker<MinecraftDownloadProvider> serviceTracker;
 	private MinecraftDownloadProvider downloadProvider;
 
 	private MinecraftDownloadProvider jmcccUpstream;
@@ -26,25 +25,9 @@ public class OSGiDownloadProviderAdapter {
 	public OSGiDownloadProviderAdapter(BundleContext ctx, Supplier<List<Builder<MinecraftDownloadProvider>>> headBuilder, DownloadInfoProcessor downloadInfoProcessor) {
 		this.headBuilder = headBuilder;
 		this.downloadInfoProcessor = downloadInfoProcessor;
-		this.serviceTracker = new ServiceTracker<>(ctx, MinecraftDownloadProvider.class, new ServiceTrackerCustomizer<MinecraftDownloadProvider, MinecraftDownloadProvider>() {
-
-			@Override
-			public MinecraftDownloadProvider addingService(ServiceReference<MinecraftDownloadProvider> reference) {
-				MinecraftDownloadProvider service = ctx.getService(reference);
-				initProvider(reference, service);
-				return service;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference<MinecraftDownloadProvider> reference, MinecraftDownloadProvider service) {
-				initProvider(reference, service);
-			}
-
-			@Override
-			public void removedService(ServiceReference<MinecraftDownloadProvider> reference, MinecraftDownloadProvider service) {
-				ctx.ungetService(reference);
-			}
-		});
+		this.serviceTracker = new LambdaServiceTracker<>(ctx, MinecraftDownloadProvider.class)
+				.whenAdding((reference, service) -> initProvider(reference, service))
+				.whenModifying((reference, service) -> initProvider(reference, service));
 		serviceTracker.open(true);
 
 		downloadProvider = (MinecraftDownloadProvider) Proxy.newProxyInstance(OSGiDownloadProviderAdapter.class.getClassLoader(), new Class<?>[] { ExtendedDownloadProvider.class, MinecraftDownloadProvider.class },

@@ -1,9 +1,12 @@
 package org.to2mbn.lolixl.utils;
 
-import java.lang.reflect.Array;
+import static java.util.stream.Collectors.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -12,12 +15,15 @@ public class ObservableServiceTracker<T> extends ServiceTracker<T, T> {
 	private ObservableList<T> tracked = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<T> trackedView = FXCollections.unmodifiableObservableList(tracked);
 
-	private T[] zeroLengthArray;
+	private Function<Stream<ServiceReference<T>>, Stream<T>> mapper;
 
-	@SuppressWarnings("unchecked")
 	public ObservableServiceTracker(BundleContext context, Class<T> clazz) {
+		this(context, clazz, null);
+	}
+
+	public ObservableServiceTracker(BundleContext context, Class<T> clazz, Function<Stream<ServiceReference<T>>, Stream<T>> mapper) {
 		super(context, clazz, null);
-		zeroLengthArray = (T[]) Array.newInstance(clazz, 0);
+		this.mapper = mapper;
 	}
 
 	@Override
@@ -39,8 +45,12 @@ public class ObservableServiceTracker<T> extends ServiceTracker<T, T> {
 		updateTrackedList();
 	}
 
-	private void updateTrackedList() {
-		tracked.setAll(getServices(zeroLengthArray));
+	public void updateTrackedList() {
+		Platform.runLater(() -> {
+			tracked.setAll(
+					mapper.apply(Stream.of(getServiceReferences()))
+							.collect(toList()));
+		});
 	}
 
 	public ObservableList<T> getServiceList() {

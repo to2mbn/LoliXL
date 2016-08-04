@@ -16,17 +16,14 @@ import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -50,17 +47,13 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 	private ObservableContext observableContext;
 	private BundleContext bundleContext;
-	private ServiceTracker<SidebarTileElement, SidebarTileElement> serviceTracker;
+	private LambdaServiceTracker<SidebarTileElement> serviceTracker;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
 		bundleContext = compCtx.getBundleContext();
-		serviceTracker = new ServiceTracker<>(bundleContext, SidebarTileElement.class, new ServiceTrackerCustomizer<SidebarTileElement, SidebarTileElement>() {
-
-			@Override
-			public SidebarTileElement addingService(ServiceReference<SidebarTileElement> reference) {
-				SidebarTileElement service = bundleContext.getService(reference);
-				Platform.runLater(() -> {
+		serviceTracker = new LambdaServiceTracker<>(bundleContext, SidebarTileElement.class)
+				.whenAdding((reference, service) -> {
 					String tagName = ServiceUtils.getIdProperty(SidebarTileElement.PROPERTY_TAG_NAME, reference, service);
 					synchronized (tiles.entries) {
 						SideBarTileList.TileEntry entry = tiles.tagNameMapping.get(tagName);
@@ -78,16 +71,8 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 						updateTiles();
 					}
 					observableContext.notifyChanged();
-				});
-				return service;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference<SidebarTileElement> reference, SidebarTileElement service) {}
-
-			@Override
-			public void removedService(ServiceReference<SidebarTileElement> reference, SidebarTileElement service) {
-				Platform.runLater(() -> {
+				})
+				.whenRemoving((reference, service) -> {
 					synchronized (tiles.entries) {
 						SideBarTileList.TileEntry entry = tiles.serviceMapping.remove(service);
 						if (entry == null) {
@@ -99,9 +84,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 						updateTiles();
 					}
 				});
-				bundleContext.ungetService(reference);
-			}
-		});
 	}
 
 	@Deactivate

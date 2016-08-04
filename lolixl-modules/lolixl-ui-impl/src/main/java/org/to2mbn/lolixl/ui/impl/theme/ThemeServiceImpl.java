@@ -13,14 +13,13 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.impl.MainScene;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import org.to2mbn.lolixl.utils.CollectionUtils;
+import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
@@ -63,7 +62,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private Map<String, Integer> themeTypeOrder;
 	private Comparator<ThemeEntry> themeComparator;
 
-	private ServiceTracker<Theme, Theme> serviceTracker;
+	private LambdaServiceTracker<Theme> serviceTracker;
 	private BundleContext bundleContext;
 	private ObservableContext observableContext;
 
@@ -98,111 +97,100 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	@Activate
 	public void active(ComponentContext compCtx) {
 		this.bundleContext = compCtx.getBundleContext();
-		serviceTracker = new ServiceTracker<>(bundleContext, Theme.class, new ServiceTrackerCustomizer<Theme, Theme>() {
-
-			@Override
-			public Theme addingService(ServiceReference<Theme> reference) {
-				Theme service = bundleContext.getService(reference);
-				String themeId = ServiceUtils.getIdProperty(Theme.PROPERTY_THEME_ID, reference, service);
-				synchronized (config.themes) {
-					ThemeEntry themeEntry = null;
-					boolean newAdd = false;
-					for (ThemeEntry ele : config.themes) {
-						if (themeId.equals(ele.id)) {
-							ele.serviceRef = reference;
-							ele.theme = service;
-							themeEntry = ele;
-							break;
+		serviceTracker = new LambdaServiceTracker<>(bundleContext, Theme.class)
+				.whenAdding((reference, service) -> {
+					String themeId = ServiceUtils.getIdProperty(Theme.PROPERTY_THEME_ID, reference, service);
+					synchronized (config.themes) {
+						ThemeEntry themeEntry = null;
+						boolean newAdd = false;
+						for (ThemeEntry ele : config.themes) {
+							if (themeId.equals(ele.id)) {
+								ele.serviceRef = reference;
+								ele.theme = service;
+								themeEntry = ele;
+								break;
+							}
 						}
-					}
-					if (themeEntry == null) {
-						newAdd = true;
-						themeEntry = new ThemeEntry();
-						themeEntry.id = themeId;
-						themeEntry.serviceRef = reference;
-						themeEntry.theme = service;
-						config.themes.add(themeEntry);
-					}
-					if (newAdd) {
-						// 过去没有设置过这个Theme
+						if (themeEntry == null) {
+							newAdd = true;
+							themeEntry = new ThemeEntry();
+							themeEntry.id = themeId;
+							themeEntry.serviceRef = reference;
+							themeEntry.theme = service;
+							config.themes.add(themeEntry);
+						}
+						if (newAdd) {
+							// 过去没有设置过这个Theme
 
-						List<ThemeEntry> availableThemes = filterAvailableThemes(getThemeType(reference));
-						long enabledCount = countEnabledThemes(availableThemes);
-						if (enabledCount == 0) {
-							// 所有负责该职责的Theme都被禁用
-							// 那么将当前这个Theme启用
-							themeEntry.enabled = true;
+							List<ThemeEntry> availableThemes = filterAvailableThemes(getThemeType(reference));
+							long enabledCount = countEnabledThemes(availableThemes);
+							if (enabledCount == 0) {
+								// 所有负责该职责的Theme都被禁用
+								// 那么将当前这个Theme启用
+								themeEntry.enabled = true;
 
-						} else if (enabledCount == 1) {
-							// 有一个启用的Theme
-							if (themeEntry.enabled) {
-								// 启用的Theme为当前的Theme
-								// 这是不可能的
-								throw new IllegalStateException("The new-added theme cannot be enabled");
-							} else {
-								// 为其它Theme
-								ThemeEntry enabledTheme = availableThemes.stream()
-										.filter(entry -> entry.enabled)
-										.findFirst().get();
-								// 对比优先级
-								if (themeComparator.compare(enabledTheme, themeEntry) > 0) {
-									// enabledTheme > themeEntry
-									// 不改变
+							} else if (enabledCount == 1) {
+								// 有一个启用的Theme
+								if (themeEntry.enabled) {
+									// 启用的Theme为当前的Theme
+									// 这是不可能的
+									throw new IllegalStateException("The new-added theme cannot be enabled");
 								} else {
-									// enabledTheme <= themeEntry
-									// 选用当前Theme
-									enabledTheme.enabled = false;
-									themeEntry.enabled = true;
+									// 为其它Theme
+									ThemeEntry enabledTheme = availableThemes.stream()
+											.filter(entry -> entry.enabled)
+											.findFirst().get();
+									// 对比优先级
+									if (themeComparator.compare(enabledTheme, themeEntry) > 0) {
+										// enabledTheme > themeEntry
+										// 不改变
+									} else {
+										// enabledTheme <= themeEntry
+										// 选用当前Theme
+										enabledTheme.enabled = false;
+										themeEntry.enabled = true;
+									}
 								}
+							} else {
+								// enabledCount > 1
+								// 这TM该咋办...fuck......
+								// 我看还是把当前的Theme关了好
 							}
 						} else {
-							// enabledCount > 1
-							// 这TM该咋办...fuck......
-							// 我看还是把当前的Theme关了好
+							// 过去设置过这个Theme，遵循过去的设置
 						}
-					} else {
-						// 过去设置过这个Theme，遵循过去的设置
+						updateThemesList();
 					}
-					updateThemesList();
-				}
-				return service;
-			}
-
-			@Override
-			public void modifiedService(ServiceReference<Theme> reference, Theme service) {}
-
-			@Override
-			public void removedService(ServiceReference<Theme> reference, Theme service) {
-				synchronized (config.themes) {
-					for (ThemeEntry entry : config.themes) {
-						if (entry.theme == service) {
-							entry.serviceRef = null;
-							entry.theme = null;
-							if (entry.enabled) {
-								String type = getThemeType(reference);
-								List<ThemeEntry> availableThemes = filterAvailableThemes(type);
-								long enabledCount = countEnabledThemes(availableThemes);
-								if (enabledCount == 0) {
-									// 得找个后继
-									if (Theme.TYPE_THEME_PACKAGE.equals(type)) {
-										// 当然只有在必须的时候才这样
-										if (availableThemes.size() > 0) {
-											availableThemes.get(0).enabled = true;
-										} else {
-											// 没救了
-											LOGGER.warning("All themes for theme-package have been removed");
+				})
+				.whenRemoving((reference, service) -> {
+					synchronized (config.themes) {
+						for (ThemeEntry entry : config.themes) {
+							if (entry.theme == service) {
+								entry.serviceRef = null;
+								entry.theme = null;
+								if (entry.enabled) {
+									String type = getThemeType(reference);
+									List<ThemeEntry> availableThemes = filterAvailableThemes(type);
+									long enabledCount = countEnabledThemes(availableThemes);
+									if (enabledCount == 0) {
+										// 得找个后继
+										if (Theme.TYPE_THEME_PACKAGE.equals(type)) {
+											// 当然只有在必须的时候才这样
+											if (availableThemes.size() > 0) {
+												availableThemes.get(0).enabled = true;
+											} else {
+												// 没救了
+												LOGGER.warning("All themes for theme-package have been removed");
+											}
 										}
 									}
 								}
+								updateThemesList();
+								break;
 							}
-							updateThemesList();
-							break;
 						}
 					}
-				}
-				bundleContext.ungetService(reference);
-			}
-		});
+				});
 	}
 
 	private List<ThemeEntry> filterAvailableThemes(String themeType) {
@@ -319,5 +307,4 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 		lastEnabledThemes.clear();
 		lastEnabledThemes.addAll(enabledThemes);
 	}
-
 }
