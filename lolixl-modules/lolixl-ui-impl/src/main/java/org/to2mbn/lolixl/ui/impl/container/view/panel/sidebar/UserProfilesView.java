@@ -6,5 +6,5 @@ import org.to2mbn.lolixl.ui.container.view.View;
 
 public class UserProfilesView extends View {
 	@FXML
-	public VBox typesContainer;
+	public VBox profilesContainer;
 }

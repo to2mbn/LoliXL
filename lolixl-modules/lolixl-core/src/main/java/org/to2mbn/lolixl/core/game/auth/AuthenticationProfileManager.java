@@ -1,12 +1,12 @@
 package org.to2mbn.lolixl.core.game.auth;
 
-import java.util.List;
 import java.util.Optional;
 import org.osgi.framework.ServiceReference;
+import javafx.collections.ObservableList;
 
 public interface AuthenticationProfileManager {
 
-	List<AuthenticationProfile<?>> getProfiles();
+	ObservableList<AuthenticationProfile<?>> getProfiles();
 
 	AuthenticationProfile<?> createProfile(ServiceReference<AuthenticationService> provider);
 

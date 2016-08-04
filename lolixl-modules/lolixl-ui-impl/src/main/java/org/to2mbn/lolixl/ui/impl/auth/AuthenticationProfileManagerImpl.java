@@ -2,14 +2,14 @@ package org.to2mbn.lolixl.ui.impl.auth;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.*;
-import java.io.IOException;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +35,9 @@ import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import com.google.gson.JsonSyntaxException;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 @Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
 @Properties({
@@ -57,6 +59,9 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	private Path profileBaseDir = Paths.get(".lolixl", "auth", "profiles");
 
 	private AuthenticationProfileList profiles = new AuthenticationProfileList();
+
+	private ObservableList<AuthenticationProfile<?>> profilesList = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
+	private ObservableList<AuthenticationProfile<?>> profilesListView = FXCollections.unmodifiableObservableList(profilesList);
 
 	private LambdaServiceTracker<AuthenticationService> serviceTracker;
 	private ObservableContext observableContext;
@@ -80,12 +85,11 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		serviceTracker.close();
 	}
 
-	@Override
-	public List<AuthenticationProfile<?>> getProfiles() {
-		return profiles.entries.stream()
+	private void updateProfilesList() {
+		profilesList.setAll(profiles.entries.stream()
 				.map(entry -> entry.profile)
 				.filter(Objects::nonNull)
-				.collect(toList());
+				.collect(toList()));
 	}
 
 	@Override
@@ -99,6 +103,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	@Override
 	public AuthenticationProfile<?> createProfile(ServiceReference<AuthenticationService> reference) {
 		Objects.requireNonNull(reference);
+		checkFxThread();
 
 		AuthenticationProfileEntry entry = new AuthenticationProfileEntry();
 
@@ -121,9 +126,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 		updateProfile(AuthenticationProfileEvent.TYPE_CREATE, entry);
 
-		localIOPool.submit(() -> {
-			saveProfile(entry);
-		});
+		saveProfile(entry);
 		observableContext.notifyChanged();
 
 		return entry.profile;
@@ -132,6 +135,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	@Override
 	public void removeProfile(AuthenticationProfile<?> profile) {
 		Objects.requireNonNull(profile);
+		checkFxThread();
 
 		for (AuthenticationProfileEntry entry : profiles.entries) {
 			if (entry.profile == profile) {
@@ -172,48 +176,64 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private void updateProfile(int type, AuthenticationProfileEntry entry) {
 		eventAdmin.postEvent(new AuthenticationProfileEvent(type, entry.profile, entry.serviceRef));
+		updateProfilesList();
 	}
 
 	private void saveProfile(AuthenticationProfileEntry entry) {
 		Path location = getProfileLocation(entry.uuid);
-		try {
-			synchronized (entry) {
-				if (entry.profile == null) {
-					throw new IllegalStateException("Profile is not initialized: " + entry);
-				}
-				GsonUtils.toJson(location, entry.profile.store());
-				LOGGER.fine(() -> format("Saved auth profile %s", entry));
-			}
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, format("Couldn't save auth profile %s to [%s]", entry, location), e);
+		AuthenticationProfile<?> profile = entry.profile;
+		if (entry.profile == null) {
+			throw new IllegalStateException("Profile is not initialized: " + entry);
 		}
+
+		localIOPool.submit(() -> {
+			try {
+				synchronized (entry) {
+					GsonUtils.toJson(location, profile.store());
+					LOGGER.fine(() -> format("Saved auth profile %s", entry));
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, format("Couldn't save auth profile %s to [%s]", entry, location), e);
+			}
+		});
 	}
 
 	private void loadAuthProfile(ServiceReference<AuthenticationService> reference, AuthenticationService service, AuthenticationProfileEntry entry) {
 		AuthenticationProfile<?> profile;
 		try {
 			profile = service.createProfile();
-			loadAuthProfileMemo(profile, getProfileLocation(entry.uuid));
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, format("Couldn't load auth profile [%s], skipping", entry.uuid), e);
+			LOGGER.log(Level.WARNING, format("Couldn't create auth profile [%s], skipping", entry.uuid), e);
 			return;
 		}
 
-		synchronized (entry) {
-			if (entry.profile == null) {
-				doSetObservableContext(profile, entry);
-				entry.serviceRef = reference;
-				entry.profile = profile;
-				updateProfile(AuthenticationProfileEvent.TYPE_CREATE, entry);
-			}
-		}
-		LOGGER.fine(() -> format("Loaded auth profile %s, service=%s", entry, reference));
+		loadAuthProfileMemo(profile, getProfileLocation(entry.uuid), entry.uuid)
+				.thenRun(() -> Platform.runLater(() -> {
+					synchronized (entry) {
+						if (entry.profile == null) {
+							doSetObservableContext(profile, entry);
+							entry.serviceRef = reference;
+							entry.profile = profile;
+							updateProfile(AuthenticationProfileEvent.TYPE_CREATE, entry);
+						}
+					}
+					LOGGER.fine(() -> format("Loaded auth profile %s, service=%s", entry, reference));
+				}));
 	}
 
 	// 因为单独写会造成类型推断失败
 	// 所以抽一个方法出来
-	private <T extends java.io.Serializable> void loadAuthProfileMemo(AuthenticationProfile<T> profile, Path path) throws JsonSyntaxException, IOException {
-		profile.restore(Optional.ofNullable(GsonUtils.fromJson(path, profile.getMementoType())));
+	private <T extends java.io.Serializable> CompletableFuture<Void> loadAuthProfileMemo(AuthenticationProfile<T> profile, Path path, UUID uuid) {
+		return GsonUtils.asynFromJson(path, profile.getMementoType())
+				.handle((result, ex) -> {
+					if (ex == null) {
+						profile.restore(Optional.of(result));
+					} else {
+						LOGGER.log(Level.WARNING, "Couldn't load auth profile " + uuid, ex);
+						profile.restore(Optional.empty());
+					}
+					return null;
+				});
 	}
 
 	private void unloadAuthProfile(AuthenticationProfileEntry entry) {
@@ -231,6 +251,11 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	private Path getProfileLocation(UUID uuid) {
 		return profileBaseDir.resolve(uuid.toString() + ".json");
+	}
+
+	@Override
+	public ObservableList<AuthenticationProfile<?>> getProfiles() {
+		return profilesListView;
 	}
 
 	@Override

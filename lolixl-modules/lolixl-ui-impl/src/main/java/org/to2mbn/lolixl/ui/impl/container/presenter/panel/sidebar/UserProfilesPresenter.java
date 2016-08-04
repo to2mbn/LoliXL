@@ -5,6 +5,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
@@ -12,6 +13,8 @@ import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.UserProfilesView;
+import org.to2mbn.lolixl.utils.CollectionUtils;
+import org.to2mbn.lolixl.utils.MappedObservableList;
 
 @Component(immediate = true)
 public class UserProfilesPresenter extends Presenter<UserProfilesView> {
@@ -22,6 +25,8 @@ public class UserProfilesPresenter extends Presenter<UserProfilesView> {
 
 	@Reference
 	private SideBarPanelDisplayService displayService;
+
+	private MappedObservableList<AuthenticationProfile<?>, Tile> profileTiles;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -35,20 +40,19 @@ public class UserProfilesPresenter extends Presenter<UserProfilesView> {
 
 	@Override
 	protected void initializePresenter() {
-		// TODO FOR YUSHI: ↓ observable
-		authProfileManager.getProfiles().stream()
-				.map(profile -> profile.createTile())
-				.forEach(tile -> {
-					tile.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-						// TODO: mark it as selected type
-					});
-					view.typesContainer.getChildren().add(tile);
-				});
+		profileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
+			Tile tile = profile.createTile();
+			tile.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+				// TODO: mark it as selected type
+			});
+			return tile;
+		});
+		CollectionUtils.bindList(profileTiles, view.profilesContainer.getChildren());
 
 		Tile tile = new Tile();
 		tile.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar.authtypes.configurebutton.text"));
 		Panel panel = displayService.newPanel();
 		panel.bindButton(tile);
-		view.typesContainer.getChildren().add(tile);
+		view.profilesContainer.getChildren().add(tile);
 	}
 }

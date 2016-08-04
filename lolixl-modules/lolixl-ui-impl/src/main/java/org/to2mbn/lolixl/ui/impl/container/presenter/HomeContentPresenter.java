@@ -17,9 +17,9 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 @Service({ HomeContentPresenter.class })
 @Component(immediate = true)
@@ -27,7 +27,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";
 
-	private static final Logger LOGGER = Logger.getLogger(HomeContentPresenter.class.getCanonicalName());
+	private int tileAnimationDuration = 100;
 
 	@Reference
 	private SideBarTileService tileService;
@@ -56,8 +56,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			tile.setPadding(Insets.EMPTY);
 			return tile;
 		});
-		tilesMapping.addListener(
-				(observable, oldValue, newValue) -> view.tileContainer.getChildren().setAll(newValue));
+		CollectionUtils.bindList(tilesMapping, view.tileContainer.getChildren());
 
 	}
 
@@ -70,7 +69,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		view.tileRootContainer.setBottom(tile);
 	}
 
-	private static class TileAnimationHandler {
+	private class TileAnimationHandler {
 		private final Tile tile;
 		private final Region tileContainer;
 		private final AtomicReference<Timeline> currentAnimation = new AtomicReference<>(null);
@@ -88,7 +87,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 				currentAnimation.set(null);
 				current.stop();
 			} else {
-				time = Duration.millis(500);
+				time = Duration.millis(tileAnimationDuration);
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
@@ -100,7 +99,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		}
 
 		private void cancelAndFallback(MouseEvent mouseEvent) {
-			LOGGER.info("fall back!!!!");
 			Duration time;
 			Timeline current = currentAnimation.get();
 			if (current != null) {
@@ -108,7 +106,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 				currentAnimation.set(null);
 				current.stop();
 			} else {
-				time = Duration.millis(500);
+				time = Duration.millis(tileAnimationDuration);
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),

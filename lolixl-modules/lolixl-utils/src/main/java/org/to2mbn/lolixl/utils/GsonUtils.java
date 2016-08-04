@@ -7,6 +7,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import org.to2mbn.lolixl.utils.internal.CommonExecutors;
 import org.to2mbn.lolixl.utils.internal.GsonFactory;
 import com.google.gson.JsonSyntaxException;
 
@@ -23,6 +26,21 @@ public final class GsonUtils {
 		try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file), "UTF-8")) {
 			GsonFactory.instance.toJson(obj, writer);
 		}
+	}
+
+	public static <T> CompletableFuture<T> asynFromJson(Path file, Class<T> type) {
+		return AsyncUtils.asyncRun(() -> fromJson(file, type), getIOPool());
+	}
+
+	public static CompletableFuture<Void> asynToJson(Path file, Object obj) {
+		return AsyncUtils.asyncRun(() -> {
+			toJson(file, obj);
+			return null;
+		}, getIOPool());
+	}
+
+	private static ExecutorService getIOPool() {
+		return CommonExecutors.getExecutorService("local_io");
 	}
 
 }

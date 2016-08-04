@@ -45,7 +45,7 @@ public class CommonExecutors {
 		};
 	}
 
-	private Map<String, ExecutorService> executors = new HashMap<>();
+	private static Map<String, ExecutorService> executors = new HashMap<>();
 
 	private void addExecutor(BundleContext ctx, String usage, Supplier<ExecutorService> executorFactory) {
 		synchronized (executors) {
@@ -83,6 +83,10 @@ public class CommonExecutors {
 				}
 			}
 		}
+	}
+
+	public static ExecutorService getExecutorService(String usage) {
+		return executors.get(usage);
 	}
 
 }
