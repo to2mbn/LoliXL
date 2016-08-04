@@ -64,10 +64,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Override
 	protected void initializePresenter() {
-		makeDraggable();
-		makeResizeable();
-
-		view.titleBarPane.getChildren().add(titleBarPresenter.getView().rootContainer);
 		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
 
@@ -138,28 +134,34 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 			return;
 		}
 		PanelEntry entry = panels.poll();
-		Animation animation = generateAnimation(entry.view, true);
 		if (panels.size() <= 0) {
-			animation.setOnFinished(event -> {
-				// 先隐藏面板
-				entry.view.setVisible(false);
-				// 把先前隐藏的侧边栏和主页栏加回来
-				view.rootContainer.setLeft(view.sidebarPane);
-				view.rootContainer.setCenter(view.contentPane);
-			});
+			view.sidebarPane.setVisible(false);
+			view.contentPane.setVisible(false);
+			view.rootContainer.setLeft(view.sidebarPane);
+			view.rootContainer.setCenter(view.contentPane);
+			Animation fallback = fallbackAnimation(view.sidebarPane, view.contentPane);
+			fallback.play();
+			view.sidebarPane.setVisible(true);
+			view.contentPane.setVisible(true);
 		} else { // 如果此时存在多层叠加(逻辑上的)着的面板
 			PanelEntry previous = panels.element();
-			animation.setOnFinished(event ->
-					// 直接设置为下一层的面板
-					view.rootContainer.setCenter(previous.view));
+			Animation animation = generateAnimation(entry.view, true);
+			animation.setOnFinished(event -> {
+				// 设置为下一层的面板
+				previous.view.setVisible(false);
+				view.rootContainer.setCenter(previous.view);
+				Animation fallback = fallbackAnimation(previous.view);
+				fallback.play();
+				previous.view.setVisible(true);
+			});
+			animation.play();
 		}
-		animation.play();
 	}
 
 	private ParallelTransition generateAnimation(Region pane, boolean reverse) {
 		// 移动动画
 		TranslateTransition tran = new TranslateTransition(Duration.millis(200), pane);
-		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 7;
+		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 15;
 		double toX = view.sidebarPane.getLayoutX();
 		tran.setFromX(reverse ? toX : fromX);
 		tran.setToX(reverse ? fromX : toX);
@@ -173,33 +175,15 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		return parallel;
 	}
 
-	private void makeDraggable() {
-		view.titleBarPane.setOnMouseMoved(event -> {
-			draggable = true;
-		});
-		view.titleBarPane.setOnMouseExited(event -> {
-			draggable = false;
-		});
-		view.titleBarPane.setOnMousePressed(event -> {
-			if (draggable) {
-				lastDragX = event.getSceneX();
-				lastDragY = event.getSceneY();
-				isDragging = true;
-			}
-		});
-		view.titleBarPane.setOnMouseDragged(event -> {
-			if (isDragging) {
-				stage.setX(event.getScreenX() - lastDragX);
-				stage.setY(event.getScreenY() - lastDragY);
-			}
-		});
-		view.titleBarPane.setOnMouseReleased(event -> {
-			isDragging = false;
-		});
-	}
-
-	private void makeResizeable() {
-		// TODO
+	private ParallelTransition fallbackAnimation(Region... panes) {
+		ParallelTransition parallel = new ParallelTransition();
+		for (Region pane : panes) {
+			FadeTransition fade = new FadeTransition(Duration.millis(200), pane);
+			fade.setFromValue(0);
+			fade.setToValue(pane.getOpacity());
+			parallel.getChildren().add(fade);
+		}
+		return parallel;
 	}
 
 	private static class PanelEntry {

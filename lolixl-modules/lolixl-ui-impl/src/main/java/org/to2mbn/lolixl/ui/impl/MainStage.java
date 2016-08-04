@@ -1,17 +1,16 @@
 package org.to2mbn.lolixl.ui.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
-import javafx.application.Platform;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 @Component
 public class MainStage {
@@ -27,7 +26,6 @@ public class MainStage {
 
 			LOGGER.fine("Creating main stage");
 			Stage m_stage = new Stage();
-			m_stage.initStyle(StageStyle.UNDECORATED);
 			return m_stage;
 
 		}, Platform::runLater).get();

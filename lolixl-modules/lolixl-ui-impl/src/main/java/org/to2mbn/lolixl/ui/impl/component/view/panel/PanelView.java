@@ -7,16 +7,24 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.io.IOException;
 
-public class PanelView extends BorderPane {
+public class PanelView extends StackPane {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
 
 	private static final Image PREVIOUS_BUTTON_IMG = new Image("/ui/img/previous_button.png");
 	private static final Image PREVIOUS_BUTTON_HOVER_IMG = new Image("/ui/img/previous_button_hover.png");
+
+	@FXML
+	public Pane glurContainer;
+
+	@FXML
+	public BorderPane contentContainer;
 
 	@FXML
 	public HBox headerContainer;

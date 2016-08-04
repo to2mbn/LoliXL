@@ -41,3 +41,10 @@
 .text-input {
     -fx-highlight-fill: #dd6365;
 }
+
+#default-sidebar-main-content-container,
+#default-sidebar-sidebar-container-onpaneladded,
+#panel-blur-container,
+#tile-blur-container {
+    -fx-background-color: rgba(205, 92, 94, 0.3);
+}
