@@ -53,6 +53,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	// for draggable:
 	private double lastDragX, lastDragY;
 	private boolean isDragging = false;
+	private boolean draggable = false;
 	// for resizeable:
 	private double lastResizeX, lastResizeY;
 
@@ -173,8 +174,14 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	}
 
 	private void makeDraggable() {
+		view.titleBarPane.setOnMouseMoved(event -> {
+			draggable = true;
+		});
+		view.titleBarPane.setOnMouseExited(event -> {
+			draggable = false;
+		});
 		view.titleBarPane.setOnMousePressed(event -> {
-			if (!checkIfOnEdge(event.getSceneY(), event.getSceneY())) {
+			if (draggable) {
 				lastDragX = event.getSceneX();
 				lastDragY = event.getSceneY();
 				isDragging = true;
@@ -193,16 +200,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private void makeResizeable() {
 		// TODO
-	}
-
-	private boolean checkIfOnEdge(double x, double y) {
-		// FIXME
-		if (x >= 3 && x <= view.rootContainer.getWidth() - 3) {
-			return (y >= 3 && y <= 12) || (y >= view.rootContainer.getHeight() - 12 && y <= view.rootContainer.getHeight() - 3);
-		} else if (y >= 3 && y <= view.rootContainer.getHeight() - 3) {
-			return (x >= 3 && x <= 12) || (x >= view.rootContainer.getWidth() - 12 && x <= view.rootContainer.getWidth() - 3);
-		}
-		return false;
 	}
 
 	private static class PanelEntry {

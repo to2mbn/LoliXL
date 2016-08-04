@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
@@ -16,14 +17,18 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 @Service({ HomeContentPresenter.class })
 @Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";
+
+	private static final Logger LOGGER = Logger.getLogger(HomeContentPresenter.class.getCanonicalName());
 
 	@Reference
 	private SideBarTileService tileService;
@@ -56,8 +61,14 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 				}
 			});
 			tile.setLayoutX(tile.getLayoutX() + tile.getWidth() - tile.getHeight());
+			LOGGER.fine("Mapping tile [" + tile.getId() + "]");
 			return tile;
 		});
+		tilesMapping.addListener(((observable, oldValue, newValue) -> {
+			List<Node> children = view.tileContainer.getChildren();
+			children.clear();
+			children.addAll(newValue);
+		}));
 	}
 
 	/**
