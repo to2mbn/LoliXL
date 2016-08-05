@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<fx:root id="add-new-profile-tile-root-container" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="280.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <ImageView id="add-new-profile-tile-icon-view" fx:id="iconView" fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="2.0" />
+         </BorderPane.margin>
+      </ImageView>
+   </left>
+   <center>
+      <Label id="add-new-profile-tile-text-label" fx:id="textLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </Label>
+   </center>
+</fx:root>
