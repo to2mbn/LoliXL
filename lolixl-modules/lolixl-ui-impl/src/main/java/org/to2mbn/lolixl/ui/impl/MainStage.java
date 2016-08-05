@@ -4,9 +4,12 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
+import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -20,12 +23,16 @@ public class MainStage {
 	public static final String PROPERTY_STAGE_ID = "org.to2mbn.lolixl.ui.impl.stage.id";
 	public static final String MAIN_STAGE_ID = "org.to2mbn.lolixl.ui.impl.stage.main.id";
 
+	@Reference
+	private EventAdmin eventAdmin;
+
 	@Activate
 	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {
 		Stage stage = AsyncUtils.asyncRun(() -> {
 
 			LOGGER.fine("Creating main stage");
 			Stage m_stage = new Stage();
+			m_stage.setOnCloseRequest(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
 			return m_stage;
 
 		}, Platform::runLater).get();

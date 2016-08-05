@@ -18,7 +18,11 @@ public final class I18N {
 		if (result != null) {
 			return String.format(result, arguments);
 		} else {
-			return key + Arrays.toString(arguments);
+			if (arguments.length == 0) {
+				return key;
+			} else {
+				return key + Arrays.toString(arguments);
+			}
 		}
 	}
 
@@ -33,4 +37,5 @@ public final class I18N {
 		}
 		return service;
 	}
+
 }
