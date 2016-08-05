@@ -48,16 +48,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	protected void initializePresenter() {
 		tilesMapping = new MappedObservableList<>(tileService.getTiles(SideBarTileService.StackingStatus.SHOWN), element -> {
 			Tile tile = element.createTile();
-			TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
-			tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::runRollOutAnimation);
-			tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
-			tile.setPrefWidth(60);
-			tile.resize(60, 60);
-			tile.setPadding(Insets.EMPTY);
+			resolveTile(tile);
 			return tile;
 		});
 		CollectionUtils.bindList(tilesMapping, view.tileContainer.getChildren());
-
 	}
 
 	/**
@@ -67,6 +61,15 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	 */
 	public void setManagementTile(Tile tile) {
 		view.tileRootContainer.setBottom(tile);
+	}
+
+	private void resolveTile(Tile tile) {
+		TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
+		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::runRollOutAnimation);
+		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
+		tile.setPrefWidth(60);
+		tile.resize(60, 60);
+		tile.setPadding(Insets.EMPTY);
 	}
 
 	private class TileAnimationHandler {

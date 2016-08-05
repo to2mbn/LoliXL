@@ -16,7 +16,7 @@
             <GaussianBlur />
          </effect>
       </Pane>
-      <BorderPane id="panel-content-container" fx:id="rootContainer" prefHeight="440.0" prefWidth="850.0">
+      <BorderPane id="panel-content-container" fx:id="contentContainer" prefHeight="440.0" prefWidth="850.0">
          <top>
             <HBox id="panel-header-container" fx:id="headerContainer" prefHeight="50.0" prefWidth="850.0" spacing="5.0" BorderPane.alignment="CENTER">
                <children>
@@ -39,7 +39,7 @@
             </HBox>
          </top>
          <center>
-            <BorderPane id="panel-content-container" fx:id="paneContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="390.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
+            <StackPane id="panel-content-container" fx:id="panelContentContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="390.0" prefWidth="850.0" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>

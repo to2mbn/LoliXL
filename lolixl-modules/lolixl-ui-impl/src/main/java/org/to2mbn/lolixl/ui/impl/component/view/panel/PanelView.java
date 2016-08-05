@@ -39,7 +39,7 @@ public class PanelView extends StackPane {
 	public Label titleLabel;
 
 	@FXML
-	public BorderPane paneContainer;
+	public StackPane panelContentContainer;
 
 	private final Panel panel;
 
@@ -60,7 +60,12 @@ public class PanelView extends StackPane {
 		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());
-		paneContainer.centerProperty().bind(panel.contentProperty());
+		panel.contentProperty().addListener(((observable, oldValue, newValue) -> {
+			if (oldValue != null) {
+				panelContentContainer.getChildren().remove(oldValue);
+			}
+			panelContentContainer.getChildren().add(newValue);
+		}));
 		iconView.imageProperty().bind(panel.iconProperty());
 		iconView.imageProperty().addListener(((observable, oldValue, newValue) -> checkEmptyIcon()));
 		checkEmptyIcon();
@@ -69,7 +74,7 @@ public class PanelView extends StackPane {
 	private void checkEmptyIcon() {
 		if (iconView.getImage() == null) {
 			headerContainer.getChildren().remove(iconView);
-		} else if (!paneContainer.getChildren().contains(iconView)) {
+		} else if (!headerContainer.getChildren().contains(iconView)) {
 			headerContainer.getChildren().add(iconView);
 		}
 	}
