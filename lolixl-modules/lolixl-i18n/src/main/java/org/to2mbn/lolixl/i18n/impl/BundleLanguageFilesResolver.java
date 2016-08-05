@@ -11,6 +11,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
 import org.to2mbn.lolixl.i18n.spi.ResourceLocalizationProvider;
@@ -46,11 +47,18 @@ public class BundleLanguageFilesResolver implements BundleListener {
 
 	private void tryLoadPluginLanguageFiles(Plugin plugin) {
 		Bundle bundle = plugin.getBundle();
+		if ((bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) != 0) {
+			return;
+		}
 
 		BundleContext ctx;
 
 		// 自旋锁
 		do {
+			int state = bundle.getState();
+			if (state != Bundle.STARTING && state != Bundle.ACTIVE) {
+				return;
+			}
 			Thread.yield();
 			ctx = bundle.getBundleContext();
 		} while (ctx == null);
