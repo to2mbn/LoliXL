@@ -11,10 +11,12 @@ public class PluginDescriptionImpl implements PluginDescription, Serializable {
 
 	private MavenArtifact artifact;
 	private Set<MavenArtifact> dependencies;
+	private Set<String> languageFiles;
 
-	public PluginDescriptionImpl(MavenArtifact artifact, Set<MavenArtifact> dependencies) {
+	public PluginDescriptionImpl(MavenArtifact artifact, Set<MavenArtifact> dependencies, Set<String> languageFiles) {
 		this.artifact = artifact;
 		this.dependencies = dependencies;
+		this.languageFiles = languageFiles;
 	}
 
 	@Override
@@ -28,8 +30,13 @@ public class PluginDescriptionImpl implements PluginDescription, Serializable {
 	}
 
 	@Override
+	public Set<String> getLanguageFiles() {
+		return languageFiles;
+	}
+
+	@Override
 	public String toString() {
-		return String.format("PluginDescription [artifact=%s, dependencies=%s]", artifact, dependencies);
+		return String.format("PluginDescriptionImpl [artifact=%s, dependencies=%s, languageFiles=%s]", artifact, dependencies, languageFiles);
 	}
 
 }

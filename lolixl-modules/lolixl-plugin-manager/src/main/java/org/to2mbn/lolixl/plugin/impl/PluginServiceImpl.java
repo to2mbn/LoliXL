@@ -463,7 +463,7 @@ public class PluginServiceImpl implements PluginService {
 					if (bundle.getState() != Bundle.ACTIVE &&
 							bundle.getState() != Bundle.STARTING) {
 						try {
-							bundle.start();
+							bundle.start(Bundle.START_ACTIVATION_POLICY);
 						} catch (Throwable exStart) {
 							LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
 							if (startExCollection == null)

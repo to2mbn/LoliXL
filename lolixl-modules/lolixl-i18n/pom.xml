@@ -12,6 +12,10 @@
 	<description>LoliXL I18N module</description>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.to2mbn.lolixl</groupId>
+			<artifactId>lolixl-plugin-manager</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
