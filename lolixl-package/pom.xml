@@ -82,6 +82,10 @@
 									<artifactId>jmccc-mcdownloader</artifactId>
 								</artifactItem>
 								<artifactItem>
+									<groupId>org.to2mbn</groupId>
+									<artifactId>jmccc-mojang-api</artifactId>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-utils</artifactId>
 								</artifactItem>
@@ -124,6 +128,10 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-language-pack</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 								</artifactItem>
 
 
@@ -191,6 +199,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-language-pack</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>

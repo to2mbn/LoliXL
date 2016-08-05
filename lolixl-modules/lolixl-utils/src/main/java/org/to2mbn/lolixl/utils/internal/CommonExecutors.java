@@ -65,6 +65,7 @@ public class CommonExecutors {
 		BundleContext ctx = compCtx.getBundleContext();
 		addExecutor(ctx, "local_io", pool(Runtime.getRuntime().availableProcessors() * 2, 10, TimeUnit.SECONDS, "lolixl.local_io"));
 		addExecutor(ctx, "cpu_compute", pool(Runtime.getRuntime().availableProcessors(), 30, TimeUnit.SECONDS, "lolixl.cpu_compute"));
+		addExecutor(ctx, "network_invocation", pool(16, 15, TimeUnit.SECONDS, "lolixl.network_invocation"));
 	}
 
 	@Deactivate

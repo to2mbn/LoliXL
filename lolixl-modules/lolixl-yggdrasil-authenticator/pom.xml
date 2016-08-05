@@ -6,15 +6,19 @@
 		<artifactId>lolixl-modules</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lolixl-i18n</artifactId>
+	<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 	<packaging>bundle</packaging>
-	<name>lolixl-i18n</name>
-	<description>LoliXL I18N module</description>
+	<name>lolixl-yggdrasil-authenticator</name>
+	<description>LoliXL yggdrasil authenticator module</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
-			<artifactId>lolixl-plugin-manager</artifactId>
+			<artifactId>lolixl-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.to2mbn</groupId>
+			<artifactId>jmccc-mojang-api</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -23,6 +23,7 @@
 		<module>lolixl-ui-impl</module>
 		<module>lolixl-plugin-center</module>
 		<module>lolixl-language-pack</module>
+		<module>lolixl-yggdrasil-authenticator</module>
 	</modules>
 
 	<build>

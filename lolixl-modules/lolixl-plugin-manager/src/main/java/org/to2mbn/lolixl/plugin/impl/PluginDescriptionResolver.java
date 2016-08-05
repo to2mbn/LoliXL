@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.plugin.impl;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
@@ -28,6 +29,7 @@ public class PluginDescriptionResolver {
 	private XPathExpression xexpVersion;
 	private XPathExpression xexpDependencies;
 	private XPathExpression xexpPlugin;
+	private XPathExpression xexpLanguageFile;
 
 	public PluginDescriptionResolver() {
 		try {
@@ -40,6 +42,7 @@ public class PluginDescriptionResolver {
 			xexpVersion = xpath.compile("version");
 			xexpDependencies = xpath.compile("dependencies/dependency");
 			xexpPlugin = xpath.compile("plugin");
+			xexpLanguageFile = xpath.compile("languageFiles/languageFile");
 		} catch (XPathExpressionException | ParserConfigurationException e) {
 			throw new IllegalStateException("Couldn't compile XPaths", e);
 		}
@@ -54,12 +57,20 @@ public class PluginDescriptionResolver {
 
 	public synchronized PluginDescription resolvePlugin(Node node) throws XPathExpressionException {
 		MavenArtifact artifact = resolveArtifact(node);
+
 		Set<MavenArtifact> dependencies = new LinkedHashSet<>();
-		NodeList nodeList = (NodeList) xexpDependencies.evaluate(node, XPathConstants.NODESET);
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			dependencies.add(resolveArtifact(nodeList.item(i)));
+		NodeList dependenciesNodeList = (NodeList) xexpDependencies.evaluate(node, XPathConstants.NODESET);
+		for (int i = 0; i < dependenciesNodeList.getLength(); i++) {
+			dependencies.add(resolveArtifact(dependenciesNodeList.item(i)));
 		}
-		return new PluginDescriptionImpl(artifact, dependencies);
+
+		Set<String> languageFiles = new LinkedHashSet<>();
+		NodeList languageFilesNodeList = (NodeList) xexpLanguageFile.evaluate(node, XPathConstants.NODESET);
+		for (int i = 0; i < languageFilesNodeList.getLength(); i++) {
+			languageFiles.add(languageFilesNodeList.item(i).getFirstChild().getNodeValue());
+		}
+
+		return new PluginDescriptionImpl(artifact, dependencies, Collections.unmodifiableSet(languageFiles));
 	}
 
 	public synchronized PluginDescription resolve(InputSource source) throws XPathExpressionException, SAXException, IOException {

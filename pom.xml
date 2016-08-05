@@ -342,6 +342,11 @@
 				<artifactId>jmccc-mcdownloader</artifactId>
 				<version>2.5-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>org.to2mbn</groupId>
+				<artifactId>jmccc-mojang-api</artifactId>
+				<version>2.5-SNAPSHOT</version>
+			</dependency>
 
 			<!-- LoliXL -->
 			<dependency>
@@ -397,6 +402,11 @@
 			<dependency>
 				<groupId>org.to2mbn.lolixl</groupId>
 				<artifactId>lolixl-language-pack</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

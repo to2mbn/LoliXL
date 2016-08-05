@@ -10,6 +10,20 @@
 	<packaging>bundle</packaging>
 	<name>lolixl-language-pack</name>
 	<description>LoliXL multi-language support module</description>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-description-plugin</artifactId>
+				<configuration>
+					<languageFiles>
+						<languageFile>org.to2mbn.lolixl.i18n.provider.impl.defaultlang</languageFile>
+					</languageFiles>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>

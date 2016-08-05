@@ -17,3 +17,6 @@ org.to2mbn.lolixl:lolixl-version-provider-mcdir
 org.to2mbn.lolixl:lolixl-offline-authenticator
 org.to2mbn.lolixl:lolixl-plugin-center
 org.to2mbn.lolixl:lolixl-language-pack
+org.to2mbn:jmccc-mojang-api
+org.to2mbn:lolixl-yggdrasil-authenticator
+

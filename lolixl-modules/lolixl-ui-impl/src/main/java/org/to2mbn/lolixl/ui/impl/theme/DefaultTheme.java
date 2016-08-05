@@ -42,8 +42,7 @@ public class DefaultTheme implements Theme {
 
 	@Override
 	public ObservableObjectValue<Image> getIcon() {
-		// TODO Use an icon here
-		return null;
+		return ObjectConstant.valueOf(null);
 	}
 
 }
