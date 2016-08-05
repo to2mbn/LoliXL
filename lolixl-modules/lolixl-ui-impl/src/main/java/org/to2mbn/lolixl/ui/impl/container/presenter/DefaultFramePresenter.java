@@ -6,7 +6,6 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.Observable;
 import javafx.scene.Scene;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Background;
@@ -60,8 +59,6 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	protected void initializePresenter() {
 		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
-
-		view.rootContainer.setEffect(new DropShadow());
 
 		view.rootContainer.sceneProperty().addListener((Observable dummy) -> {
 			Scene scene = view.rootContainer.getScene();
