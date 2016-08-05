@@ -7,8 +7,8 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.Event;
@@ -27,7 +27,7 @@ public class ApplicationExitHandler implements EventHandler {
 
 	private static final Logger LOGGER = Logger.getLogger(ApplicationExitHandler.class.getCanonicalName());
 
-	private long stopWaitTime = 3000;
+	private long stopWaitTime = 5000;
 
 	private BundleContext bundleContext;
 
@@ -41,8 +41,7 @@ public class ApplicationExitHandler implements EventHandler {
 		LOGGER.info("Exiting application");
 
 		stopFx();
-		stopBundles();
-		stopBundles(); // some bundles may be started during last stopBundles() invocation
+		stopFramework();
 
 		if ("true".equals(System.getProperty("lolixl.forciblyExit"))) {
 			Thread t = new Thread(() -> {
@@ -60,17 +59,11 @@ public class ApplicationExitHandler implements EventHandler {
 		}
 	}
 
-	private void stopBundles() {
-		for (Bundle bundle : bundleContext.getBundles()) {
-			if (bundle.getState() == Bundle.ACTIVE ||
-					bundle.getState() == Bundle.STARTING) {
-				LOGGER.fine("Try to stop bundle " + bundle);
-				try {
-					bundle.stop();
-				} catch (Throwable e) {
-					LOGGER.log(Level.SEVERE, "Couldn't stop bundle " + bundle, e);
-				}
-			}
+	private void stopFramework() {
+		try {
+			bundleContext.getBundle(0).stop();
+		} catch (BundleException e) {
+			LOGGER.log(Level.SEVERE, "Couldn't stop framework", e);
 		}
 	}
 

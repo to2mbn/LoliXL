@@ -4,7 +4,11 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.Observable;
+import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -58,6 +62,15 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
 
 		view.rootContainer.setEffect(new DropShadow());
+
+		view.rootContainer.sceneProperty().addListener((Observable dummy) -> {
+			Scene scene = view.rootContainer.getScene();
+			if (scene != null) {
+				view.rootContainer.getScene().getAccelerators().put(
+						new KeyCodeCombination(KeyCode.ESCAPE),
+						() -> getCurrent().ifPresent(Panel::hide));
+			}
+		});
 	}
 
 	@Override
@@ -67,7 +80,8 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Override
 	public void setBackground(Background background) {
-		preCheck(background);
+		Objects.requireNonNull(background);
+		FXUtils.checkFxThread();
 		view.rootContainer.setBackground(background);
 	}
 
@@ -83,18 +97,13 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Override
 	public Optional<Panel> getCurrent() {
-		PanelEntry entry = panels.poll();
+		PanelEntry entry = panels.peek();
 		return entry != null ? Optional.of(entry.model) : Optional.empty();
 	}
 
 	@Override
 	public Panel[] getOpenedPanels() {
 		return panels.stream().map(entry -> entry.model).toArray(Panel[]::new);
-	}
-
-	private <T> void preCheck(T obj) {
-		Objects.requireNonNull(obj);
-		FXUtils.checkFxThread();
 	}
 
 	private void displayPanelEntry(Panel model) {
@@ -177,6 +186,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	}
 
 	private static class PanelEntry {
+
 		private final Panel model;
 		private final Region view;
 
