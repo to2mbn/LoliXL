@@ -1,12 +1,9 @@
 package org.to2mbn.lolixl.i18n;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 
 public class LocalizedStringValue extends StringBinding {
@@ -36,14 +33,10 @@ public class LocalizedStringValue extends StringBinding {
 
 	private String key;
 	private Object[] args;
-	private LocalizationService localizationService;
-	private ObservableObjectValue<Locale> localeProperty;
 
 	public LocalizedStringValue(LocalizationService localizationService, String key, Object... args) {
-		this.localizationService = Objects.requireNonNull(localizationService);
 		this.key = Objects.requireNonNull(key);
 		this.args = Objects.requireNonNull(args);
-		this.localeProperty = localizationService.localeProperty();
 
 		bind(localizationService.localeProperty());
 		bind(extractDependencies(args));
@@ -51,13 +44,7 @@ public class LocalizedStringValue extends StringBinding {
 
 	@Override
 	protected String computeValue() {
-		String val = localizationService.getLocalizedString(localeProperty.get(), key);
-		Object[] extractedValues = extractValues(args);
-		if (val != null) {
-			return String.format(val, extractedValues);
-		} else {
-			return key + Arrays.toString(extractedValues);
-		}
+		return I18N.getLocalizedString(key, extractValues(args));
 	}
 
 }
