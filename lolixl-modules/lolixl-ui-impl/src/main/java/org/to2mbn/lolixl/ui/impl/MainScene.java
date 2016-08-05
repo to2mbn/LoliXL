@@ -8,7 +8,6 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
-import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,21 +32,18 @@ public class MainScene {
 
 	@Activate
 	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {
-		Scene scene = AsyncUtils.asyncRun(() -> {
-
+		Platform.runLater(() -> {
 			LOGGER.fine("Creating main scene");
-			Scene m_scene = new Scene(defaultFramePresenter.getView().rootContainer);
+			Scene scene = new Scene(defaultFramePresenter.getView().rootContainer);
 			Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
-			m_scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
-			stage.setScene(m_scene);
+			scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
+			stage.setScene(scene);
 			stage.show();
-			return m_scene;
 
-		}, Platform::runLater).get();
-
-		Map<String, Object> properties = new HashMap<>();
-		properties.put(PROPERTY_SCENE_ID, MAIN_SCENE_ID);
-		compCtx.getBundleContext().registerService(Scene.class, scene, new DictionaryAdapter<>(properties));
+			Map<String, Object> properties = new HashMap<>();
+			properties.put(PROPERTY_SCENE_ID, MAIN_SCENE_ID);
+			compCtx.getBundleContext().registerService(Scene.class, scene, new DictionaryAdapter<>(properties));
+		});
 	}
 
 }

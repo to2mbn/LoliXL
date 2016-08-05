@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.init;
+package org.to2mbn.lolixl.impl.init;
 
 import java.io.BufferedReader;
 import java.io.IOException;
