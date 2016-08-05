@@ -1,5 +1,7 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.WeakChangeListener;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -13,7 +15,6 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.SettingsView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import javafx.beans.value.ObservableStringValue;
 
 @Service({ SidebarTileElement.class })
 @Component(immediate = true)
@@ -40,13 +41,12 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 	@Override
 	protected void initializePresenter() {
 		view.categoryContainer.setItems(categoryManager.getProviders());
-
-		view.categoryContainer.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
+		view.categoryContainer.selectionModelProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
 				view.contentContainer.getChildren().clear();
 			}
 			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
-		});
+		}));
 	}
 
 	@Override

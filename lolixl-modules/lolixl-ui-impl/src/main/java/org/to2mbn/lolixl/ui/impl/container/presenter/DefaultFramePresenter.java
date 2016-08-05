@@ -40,22 +40,12 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 	private Stage stage;
 
 	@Reference
-	private DefaultTitleBarPresenter titleBarPresenter;
-
-	@Reference
 	private DefaultSideBarPresenter sideBarPresenter;
 
 	@Reference
 	private HomeContentPresenter homeContentPresenter;
 
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
-
-	// for draggable:
-	private double lastDragX, lastDragY;
-	private boolean isDragging = false;
-	private boolean draggable = false;
-	// for resizeable:
-	private double lastResizeX, lastResizeY;
 
 	@Activate
 	public void active(ComponentContext compCtx) {

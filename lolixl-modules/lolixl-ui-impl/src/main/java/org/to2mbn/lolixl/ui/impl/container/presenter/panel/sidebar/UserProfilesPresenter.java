@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
+import javafx.event.WeakEventHandler;
 import javafx.scene.input.MouseEvent;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -42,9 +43,9 @@ public class UserProfilesPresenter extends Presenter<UserProfilesView> {
 	protected void initializePresenter() {
 		profileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
 			Tile tile = profile.createTile();
-			tile.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
 				// TODO: mark it as selected type
-			});
+			}));
 			return tile;
 		});
 		CollectionUtils.bindList(profileTiles, view.profilesContainer.getChildren());
