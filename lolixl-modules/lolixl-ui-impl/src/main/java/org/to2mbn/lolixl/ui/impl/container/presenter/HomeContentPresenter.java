@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -65,8 +66,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private void resolveTile(Tile tile) {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
-		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::runRollOutAnimation);
-		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
+		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, new WeakEventHandler<>(animationHandler::runRollOutAnimation));
+		tile.addEventHandler(MouseEvent.MOUSE_EXITED, new WeakEventHandler<>(animationHandler::cancelAndFallback));
 		tile.setPrefWidth(60);
 		tile.resize(60, 60);
 		tile.setPadding(Insets.EMPTY);
