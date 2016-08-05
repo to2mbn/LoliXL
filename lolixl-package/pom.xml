@@ -121,6 +121,10 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-plugin-center</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-language-pack</artifactId>
+								</artifactItem>
 
 
 								<!-- lolixl-plugin xml -->
@@ -181,6 +185,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-plugin-center</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-language-pack</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>

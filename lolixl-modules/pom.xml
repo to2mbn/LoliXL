@@ -22,6 +22,7 @@
 		<module>lolixl-version-provider-mcdir</module>
 		<module>lolixl-ui-impl</module>
 		<module>lolixl-plugin-center</module>
+		<module>lolixl-language-pack</module>
 	</modules>
 
 	<build>

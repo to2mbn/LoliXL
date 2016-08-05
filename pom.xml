@@ -394,6 +394,11 @@
 				<artifactId>lolixl-plugin-center</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-language-pack</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- Maven -->
 			<dependency>

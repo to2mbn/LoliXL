@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.init;
+package org.to2mbn.lolixl.impl.init;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
