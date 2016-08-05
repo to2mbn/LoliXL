@@ -48,3 +48,7 @@
 #tile-blur-container {
     -fx-background-color: rgba(205, 92, 94, 0.3);
 }
+
+#theme-tile-installed {
+    -fx-background-color: rgba(205, 92, 94, 0.8) ;
+}

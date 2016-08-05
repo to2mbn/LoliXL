@@ -4,7 +4,9 @@
 #default-sidebar-sidebar-container,
 #default-sidebar-user-profile-container,
 #panel-root-container,
-#panel-content-container {
+#panel-content-container,
+#theme-tile-root-container,
+#theme-tile-content-container {
     -fx-background-color: transparent;
 }
 
@@ -39,5 +41,13 @@
 }
 
 #displayable-item-tile-root-container {
+    -fx-background-color: transparent;
+}
+
+#theme-tile-name-label {
+    -fx-text-fill: whitesmoke;
+}
+
+#theme-tile {
     -fx-background-color: transparent;
 }
