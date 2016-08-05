@@ -55,3 +55,7 @@
 #tile-root-container {
     -fx-background-color: blue;
 }
+
+#displayable-tile {
+    -fx-text-fill: transparent;
+}

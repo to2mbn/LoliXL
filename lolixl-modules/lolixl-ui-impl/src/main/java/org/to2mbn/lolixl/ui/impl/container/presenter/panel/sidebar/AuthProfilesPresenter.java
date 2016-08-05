@@ -13,12 +13,13 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.UserProfilesView;
+import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
+import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.AuthProfilesView;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 
 @Component(immediate = true)
-public class UserProfilesPresenter extends Presenter<UserProfilesView> {
+public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 	private static final String FXML_LOCATION = "/ui/fxml/panel/auth_types_panel.fxml";
 
 	@Reference
@@ -26,6 +27,9 @@ public class UserProfilesPresenter extends Presenter<UserProfilesView> {
 
 	@Reference
 	private SideBarPanelDisplayService displayService;
+
+	@Reference
+	private DefaultSideBarPresenter sideBarPresenter;
 
 	private MappedObservableList<AuthenticationProfile<?>, Tile> profileTiles;
 
@@ -41,19 +45,20 @@ public class UserProfilesPresenter extends Presenter<UserProfilesView> {
 
 	@Override
 	protected void initializePresenter() {
-		profileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
-			Tile tile = profile.createTile();
-			tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
-				// TODO: mark it as selected type
-			}));
-			return tile;
-		});
-		CollectionUtils.bindList(profileTiles, view.profilesContainer.getChildren());
-
 		Tile tile = new Tile();
 		tile.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar.authtypes.configurebutton.text"));
 		Panel panel = displayService.newPanel();
 		panel.bindButton(tile);
 		view.profilesContainer.getChildren().add(tile);
+
+		profileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
+			Tile t = profile.createTile();
+			t.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
+				// TODO: mark it as selected type
+				sideBarPresenter.getView().userProfileContainer.getChildren().setAll(tile);
+			}));
+			return t;
+		});
+		CollectionUtils.bindList(profileTiles, view.profilesContainer.getChildren());
 	}
 }

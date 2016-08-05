@@ -10,8 +10,10 @@ import javafx.scene.Parent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
@@ -37,6 +39,9 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 
 	private Panel currentPanel;
 	private int currentAlertIdx;
+
+	@Reference
+	private AuthenticationProfileManager authProfileManager;
 
 	@Activate
 	public void active(ComponentContext compCtx) {

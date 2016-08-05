@@ -30,8 +30,6 @@ public class DisplayableItemTile extends Tile {
 		graphic.textLabel.textProperty().bind(item.getLocalizedName());
 		graphic.iconView.imageProperty().bind(item.getIcon());
 		setGraphic(graphic);
+		setId("displayable-tile");
 	}
-
-	// TODO
-
 }

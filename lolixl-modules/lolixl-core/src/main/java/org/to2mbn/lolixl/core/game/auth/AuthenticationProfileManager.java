@@ -1,8 +1,9 @@
 package org.to2mbn.lolixl.core.game.auth;
 
-import java.util.Optional;
-import org.osgi.framework.ServiceReference;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import org.osgi.framework.ServiceReference;
+import java.util.Optional;
 
 public interface AuthenticationProfileManager {
 
@@ -13,4 +14,6 @@ public interface AuthenticationProfileManager {
 	Optional<ServiceReference<AuthenticationService>> getProfileProvider(AuthenticationProfile<?> profile);
 
 	void removeProfile(AuthenticationProfile<?> profile);
+
+	ObjectProperty<AuthenticationProfile> selectedProfileProperty();
 }
