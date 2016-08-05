@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane id="auth-type-selector-view-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.auth.AuthTypeSelectorView">
+   <center>
+      <ScrollPane id="auth-type-selector-view-scroll-pane" fx:id="scrollPane" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox id="auth-type-selector-view-tile-container" fx:id="tilesContainer" spacing="10.0">
+               <padding>
+                  <Insets left="25.0" right="25.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
