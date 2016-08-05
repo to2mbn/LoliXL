@@ -166,9 +166,9 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 		tran.setToX(reverse ? fromX : toX);
 
 		// 渐变动画
-		FadeTransition fade = new FadeTransition(Duration.millis(100), pane);
-		fade.setFromValue(reverse ? pane.getOpacity() : 0.3);
-		fade.setToValue(reverse ? 0.3 : pane.getOpacity());
+		FadeTransition fade = new FadeTransition(Duration.millis(200), pane);
+		fade.setFromValue(reverse ? pane.getOpacity() : 0);
+		fade.setToValue(reverse ? 0 : pane.getOpacity());
 
 		ParallelTransition parallel = new ParallelTransition(tran, fade);
 		return parallel;

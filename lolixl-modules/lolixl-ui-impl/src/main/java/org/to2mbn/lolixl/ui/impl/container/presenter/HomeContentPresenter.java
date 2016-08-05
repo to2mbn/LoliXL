@@ -61,6 +61,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	 * @param tile
 	 */
 	public void setManagementTile(Tile tile) {
+		resolveTile(tile);
 		view.tileRootContainer.setBottom(tile);
 	}
 
@@ -68,8 +69,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
 		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, new WeakEventHandler<>(animationHandler::runRollOutAnimation));
 		tile.addEventHandler(MouseEvent.MOUSE_EXITED, new WeakEventHandler<>(animationHandler::cancelAndFallback));
-		tile.setPrefWidth(60);
-		tile.resize(60, 60);
+		tile.setPrefWidth(55);
+		tile.resize(55, 55);
 		tile.setPadding(Insets.EMPTY);
 	}
 
@@ -95,7 +96,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 300))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 200))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
@@ -114,7 +115,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 60))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 55))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);

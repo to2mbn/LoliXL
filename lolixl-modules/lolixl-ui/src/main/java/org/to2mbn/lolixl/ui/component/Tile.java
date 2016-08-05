@@ -12,6 +12,7 @@ public class Tile extends Button {
 		//addEventHandler(MouseEvent.MOUSE_PRESSED, this::onMousePressed);
 		//addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
 		setDefaultButton(true);
+		setText("");
 	}
 
 	private void onMousePressed(MouseEvent event) {

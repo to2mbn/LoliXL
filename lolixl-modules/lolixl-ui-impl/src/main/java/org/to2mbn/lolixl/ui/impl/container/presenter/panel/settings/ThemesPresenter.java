@@ -124,9 +124,9 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 			@Override
 			protected String computeValue() {
 				return Stream
-						.of(authorsBinding.getValue())
-						.reduce(StringConstant.valueOf(""), (str, next) -> Bindings.concat(str.get() + ", " + next.get()))
-						.get();
+					.of(authorsBinding.getValue())
+					.reduce(StringConstant.valueOf(""), (str, next) -> Bindings.concat(str.get() + ", " + next.get()))
+					.get();
 			}
 		});
 	}

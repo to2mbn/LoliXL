@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.StackPane?>
 
 
-<StackPane id="theme-tile-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="110.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="theme-tile-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="110.0" type="StackPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane id="theme-tile-blur-container">
          <effect>
             <GaussianBlur />
          </effect>
       </Pane>
-      <BorderPane id="theme-tile-content-container">
+      <BorderPane id="theme-tile-content-container" fx:id="contentContainer">
          <center>
             <ImageView id="theme-tile-icon-view" fx:id="iconView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
@@ -24,4 +24,4 @@
          </bottom>
       </BorderPane>
    </children>
-</StackPane>
+</fx:root>

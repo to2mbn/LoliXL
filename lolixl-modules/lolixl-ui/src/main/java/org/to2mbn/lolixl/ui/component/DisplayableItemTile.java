@@ -27,10 +27,9 @@ public class DisplayableItemTile extends Tile {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-		setGraphic(graphic);
-
 		graphic.textLabel.textProperty().bind(item.getLocalizedName());
 		graphic.iconView.imageProperty().bind(item.getIcon());
+		setGraphic(graphic);
 	}
 
 	// TODO

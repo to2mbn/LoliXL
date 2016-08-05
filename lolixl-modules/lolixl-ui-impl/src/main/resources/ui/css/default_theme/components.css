@@ -51,3 +51,7 @@
 #theme-tile {
     -fx-background-color: transparent;
 }
+
+#tile-root-container {
+    -fx-background-color: blue;
+}
