@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class AuthProfileTileView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/auth_profile_tile.fxml";
@@ -23,10 +24,14 @@ public class AuthProfileTileView extends BorderPane {
 	@FXML
 	public Label profileNameLabel;
 
-	public AuthProfileTileView() throws IOException {
+	public AuthProfileTileView() {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 }

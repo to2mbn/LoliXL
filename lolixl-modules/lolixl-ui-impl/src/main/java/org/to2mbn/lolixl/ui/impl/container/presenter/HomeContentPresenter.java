@@ -22,7 +22,6 @@ import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 @Service({ HomeContentPresenter.class })
 @Component(immediate = true)
@@ -110,7 +109,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
 			newOne.play();
-			Logger.getAnonymousLogger().info("play animation");
 		}
 
 		private void cancelAndFallback(MouseEvent mouseEvent) {
@@ -130,7 +128,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
 			newOne.play();
-			Logger.getAnonymousLogger().info("cancel animation");
 		}
 	}
 }

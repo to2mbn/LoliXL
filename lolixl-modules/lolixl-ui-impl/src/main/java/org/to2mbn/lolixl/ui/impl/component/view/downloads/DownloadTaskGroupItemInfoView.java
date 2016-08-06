@@ -19,6 +19,7 @@ import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,7 +43,7 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 	private final DownloadTaskGroup taskGroup;
 	private final ObservableListValue<DownloadTaskEntry> entries;
 
-	public DownloadTaskGroupItemInfoView(DownloadTaskGroup group) throws IOException {
+	public DownloadTaskGroupItemInfoView(DownloadTaskGroup group) {
 		timer = new Timer(true);
 		updateTask = new TimerTask() {
 			@Override
@@ -55,7 +56,11 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 		itemContainer.setCellFactory(view -> new ListCell<DownloadTaskEntry>() {
 			@Override
 			public void updateItem(DownloadTaskEntry entry, boolean empty) {

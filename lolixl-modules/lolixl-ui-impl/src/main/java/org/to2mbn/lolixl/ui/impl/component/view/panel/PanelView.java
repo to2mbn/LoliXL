@@ -13,6 +13,7 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class PanelView extends BorderPane {
 	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
@@ -37,12 +38,16 @@ public class PanelView extends BorderPane {
 
 	private final Panel panel;
 
-	public PanelView(Panel _panel) throws IOException {
+	public PanelView(Panel _panel) {
 		panel = _panel;
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), LOCATION_OF_FXML));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 		initComponent();
 	}
 

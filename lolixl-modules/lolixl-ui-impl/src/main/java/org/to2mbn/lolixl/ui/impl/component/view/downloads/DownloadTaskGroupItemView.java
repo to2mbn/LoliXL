@@ -12,6 +12,7 @@ import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,11 +38,15 @@ public class DownloadTaskGroupItemView extends BorderPane {
 	private final AtomicReference<Timer> currentTimer;
 	private final DownloadTaskGroup taskGroup;
 
-	public DownloadTaskGroupItemView(DownloadTaskGroup group) throws IOException {
+	public DownloadTaskGroupItemView(DownloadTaskGroup group) {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 		currentTimer = new AtomicReference<>(null);
 		taskGroup = group;
 		initComponent(group);

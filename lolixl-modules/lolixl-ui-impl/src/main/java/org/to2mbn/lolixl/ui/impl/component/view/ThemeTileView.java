@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class ThemeTileView extends StackPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/theme_tile.fxml";
@@ -26,11 +27,15 @@ public class ThemeTileView extends StackPane {
 	@FXML
 	public ImageView iconView;
 
-	public ThemeTileView(Theme theme) throws IOException {
+	public ThemeTileView(Theme theme) {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 		nameLabel.textProperty().bind(theme.getLocalizedName());
 		iconView.imageProperty().bind(theme.getIcon());
 	}

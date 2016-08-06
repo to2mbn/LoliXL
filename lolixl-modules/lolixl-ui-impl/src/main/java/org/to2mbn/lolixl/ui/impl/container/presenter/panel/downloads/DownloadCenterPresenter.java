@@ -22,7 +22,7 @@ import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemI
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -88,7 +88,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 		return taskCountProperty.getReadOnlyProperty();
 	}
 
-	private void addItem(DownloadTaskGroup group) throws IOException {
+	private void addItem(DownloadTaskGroup group) {
 		Tile tile = new Tile();
 		tile.setPrefWidth(Region.USE_COMPUTED_SIZE);
 		tile.setPrefHeight(60D);
@@ -116,7 +116,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 	private void tryAddItem(DownloadTaskGroup group) {
 		try {
 			addItem(group);
-		} catch (IOException ex) {
+		} catch (UncheckedIOException ex) {
 			LOGGER.log(Level.WARNING, "Failed to add item for download task group, this should not be happened", ex);
 		}
 	}

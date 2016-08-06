@@ -7,8 +7,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /**
  * 从 {@link DisplayableItem} 创建的磁贴。
@@ -27,14 +25,9 @@ public class DisplayableItemTile extends Tile {
 
 	public DisplayableItemTile(DisplayableItem item) {
 		this.item = item;
-		setId("displayable-tile");
 		setContentDisplay(ContentDisplay.TOP);
 
-		try {
-			graphic = new DisplayableItemTileView();
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+		graphic = new DisplayableItemTileView();
 		graphic.textLabel.textProperty().bind(item.getLocalizedName());
 		graphic.iconView.imageProperty().bind(new ObjectBinding<Image>() {
 			ObservableObjectValue<Image> image = item.getIcon();

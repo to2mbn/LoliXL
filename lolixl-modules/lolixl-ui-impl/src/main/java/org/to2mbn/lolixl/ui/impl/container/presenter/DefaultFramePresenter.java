@@ -26,8 +26,6 @@ import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
 import org.to2mbn.lolixl.utils.FXUtils;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -105,11 +103,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	private void displayPanelEntry(Panel model) {
 		PanelEntry entry;
-		try {
-			entry = new PanelEntry(model, new PanelView(model));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+		entry = new PanelEntry(model, new PanelView(model));
 		panels.offer(entry);
 		// 先隐藏添加的面板 等待之后的动画效果即将播放了再显示回来
 		entry.view.setVisible(false);

@@ -26,8 +26,6 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeServiceImpl;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -68,26 +66,22 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 	private void refreshThemes() {
 		List<Tile> resolved = new LinkedList<>();
 		themeService.getAllThemes().forEach(theme -> {
-			try {
-				Tile tile = new Tile();
-				tile.setId("theme-tile");
-				ThemeTileView graphic = new ThemeTileView(theme);
-				tile.setGraphic(graphic);
-				tile.setUserData(theme);
-				tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
-					updateInfoPane((Theme) tile.getUserData());
-				}));
-				tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
-					if (isThemeEnabled(theme)) {
-						disableTheme(tile, theme);
-					} else {
-						enableTheme(tile, theme);
-					}
-				}));
-				resolved.add(tile);
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
-			}
+			Tile tile = new Tile();
+			tile.setId("theme-tile");
+			ThemeTileView graphic = new ThemeTileView(theme);
+			tile.setGraphic(graphic);
+			tile.setUserData(theme);
+			tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
+				updateInfoPane((Theme) tile.getUserData());
+			}));
+			tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
+				if (isThemeEnabled(theme)) {
+					disableTheme(tile, theme);
+				} else {
+					enableTheme(tile, theme);
+				}
+			}));
+			resolved.add(tile);
 		});
 		view.themesContainer.getChildren().setAll(resolved);
 	}

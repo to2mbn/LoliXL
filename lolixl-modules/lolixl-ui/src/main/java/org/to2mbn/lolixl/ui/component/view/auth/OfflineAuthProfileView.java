@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class OfflineAuthProfileView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/offline_auth_profile_panel.fxml";
@@ -48,11 +49,15 @@ public class OfflineAuthProfileView extends BorderPane {
 	@FXML
 	public ImageView avatarView;
 
-	public OfflineAuthProfileView() throws IOException {
+	public OfflineAuthProfileView() {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
-		loader.load();
+		try {
+			loader.load();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 		userNameLabel.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.auth.label.username.text"));
 		avatarPathLabel.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.auth.label.avatarpath.text"));
 		avatarLabel.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.auth.label.avatar.text"));
