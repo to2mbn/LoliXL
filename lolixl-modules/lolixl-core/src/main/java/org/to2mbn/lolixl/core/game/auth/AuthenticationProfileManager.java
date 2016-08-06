@@ -15,5 +15,5 @@ public interface AuthenticationProfileManager {
 
 	void removeProfile(AuthenticationProfile<?> profile);
 
-	ObjectProperty<AuthenticationProfile> selectedProfileProperty();
+	ObjectProperty<AuthenticationProfile<?>> selectedProfileProperty();
 }

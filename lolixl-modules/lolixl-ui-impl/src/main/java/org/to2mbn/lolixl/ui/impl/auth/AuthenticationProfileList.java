@@ -30,5 +30,6 @@ public class AuthenticationProfileList implements Configuration {
 	private static final long serialVersionUID = 1L;
 
 	public List<AuthenticationProfileEntry> entries = new CopyOnWriteArrayList<>();
+	public volatile UUID selectedProfile;
 
 }

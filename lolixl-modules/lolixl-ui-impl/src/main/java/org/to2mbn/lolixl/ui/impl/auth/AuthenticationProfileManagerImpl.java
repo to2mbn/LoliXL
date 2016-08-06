@@ -68,7 +68,57 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	private LambdaServiceTracker<AuthenticationService> serviceTracker;
 	private ObservableContext observableContext;
 
-	private ObjectProperty<AuthenticationProfile> selectedProfileProperty = new SimpleObjectProperty<>();
+	private ObjectProperty<AuthenticationProfile<?>> selectedProfileProperty = new SimpleObjectProperty<AuthenticationProfile<?>>() {
+
+		@Override
+		public void set(AuthenticationProfile<?> newValue) {
+			checkFxThread();
+
+			// Null is allowed to be set when, and only when, there is no available profiles and the uuid of previous selected profile is no long valid.
+			if (newValue == null) {
+				if (profiles.selectedProfile != null) {
+					boolean isSelectedProfileValid = false;
+					for (AuthenticationProfileEntry entry : profiles.entries) {
+						if (Objects.equals(entry.uuid, profiles.selectedProfile)) {
+							isSelectedProfileValid = true;
+							break;
+						}
+					}
+					if (!isSelectedProfileValid) {
+						profiles.selectedProfile = null;
+						super.set(null);
+						return;
+					}
+				}
+
+				throw new IllegalStateException("Null profile is not allowed to be set currently");
+			}
+
+			if (!profilesList.contains(newValue)) {
+				throw new IllegalArgumentException("Auth profile " + newValue + " isn't managed");
+			}
+			super.set(newValue);
+		}
+
+		@Override
+		protected void invalidated() {
+			if (!Platform.isFxApplicationThread()) {
+				Platform.runLater(this::invalidated);
+				return;
+			}
+			AuthenticationProfile<?> selected = selectedProfileProperty.get();
+			if (selected != null) {
+				profiles.entries.stream().filter(entry -> entry.profile == selected).findFirst().map(entry -> entry.uuid).ifPresent(uuid -> {
+					if (!Objects.equals(uuid, profiles.selectedProfile)) {
+						LOGGER.fine("Updated selected auth profile: " + uuid);
+						profiles.selectedProfile = uuid;
+						observableContext.notifyChanged();
+					}
+				});
+			}
+		}
+
+	};
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -133,6 +183,8 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 		saveProfile(entry);
 		observableContext.notifyChanged();
 
+		trySetDefaultSelectedProfile(entry);
+
 		return entry.profile;
 	}
 
@@ -149,6 +201,17 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 					profile.setObservableContext(null);
 					LOGGER.fine(() -> format("Removed auth profile %s", entry));
 
+					if (Objects.equals(entry.uuid, profiles.selectedProfile)) {
+						// find a successor
+						if (getProfiles().size() > 0) {
+							AuthenticationProfile<?> successor = getProfiles().get(0);
+							selectedProfileProperty.set(successor);
+						} else {
+							selectedProfileProperty.set(null);
+						}
+					}
+					checkSelectedProfileState();
+
 					localIOPool.submit(() -> {
 						try {
 							Files.deleteIfExists(getProfileLocation(entry.uuid));
@@ -164,9 +227,46 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 	}
 
 	@Override
-	public ObjectProperty<AuthenticationProfile> selectedProfileProperty() {
-		// TODO
+	public ObjectProperty<AuthenticationProfile<?>> selectedProfileProperty() {
 		return selectedProfileProperty;
+	}
+
+	private void trySetDefaultSelectedProfile(AuthenticationProfileEntry entry) {
+		if (profiles.selectedProfile == null) {
+			selectedProfileProperty.set(entry.profile);
+		}
+		checkSelectedProfileState();
+	}
+
+	// self-check
+	private void checkSelectedProfileState() {
+		checkFxThread(); // should be invoked on javafx thread
+		if (profiles.selectedProfile == null) {
+			if (selectedProfileProperty.get() != null) {
+				throw new IllegalStateException("selected profile uuid is null, but selected profile property is " + selectedProfileProperty.get());
+			}
+			for (AuthenticationProfileEntry entry : profiles.entries) {
+				if (entry.profile != null) {
+					throw new IllegalStateException("selected profile uuid is null, but profile " + entry + " is avaliable");
+				}
+			}
+		} else {
+			AuthenticationProfile<?> expectedProfile = null;
+			boolean found = false;
+			for (AuthenticationProfileEntry entry : profiles.entries) {
+				if (Objects.equals(entry.uuid, profiles.selectedProfile)) {
+					found = true;
+					expectedProfile = entry.profile;
+					break;
+				}
+			}
+			if (!found) {
+				throw new IllegalStateException("selected profile uuid is " + profiles.selectedProfile + " , but no such profile is found");
+			}
+			if (!Objects.equals(expectedProfile, selectedProfileProperty.get())) {
+				throw new IllegalStateException("selected profile property doesn't match:\nexpected: " + expectedProfile + "\ncurrent: " + selectedProfileProperty.get());
+			}
+		}
 	}
 
 	private Stream<AuthenticationProfileEntry> profilesOfService(ServiceReference<AuthenticationService> reference, AuthenticationService service) {
@@ -225,9 +325,14 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 							entry.serviceRef = reference;
 							entry.profile = profile;
 							updateProfile(AuthenticationProfileEvent.TYPE_CREATE, entry);
+							if (Objects.equals(entry.uuid, profiles.selectedProfile)) {
+								LOGGER.fine("Loading selected auth profile: " + entry.uuid);
+								selectedProfileProperty.set(entry.profile);
+							}
 						}
 					}
 					LOGGER.fine(() -> format("Loaded auth profile %s, service=%s", entry, reference));
+					trySetDefaultSelectedProfile(entry);
 				}));
 	}
 

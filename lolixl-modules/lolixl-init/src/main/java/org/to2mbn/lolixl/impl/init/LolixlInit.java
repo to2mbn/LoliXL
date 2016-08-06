@@ -3,10 +3,7 @@ package org.to2mbn.lolixl.impl.init;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -29,7 +26,6 @@ public class LolixlInit {
 		LOGGER.info("Initializing JavaFX");
 		new JFXPanel(); // init JavaFX
 
-		List<CompletableFuture<?>> futures = new ArrayList<>();
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/org.to2mbn.lolixl.init.plugins.list"), "UTF-8"))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -39,15 +35,13 @@ public class LolixlInit {
 				String[] splited = line.split(":", 2);
 				String groupId = splited[0];
 				String artifactId = splited[1];
-				futures.add(pluginManager.getRemoteRepository().getRepository().getVersioning(groupId, artifactId)
-						.thenCompose(versioning -> pluginManager.install(new MavenArtifact(groupId, artifactId, versioning.getLatest()))));
+				pluginManager.getRemoteRepository().getRepository().getVersioning(groupId, artifactId)
+						.thenCompose(versioning -> pluginManager.install(new MavenArtifact(groupId, artifactId, versioning.getLatest())))
+						.exceptionally(ex -> {
+							LOGGER.log(Level.SEVERE, "Couldn't start init plugin " + groupId + ":" + artifactId, ex);
+							return null;
+						});
 			}
-		}
-		CompletableFuture<?> installPluginFuture = CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
-		try {
-			installPluginFuture.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
 		}
 	}
 

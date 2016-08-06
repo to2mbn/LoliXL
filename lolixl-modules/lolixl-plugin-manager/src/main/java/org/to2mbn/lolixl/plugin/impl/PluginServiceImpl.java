@@ -228,6 +228,7 @@ public class PluginServiceImpl implements PluginService {
 			loadedPlugins.remove(plugin);
 	}
 
+	// self-check
 	private void checkDependenciesState() throws IllegalStateException {
 		try {
 			if (artifact2bundle.size() != bundle2artifact.size())
@@ -451,26 +452,26 @@ public class PluginServiceImpl implements PluginService {
 		IllegalStateException startExCollection = null;
 
 		try {
-			try {
-				synchronized (lock) {
+			synchronized (lock) {
+				try {
 					performActions(computeActions(toInstall, toUninstall), artifact2loader);
 					checkDependenciesState();
-				}
-			} finally {
-				bundleContext.getBundle(0).adapt(FrameworkWiring.class).refreshBundles(null);
+				} finally {
+					bundleContext.getBundle(0).adapt(FrameworkWiring.class).refreshBundles(null);
 
-				for (Bundle bundle : bundle2artifact.keySet()) {
-					if (bundle.getState() != Bundle.ACTIVE &&
-							bundle.getState() != Bundle.STARTING) {
-						try {
-							bundle.start(Bundle.START_ACTIVATION_POLICY);
-						} catch (Throwable exStart) {
-							LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
-							if (startExCollection == null)
-								startExCollection = new IllegalStateException("One or more bundles couldn't start");
-							startExCollection.addSuppressed(exStart);
+					for (Bundle bundle : bundle2artifact.keySet()) {
+						if (bundle.getState() != Bundle.ACTIVE &&
+								bundle.getState() != Bundle.STARTING) {
+							try {
+								bundle.start(Bundle.START_ACTIVATION_POLICY);
+								LOGGER.info("Started " + bundle);
+							} catch (Throwable exStart) {
+								LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
+								if (startExCollection == null)
+									startExCollection = new IllegalStateException("One or more bundles couldn't start");
+								startExCollection.addSuppressed(exStart);
+							}
 						}
-						LOGGER.info("Started " + bundle);
 					}
 				}
 			}

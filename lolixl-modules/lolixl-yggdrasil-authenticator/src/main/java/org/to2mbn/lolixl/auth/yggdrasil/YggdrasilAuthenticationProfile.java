@@ -97,13 +97,11 @@ public class YggdrasilAuthenticationProfile implements AuthenticationProfile<Ygg
 
 					@Override
 					public String getPassword() throws AuthenticationException {
-						// TODO: Invoke on JavaFX Thread?
 						return passwordProvider.apply(requireValidEmail());
 					}
 
 					@Override
 					public CharacterSelector getCharacterSelector() {
-						// TODO: Invoke on JavaFX Thread?
 						return characterSelector;
 					}
 
