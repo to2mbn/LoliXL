@@ -4,6 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -21,6 +28,9 @@ class Main {
 	private static final String RESOURCE_FELIX_CONFIGURATION = "/org.to2mbn.lolixl.felix.properties";
 
 	private static FileHandler loggingHandler;
+
+	private static Felix felix = null;
+	private static Properties felixConfiguration = null;
 
 	private static Properties loadConfiguration() throws IOException {
 		Properties configuration = new Properties();
@@ -112,16 +122,16 @@ class Main {
 	}
 
 	public static void main(String[] args) {
-		Felix felix = null;
 		try {
 			Metadata.initMetadata();
 			setupSystemProperties();
 			setupWorkingDir();
 			configureJUL();
-			Properties felixConfiguration = loadConfiguration();
+			felixConfiguration = loadConfiguration();
 			processConfiguration(felixConfiguration);
 			AccessEndpoint.internalBundleRepository = new InternalBundleRepository();
 
+			clearFelixCache();
 			felix = new Felix(felixConfiguration);
 			felix.start();
 			OSGiListener osgiListener = new OSGiListener();
@@ -138,7 +148,7 @@ class Main {
 				}
 			} while (event.getType() == FrameworkEvent.WAIT_TIMEDOUT ||
 					event.getType() == FrameworkEvent.STOPPED_UPDATE);
-
+			clearFelixCache();
 		} catch (Throwable e) {
 			if (felix != null) {
 				try {
@@ -147,9 +157,47 @@ class Main {
 					e.addSuppressed(e1);
 				}
 			}
+			clearFelixCache();
 			FatalErrorReporter.process(e);
 			System.exit(1);
 		}
 	}
 
+	private static void clearFelixCache() {
+		try {
+			if (felixConfiguration != null) {
+				String cachePath = felixConfiguration.getProperty("felix.cache.rootdir");
+				if (cachePath != null) {
+					LOGGER.fine("Cleaning " + cachePath);
+					deleteRecursively(Paths.get(cachePath));
+				}
+			}
+		} catch (Throwable e) {
+			LOGGER.log(Level.WARNING, "Couldn't clean up felix cache", e);
+		}
+	}
+
+	private static void deleteRecursively(Path path) throws IOException {
+		if (Files.isDirectory(path)) {
+			try {
+				Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+
+					@Override
+					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+						Files.deleteIfExists(file);
+						return FileVisitResult.CONTINUE;
+					}
+
+					@Override
+					public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+						Files.deleteIfExists(dir);
+						return FileVisitResult.CONTINUE;
+					}
+
+				});
+			} catch (NoSuchFileException e) {}
+		} else if (Files.isRegularFile(path)) {
+			Files.deleteIfExists(path);
+		}
+	}
 }
