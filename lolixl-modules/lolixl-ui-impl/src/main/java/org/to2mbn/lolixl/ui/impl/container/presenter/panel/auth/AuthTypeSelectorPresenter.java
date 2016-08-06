@@ -34,8 +34,12 @@ public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
 						.map(bundleCtx::getService)
 						.filter(Objects::nonNull));
 		tilesMapping = new MappedObservableList<>(serviceTracker.getServiceList(), AuthenticationService::createTile);
-		CollectionUtils.bindList(tilesMapping, view.tilesContainer.getChildren());
 		serviceTracker.open(true);
+	}
+
+	@Override
+	protected void initializePresenter() {
+		CollectionUtils.bindList(tilesMapping, view.tilesContainer.getChildren());
 	}
 
 	@Override

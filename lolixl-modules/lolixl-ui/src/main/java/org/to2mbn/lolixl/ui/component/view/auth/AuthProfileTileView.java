@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.component.view;
+package org.to2mbn.lolixl.ui.component.view.auth;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

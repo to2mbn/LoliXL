@@ -1,5 +1,10 @@
 package org.to2mbn.lolixl.ui.component;
 
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.WeakChangeListener;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import java.io.IOException;
@@ -17,19 +22,41 @@ import java.io.UncheckedIOException;
  */
 public class DisplayableItemTile extends Tile {
 
-	private DisplayableItem item;
-	private DisplayableItemTileView graphic;
+	private final DisplayableItem item;
+	private final DisplayableItemTileView graphic;
 
 	public DisplayableItemTile(DisplayableItem item) {
 		this.item = item;
+		setId("displayable-tile");
+		setContentDisplay(ContentDisplay.TOP);
+
 		try {
 			graphic = new DisplayableItemTileView();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 		graphic.textLabel.textProperty().bind(item.getLocalizedName());
-		graphic.iconView.imageProperty().bind(item.getIcon());
+		graphic.iconView.imageProperty().bind(new ObjectBinding<Image>() {
+			ObservableObjectValue<Image> image = item.getIcon();
+
+			{
+				bind(image);
+			}
+
+			@Override
+			protected Image computeValue() {
+				return image.get() != null ? image.get() : new Image("/ui/img/no_icon.png");
+			}
+		});
+		// for animation:
+		prefWidthProperty().addListener(new WeakChangeListener<>(((observable, oldValue, newValue) -> {
+			graphic.setPrefWidth(newValue.doubleValue());
+			graphic.resize(newValue.doubleValue(), getPrefHeight());
+		})));
+		prefHeightProperty().addListener(new WeakChangeListener<>(((observable, oldValue, newValue) -> {
+			graphic.setPrefHeight(newValue.doubleValue());
+			graphic.resize(getPrefWidth(), newValue.doubleValue());
+		})));
 		setGraphic(graphic);
-		setId("displayable-tile");
 	}
 }

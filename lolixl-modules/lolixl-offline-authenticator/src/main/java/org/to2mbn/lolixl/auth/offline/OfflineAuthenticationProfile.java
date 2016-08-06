@@ -4,11 +4,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.layout.Region;
-import java.util.Optional;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.OfflineAuthenticator;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
+import org.to2mbn.lolixl.ui.component.view.auth.OfflineAuthProfileView;
 import org.to2mbn.lolixl.utils.ObservableContext;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Optional;
 
 public class OfflineAuthenticationProfile implements AuthenticationProfile<OfflineAuthenticationMemento> {
 
@@ -43,8 +46,16 @@ public class OfflineAuthenticationProfile implements AuthenticationProfile<Offli
 
 	@Override
 	public Region createConfiguringPanel() {
-		// TODO Auto-generated method stub
-		return null;
+		OfflineAuthProfileView view = null;
+		try {
+			view = new OfflineAuthProfileView();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		// TODO: bind avatar view
+		username.bind(view.userNameInput.textProperty());
+		// TODO: avatar path???
+		return view;
 	}
 
 	@Override

@@ -2,11 +2,9 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
 import com.sun.javafx.binding.StringConstant;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.WeakListChangeListener;
 import javafx.event.WeakEventHandler;
 import javafx.scene.input.MouseEvent;
@@ -30,8 +28,8 @@ import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Service({ org.osgi.service.event.EventHandler.class })
@@ -68,7 +66,7 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 	}
 
 	private void refreshThemes() {
-		List<Tile> resolved = FXCollections.observableArrayList();
+		List<Tile> resolved = new LinkedList<>();
 		themeService.getAllThemes().forEach(theme -> {
 			try {
 				Tile tile = new Tile();
@@ -80,17 +78,12 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 					updateInfoPane((Theme) tile.getUserData());
 				}));
 				tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
-					Theme th = (Theme) tile.getUserData();
-					if (isThemeEnabled(th)) {
-						disableTheme(th);
+					if (isThemeEnabled(theme)) {
+						disableTheme(tile, theme);
 					} else {
-						enableTheme(th);
+						enableTheme(tile, theme);
 					}
 				}));
-				tile.idProperty().bind(Bindings
-						.when(new LambdaBooleanBinding(() -> isThemeEnabled((Theme) tile.getUserData())))
-						.then(tile.idProperty().get().concat("-installed"))
-						.otherwise(tile.idProperty().get().replace("-installed", "")));
 				resolved.add(tile);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
@@ -99,12 +92,18 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 		view.themesContainer.getChildren().setAll(resolved);
 	}
 
-	private void enableTheme(Theme theme) {
-		themeService.enable(theme);
+	private void enableTheme(Tile tile, Theme theme) {
+		if (!isThemeEnabled(theme)) {
+			tile.setId(tile.getId() + "-installed");
+			themeService.enable(theme);
+		}
 	}
 
-	private void disableTheme(Theme theme) {
-		themeService.disable(theme);
+	private void disableTheme(Tile tile, Theme theme) {
+		if (isThemeEnabled(theme)) {
+			tile.setId(tile.getId().replace("-installed", ""));
+			themeService.disable(theme);
+		}
 	}
 
 	private boolean isThemeEnabled(Theme theme) {
@@ -129,18 +128,5 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 					.get();
 			}
 		});
-	}
-
-	private static class LambdaBooleanBinding extends BooleanBinding {
-		private final Supplier<Boolean> supplier;
-
-		private LambdaBooleanBinding(Supplier<Boolean> _supplier) {
-			supplier = _supplier;
-		}
-
-		@Override
-		protected boolean computeValue() {
-			return supplier.get();
-		}
 	}
 }

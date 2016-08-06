@@ -13,6 +13,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
+import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
@@ -21,6 +22,7 @@ import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 @Service({ HomeContentPresenter.class })
 @Component(immediate = true)
@@ -53,6 +55,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			return tile;
 		});
 		CollectionUtils.bindList(tilesMapping, view.tileContainer.getChildren());
+		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.homecontent.button.startgame.text"));
 	}
 
 	/**
@@ -69,9 +72,15 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
 		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, new WeakEventHandler<>(animationHandler::runRollOutAnimation));
 		tile.addEventHandler(MouseEvent.MOUSE_EXITED, new WeakEventHandler<>(animationHandler::cancelAndFallback));
+		tile.setPadding(Insets.EMPTY);
+
+		tile.setMinWidth(55);
+		tile.setMinHeight(55);
+		tile.setMaxWidth(200);
+		tile.setMinWidth(55);
+		tile.setPrefHeight(55);
 		tile.setPrefWidth(55);
 		tile.resize(55, 55);
-		tile.setPadding(Insets.EMPTY);
 	}
 
 	private class TileAnimationHandler {
@@ -96,11 +105,12 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 200))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getMaxWidth()))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
 			newOne.play();
+			Logger.getAnonymousLogger().info("play animation");
 		}
 
 		private void cancelAndFallback(MouseEvent mouseEvent) {
@@ -115,11 +125,12 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 55))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getMinWidth()))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
 			newOne.play();
+			Logger.getAnonymousLogger().info("cancel animation");
 		}
 	}
 }

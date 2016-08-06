@@ -5,7 +5,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 
-<fx:root id="tile-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="55.0" prefWidth="200.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="tile-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="200.0" minHeight="-Infinity" minWidth="55.0" prefHeight="55.0" prefWidth="200.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <Label id="tile-text-label" fx:id="textLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <padding>
@@ -19,7 +19,7 @@
    <left>
       <ImageView id="item-tile-icon-view" fx:id="iconView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            <Insets bottom="2.0" left="2.0" right="3.0" top="2.0" />
          </BorderPane.margin>
       </ImageView>
    </left>
