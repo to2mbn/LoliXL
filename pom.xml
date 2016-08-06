@@ -12,6 +12,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jar.source>1.8</jar.source>
 		<jar.target>1.8</jar.target>
+
+		<!-- Versions -->
+		<jmccc.version>2.5-SNAPSHOT</jmccc.version>
+		<ehcache.version>3.1.1</ehcache.version>
+		<slf4j.version>1.7.21</slf4j.version>
 	</properties>
 	<issueManagement>
 		<url>https://github.com/to2mbn/LoliXL/issues</url>
@@ -330,22 +335,66 @@
 			<dependency>
 				<groupId>org.to2mbn</groupId>
 				<artifactId>jmccc</artifactId>
-				<version>2.5-SNAPSHOT</version>
+				<version>${jmccc.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.to2mbn</groupId>
 				<artifactId>jmccc-yggdrasil-authenticator</artifactId>
-				<version>2.5-SNAPSHOT</version>
+				<version>${jmccc.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.to2mbn</groupId>
 				<artifactId>jmccc-mcdownloader</artifactId>
-				<version>2.5-SNAPSHOT</version>
+				<version>${jmccc.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.to2mbn</groupId>
 				<artifactId>jmccc-mojang-api</artifactId>
-				<version>2.5-SNAPSHOT</version>
+				<version>${jmccc.version}</version>
+			</dependency>
+
+			<!-- Ehcache -->
+			<dependency>
+				<groupId>org.ehcache.modules</groupId>
+				<artifactId>ehcache-impl</artifactId>
+				<version>${ehcache.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache.modules</groupId>
+				<artifactId>ehcache-api</artifactId>
+				<version>${ehcache.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache.modules</groupId>
+				<artifactId>ehcache-core</artifactId>
+				<version>${ehcache.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.terracotta</groupId>
+				<artifactId>offheap-store</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>sizeof</artifactId>
+				<version>0.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.terracotta</groupId>
+				<artifactId>statistics</artifactId>
+				<version>1.1.0</version>
+			</dependency>
+			
+			<!-- slf4j -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-jdk14</artifactId>
+				<version>${slf4j.version}</version>
 			</dependency>
 
 			<!-- LoliXL -->

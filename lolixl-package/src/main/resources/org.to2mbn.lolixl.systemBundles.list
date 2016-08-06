@@ -19,4 +19,12 @@ org.to2mbn.lolixl:lolixl-plugin-center
 org.to2mbn.lolixl:lolixl-language-pack
 org.to2mbn:jmccc-mojang-api
 org.to2mbn:lolixl-yggdrasil-authenticator
+org.ehcache.modules:ehcache-impl
+org.ehcache.modules:ehcache-api
+org.ehcache.modules:ehcache-core
+org.terracotta:offheap-store
+org.ehcache:sizeof
+org.terracotta:statistics
+org.slf4j:slf4j-api
+org.slf4j:slf4j-jdk14
 

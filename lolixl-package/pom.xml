@@ -133,6 +133,38 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.ehcache.modules</groupId>
+									<artifactId>ehcache-impl</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.ehcache.modules</groupId>
+									<artifactId>ehcache-api</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.ehcache.modules</groupId>
+									<artifactId>ehcache-core</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.terracotta</groupId>
+									<artifactId>offheap-store</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.ehcache</groupId>
+									<artifactId>sizeof</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.terracotta</groupId>
+									<artifactId>statistics</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>slf4j-api</artifactId>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.slf4j</groupId>
+									<artifactId>slf4j-jdk14</artifactId>
+								</artifactItem>
 
 
 								<!-- lolixl-plugin xml -->

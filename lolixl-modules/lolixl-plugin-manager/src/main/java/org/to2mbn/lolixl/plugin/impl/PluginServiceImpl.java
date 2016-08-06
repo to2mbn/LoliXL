@@ -30,6 +30,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.FrameworkWiring;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
@@ -461,7 +462,8 @@ public class PluginServiceImpl implements PluginService {
 
 					for (Bundle bundle : bundle2artifact.keySet()) {
 						if (bundle.getState() != Bundle.ACTIVE &&
-								bundle.getState() != Bundle.STARTING) {
+								bundle.getState() != Bundle.STARTING &&
+								(bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) == 0) {
 							try {
 								bundle.start(Bundle.START_ACTIVATION_POLICY);
 								LOGGER.info("Started " + bundle);
