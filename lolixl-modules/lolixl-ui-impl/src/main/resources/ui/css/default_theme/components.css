@@ -59,3 +59,13 @@
 #displayable-tile {
     -fx-text-fill: transparent;
 }
+
+#game-version-group-mcdir-path-label {
+    -fx-text-fill: lightgrey;
+    -fx-font-style: italic;
+    -fx-font-size: 18;
+}
+
+#mcpath-editor {
+    -fx-font-size: 18;
+}

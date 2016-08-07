@@ -13,7 +13,6 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.auth.AuthTypeSelectorView;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import org.to2mbn.lolixl.utils.ObservableServiceTracker;
-import java.util.Objects;
 
 @Component
 public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
@@ -29,10 +28,7 @@ public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
 	public void active(ComponentContext compCtx) {
 		super.active();
 		BundleContext bundleCtx = compCtx.getBundleContext();
-		serviceTracker = new ObservableServiceTracker<>(bundleCtx, AuthenticationService.class,
-				stream -> stream
-						.map(bundleCtx::getService)
-						.filter(Objects::nonNull));
+		serviceTracker = new ObservableServiceTracker<>(bundleCtx, AuthenticationService.class);
 		tilesMapping = new MappedObservableList<>(serviceTracker.getServiceList(), AuthenticationService::createTile);
 		serviceTracker.open(true);
 	}

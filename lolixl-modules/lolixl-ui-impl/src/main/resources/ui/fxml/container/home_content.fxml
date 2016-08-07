@@ -17,7 +17,7 @@
    <right>
       <BorderPane id="default-content-tile-root-container" fx:id="tileRootContainer" nodeOrientation="RIGHT_TO_LEFT" prefHeight="390.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <center>
-            <VBox id="default-content-tile-container" fx:id="tileContainer" alignment="TOP_RIGHT" spacing="5.0" BorderPane.alignment="CENTER">
+            <VBox id="default-content-tile-container" fx:id="tileContainer" spacing="5.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>

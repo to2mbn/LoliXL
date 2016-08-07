@@ -68,7 +68,9 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 		themeService.getAllThemes().forEach(theme -> {
 			Tile tile = new Tile();
 			tile.setId("theme-tile");
-			ThemeTileView graphic = new ThemeTileView(theme);
+			ThemeTileView graphic = new ThemeTileView();
+			graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
+			graphic.iconView.imageProperty().bind(theme.getIcon());
 			tile.setGraphic(graphic);
 			tile.setUserData(theme);
 			tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
