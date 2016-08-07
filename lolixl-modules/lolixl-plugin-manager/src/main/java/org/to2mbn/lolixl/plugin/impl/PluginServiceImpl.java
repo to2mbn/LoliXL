@@ -269,7 +269,7 @@ public class PluginServiceImpl implements PluginService {
 		Map<MavenArtifact, byte[]> oldArtifact2data = new HashMap<>(artifact2data);
 		Map<MavenArtifact, PluginDescription> oldArtifact2description = DependencyResolver.toArtifact2DescriptionMap(getCurrentPluginDescriptions());
 
-		LOGGER.info("Perform actions: " + actions);
+		LOGGER.fine("Perform actions: " + actions);
 		try {
 			for (DependencyAction action : actions) {
 				lastAction = action;
@@ -300,6 +300,7 @@ public class PluginServiceImpl implements PluginService {
 	}
 
 	private void performAction(DependencyAction action, Map<MavenArtifact, ArtifactLoader> artifact2loader) throws BundleException {
+		LOGGER.info("Perform " + action);
 		EventAdmin eventAdmin = this.eventAdmin;
 		if (eventAdmin != null)
 			eventAdmin.postEvent(new DependencyActionEvent(action));
@@ -321,8 +322,6 @@ public class PluginServiceImpl implements PluginService {
 		Objects.requireNonNull(loader);
 		if (getBundle(artifact).isPresent())
 			throw new IllegalStateException(artifact + " is already installed");
-
-		LOGGER.info("Installing " + artifact);
 
 		Bundle bundle;
 		Optional<byte[]> optionalData = loader.getJar();
@@ -346,7 +345,6 @@ public class PluginServiceImpl implements PluginService {
 		if (!getBundle(src).isPresent())
 			throw new IllegalStateException(src + " is not installed");
 
-		LOGGER.info(format("Updating %s -> %s", src, dest));
 		Bundle bundle = getBundle(src).get();
 
 		byte[] data = loader.getJar().orElse(null);
@@ -389,7 +387,6 @@ public class PluginServiceImpl implements PluginService {
 			}
 		}
 
-		LOGGER.info("Uninstalling " + artifact);
 		Bundle bundle = getBundle(artifact).get();
 		bundle.uninstall();
 		removeBundle0(artifact);
@@ -449,7 +446,7 @@ public class PluginServiceImpl implements PluginService {
 		Objects.requireNonNull(toInstall);
 		Objects.requireNonNull(toUninstall);
 
-		LOGGER.info(format("Update state: toInstall=%s, toUninstall=%s", toInstall, toUninstall));
+		LOGGER.fine(format("Update state: toInstall=%s, toUninstall=%s", toInstall, toUninstall));
 
 		IllegalStateException startExCollection = null;
 
@@ -474,7 +471,6 @@ public class PluginServiceImpl implements PluginService {
 								(bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) == 0) {
 							try {
 								bundle.start(Bundle.START_ACTIVATION_POLICY);
-								LOGGER.info("Started " + bundle);
 							} catch (Throwable exStart) {
 								LOGGER.log(Level.WARNING, format("Bundle %s couldn't start", bundle), exStart);
 								if (startExCollection == null)

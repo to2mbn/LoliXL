@@ -78,7 +78,7 @@ public class OSGiListener implements BundleListener, ServiceListener, FrameworkL
 	@Override
 	public void serviceChanged(ServiceEvent event) {
 		String type;
-		Level level = Level.INFO;
+		Level level = Level.FINE;
 		switch (event.getType()) {
 			case ServiceEvent.REGISTERED:
 				type = "REGISTERED";
@@ -109,36 +109,46 @@ public class OSGiListener implements BundleListener, ServiceListener, FrameworkL
 	@Override
 	public void bundleChanged(BundleEvent event) {
 		String type;
-		Level level = Level.INFO;
+		Level level;
 		switch (event.getType()) {
 			case BundleEvent.INSTALLED:
+				level = Level.INFO;
 				type = "INSTALLED";
 				break;
 			case BundleEvent.RESOLVED:
+				level = Level.FINE;
 				type = "RESOLVED";
 				break;
 			case BundleEvent.LAZY_ACTIVATION:
+				level = Level.FINE;
 				type = "LAZY_ACTIVATION";
 				break;
 			case BundleEvent.STARTING:
+				level = Level.FINE;
 				type = "STARTING";
 				break;
 			case BundleEvent.STARTED:
+				level = Level.INFO;
 				type = "STARTED";
 				break;
 			case BundleEvent.STOPPING:
+				level = Level.FINE;
 				type = "STOPPING";
 				break;
 			case BundleEvent.STOPPED:
+				level = Level.INFO;
 				type = "STOPPED";
 				break;
 			case BundleEvent.UPDATED:
+				level = Level.INFO;
 				type = "UPDATED";
 				break;
 			case BundleEvent.UNRESOLVED:
+				level = Level.FINE;
 				type = "UNRESOLVED";
 				break;
 			case BundleEvent.UNINSTALLED:
+				level = Level.INFO;
 				type = "UNINSTALLED";
 				break;
 			default:
@@ -155,7 +165,7 @@ public class OSGiListener implements BundleListener, ServiceListener, FrameworkL
 		}
 		if (event.getOrigin() != null) {
 			sb.append(" origin=[")
-					.append(event.getBundle())
+					.append(event.getOrigin())
 					.append("]");
 		}
 		LOGGER_BUNDLE.log(level, sb.toString());
