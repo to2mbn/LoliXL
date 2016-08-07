@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -35,6 +36,8 @@ import javafx.collections.WeakListChangeListener;
 public class GameVersionProviderManagerImpl implements GameVersionProviderManager, ConfigurationCategory<GameVersionConfig> {
 
 	public static final String CATEGORY_VERSION_PROVIDERS = "org.to2mbn.lolixl.ui.impl.version.manager";
+
+	private static final Logger LOGGER = Logger.getLogger(GameVersionProviderManagerImpl.class.getCanonicalName());
 
 	private ObservableServiceTracker<GameVersionProvider> providers;
 	private Map<GameVersionProvider, String> locationMapping = new ConcurrentHashMap<>();
@@ -93,7 +96,8 @@ public class GameVersionProviderManagerImpl implements GameVersionProviderManage
 							}
 							SelectedGameVersion newSelected = new SelectedGameVersion(version.getVersionNumber(), location);
 							if (!newSelected.equals(config.selected)) {
-								config.selected = new SelectedGameVersion(version.getVersionNumber(), location);
+								config.selected = newSelected;
+								LOGGER.info("Set selected version to " + newSelected);
 								observableContext.notifyChanged();
 							}
 							return;
@@ -121,16 +125,19 @@ public class GameVersionProviderManagerImpl implements GameVersionProviderManage
 						config.providers.put(location, entry);
 						observableContext.notifyChanged();
 					}
+					LOGGER.fine("Added GameVersionProvider " + location);
 
 					// process alias
 					if (entry.alias != null) {
 						service.aliasProperty().set(entry.alias);
+						LOGGER.fine("Set alias for GameVersionProvider " + location + " : " + entry.alias);
 					}
 					GameVersionProviderEntry entry0 = entry; // for lambda
 					service.aliasProperty().addListener(new WeakInvalidationListener(dummy -> {
 						String newAlias = service.aliasProperty().get();
 						if (!Objects.equals(newAlias, entry0.alias)) {
 							entry0.alias = newAlias;
+							LOGGER.fine("Alias of GameVersionProvider " + location + " changed to: " + newAlias);
 							observableContext.notifyChanged();
 						}
 					}));
@@ -140,13 +147,16 @@ public class GameVersionProviderManagerImpl implements GameVersionProviderManage
 						change.getAddedSubList().forEach(added -> {
 							String versionNumber = added.getVersionNumber();
 							String versionAlias = entry0.versionAlias.get(versionNumber);
+							LOGGER.fine("Added version " + versionNumber + ", owner=" + location);
 							if (versionAlias != null) {
 								added.aliasProperty().set(versionAlias);
+								LOGGER.fine("Set alias for version " + versionNumber + " : " + entry0.alias + ", owner=" + location);
 							}
 							added.aliasProperty().addListener((Observable dummy) -> {
 								String newVersionAlias = added.aliasProperty().get();
 								if (!Objects.equals(newVersionAlias, entry0.versionAlias.get(versionNumber))) {
 									entry0.versionAlias.put(versionNumber, newVersionAlias);
+									LOGGER.fine("Alias of version " + versionNumber + " changed to " + newVersionAlias + " , owner=" + location);
 									observableContext.notifyChanged();
 								}
 							});
