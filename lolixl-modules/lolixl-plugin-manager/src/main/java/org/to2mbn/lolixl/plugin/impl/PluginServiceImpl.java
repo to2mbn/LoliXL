@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -458,9 +459,16 @@ public class PluginServiceImpl implements PluginService {
 					performActions(computeActions(toInstall, toUninstall), artifact2loader);
 					checkDependenciesState();
 				} finally {
-					bundleContext.getBundle(0).adapt(FrameworkWiring.class).refreshBundles(null);
+					FrameworkWiring frameworkWiring = bundleContext.getBundle(0).adapt(FrameworkWiring.class);
 
-					for (Bundle bundle : bundle2artifact.keySet()) {
+					CountDownLatch latch = new CountDownLatch(1);
+					frameworkWiring.refreshBundles(null, event -> latch.countDown());
+					latch.await();
+
+					Set<Bundle> bundles = bundle2artifact.keySet();
+					frameworkWiring.resolveBundles(bundles);
+
+					for (Bundle bundle : bundles) {
 						if (bundle.getState() != Bundle.ACTIVE &&
 								bundle.getState() != Bundle.STARTING &&
 								(bundle.adapt(BundleRevision.class).getTypes() & BundleRevision.TYPE_FRAGMENT) == 0) {
