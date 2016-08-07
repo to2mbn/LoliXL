@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane id="auth-profiles-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.AuthProfilesView">
+   <center>
+      <ScrollPane id="auth-profiles-profiles-root-container" fx:id="profilesRootContainer" hbarPolicy="NEVER" prefHeight="440.0" prefWidth="250.0">
+         <content>
+            <VBox id="auth-profiles-types-container" fx:id="profilesContainer" />
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
