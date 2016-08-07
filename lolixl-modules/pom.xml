@@ -12,6 +12,7 @@
 	<description>LoliXL OSGi modules</description>
 
 	<modules>
+		<module>lolixl-ehcache</module>
 		<module>lolixl-utils</module>
 		<module>lolixl-plugin-manager</module>
 		<module>lolixl-ui</module>

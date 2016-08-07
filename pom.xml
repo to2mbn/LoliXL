@@ -384,7 +384,7 @@
 				<artifactId>statistics</artifactId>
 				<version>1.1.0</version>
 			</dependency>
-			
+
 			<!-- slf4j -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -456,6 +456,11 @@
 			<dependency>
 				<groupId>org.to2mbn.lolixl</groupId>
 				<artifactId>lolixl-yggdrasil-authenticator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-ehcache</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
