@@ -7,10 +7,8 @@ import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
-import com.sun.javafx.binding.StringConstant;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableStringValue;
 
 public class McdirGameVersion implements GameVersion {
 
@@ -25,8 +23,8 @@ public class McdirGameVersion implements GameVersion {
 	}
 
 	@Override
-	public ObservableStringValue getVersionNumber() {
-		return StringConstant.valueOf(version);
+	public String getVersionNumber() {
+		return version;
 	}
 
 	@Override

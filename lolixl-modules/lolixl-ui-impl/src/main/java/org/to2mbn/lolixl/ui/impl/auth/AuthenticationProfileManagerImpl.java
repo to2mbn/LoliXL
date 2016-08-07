@@ -43,10 +43,12 @@ import java.util.stream.Stream;
 
 @Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
 @Properties({
-		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = "org.to2mbn.lolixl.ui.impl.auth.profiles")
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = AuthenticationProfileManagerImpl.CATEGORY_AUTH_PROFILES)
 })
 @Component(immediate = true)
 public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager, ConfigurationCategory<AuthenticationProfileList> {
+
+	public static final String CATEGORY_AUTH_PROFILES = "org.to2mbn.lolixl.ui.impl.auth.profiles";
 
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationProfileManagerImpl.class.getCanonicalName());
 
@@ -87,6 +89,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 					if (!isSelectedProfileValid) {
 						profiles.selectedProfile = null;
 						super.set(null);
+						observableContext.notifyChanged();
 						return;
 					}
 				}
@@ -385,7 +388,10 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 	@Override
 	public void restore(Optional<AuthenticationProfileList> optionalMemento) {
-		optionalMemento.ifPresent(memento -> profiles.entries.addAll(memento.entries));
+		optionalMemento.ifPresent(memento -> {
+			profiles.entries.addAll(memento.entries);
+			profiles.selectedProfile = memento.selectedProfile;
+		});
 		serviceTracker.open(true);
 	}
 

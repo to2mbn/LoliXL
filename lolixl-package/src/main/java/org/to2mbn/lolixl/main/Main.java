@@ -15,7 +15,6 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
@@ -26,8 +25,6 @@ class Main {
 
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getCanonicalName());
 	private static final String RESOURCE_FELIX_CONFIGURATION = "/org.to2mbn.lolixl.felix.properties";
-
-	private static FileHandler loggingHandler;
 
 	private static Felix felix = null;
 	private static Properties felixConfiguration = null;
@@ -79,41 +76,12 @@ class Main {
 		AccessEndpoint.internalBundleRepository.init(felix);
 	}
 
-	private static void setupLoggingHandler() throws IOException {
-		loggingHandler = new FileHandler(Metadata.LOG_FILE);
+	private static void configureJUL() throws IOException {
+		Handler loggingHandler = new FileHandler(Metadata.LOG_FILE);
 		loggingHandler.setFormatter(new SimpleFormatter("%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL [%4$s] [%3$s] %5$s%6$s%n"));
 		loggingHandler.setLevel(Level.ALL);
-	}
 
-	private static void configureJUL() throws IOException {
-		setupLoggingHandler();
-		enableLogging("org.to2mbn", Level.ALL);
-		enableLogging("org.apache.felix", Level.ALL);
-	}
-
-	private static void enableLogging(String packageName, Level level) {
-		Logger logger = Logger.getLogger(packageName);
-		Handler handler = new Handler() {
-
-			@Override
-			public void publish(LogRecord record) {
-				if (isLoggable(record))
-					loggingHandler.publish(record);
-			}
-
-			@Override
-			public void flush() {
-				loggingHandler.flush();
-			}
-
-			@Override
-			public void close() throws SecurityException {
-				loggingHandler.close();
-			}
-		};
-		handler.setLevel(level);
-		logger.addHandler(handler);
-		logger.setLevel(level);
+		Logger.getLogger("").addHandler(loggingHandler);
 	}
 
 	private static void processConfiguration(Properties configuration) {

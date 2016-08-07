@@ -5,12 +5,11 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class ObservableServiceTracker<T> extends ServiceTracker<T, T> {
+public class ObservableServiceTracker<T> extends LambdaServiceTracker<T> {
 
 	private ObservableList<T> tracked = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<T> trackedView = FXCollections.unmodifiableObservableList(tracked);
@@ -22,7 +21,7 @@ public class ObservableServiceTracker<T> extends ServiceTracker<T, T> {
 	}
 
 	public ObservableServiceTracker(BundleContext context, Class<T> clazz, Function<Stream<ServiceReference<T>>, Stream<T>> mapper) {
-		super(context, clazz, null);
+		super(context, clazz);
 		this.mapper = mapper == null
 				? stream -> stream
 						.map(this::getService)

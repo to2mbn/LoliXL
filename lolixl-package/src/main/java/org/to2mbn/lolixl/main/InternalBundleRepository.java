@@ -179,7 +179,7 @@ class InternalBundleRepository {
 			String a = ga.substring(idxMaohao + 1);
 			String v = ga2v.get(ga);
 			String gav = g + ":" + a + ":" + v;
-			LOGGER.info("Installing bootstrap bundle " + gav);
+			LOGGER.fine("Installing bootstrap bundle " + gav);
 
 			Path localRepoArtifact = getLocalArtifactPath(g, a, v, null, "jar");
 

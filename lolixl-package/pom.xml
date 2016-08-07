@@ -134,28 +134,8 @@
 									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.ehcache.modules</groupId>
-									<artifactId>ehcache-impl</artifactId>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.ehcache.modules</groupId>
-									<artifactId>ehcache-api</artifactId>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.ehcache.modules</groupId>
-									<artifactId>ehcache-core</artifactId>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.terracotta</groupId>
-									<artifactId>offheap-store</artifactId>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.ehcache</groupId>
-									<artifactId>sizeof</artifactId>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.terracotta</groupId>
-									<artifactId>statistics</artifactId>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-ehcache</artifactId>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.slf4j</groupId>
@@ -237,6 +217,12 @@
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
+									<classifier>lolixl-plugin</classifier>
+									<type>xml</type>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.to2mbn.lolixl</groupId>
+									<artifactId>lolixl-ehcache</artifactId>
 									<classifier>lolixl-plugin</classifier>
 									<type>xml</type>
 								</artifactItem>

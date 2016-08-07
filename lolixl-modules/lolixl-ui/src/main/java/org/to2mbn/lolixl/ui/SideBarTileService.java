@@ -5,8 +5,6 @@ import javafx.collections.ObservableList;
 
 public interface SideBarTileService {
 
-	String CATEGORY_SIDEBAR_TILES = "org.to2mbn.lolixl.ui.impl.sideBarTiles";
-
 	/**
 	 * 描述一个磁贴的状态
 	 * <p>
