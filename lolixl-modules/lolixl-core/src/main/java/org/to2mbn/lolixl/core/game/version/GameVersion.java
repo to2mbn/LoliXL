@@ -10,7 +10,7 @@ import javafx.beans.value.ObservableStringValue;
 
 public interface GameVersion extends DisplayableTile, Aliasable {
 
-	ObservableStringValue getVersionNumber();
+	String getVersionNumber();
 
 	Path getMinecraftDirectory();
 	Version getLaunchableVersion();
@@ -20,17 +20,16 @@ public interface GameVersion extends DisplayableTile, Aliasable {
 		return new StringBinding() {
 
 			StringProperty aliasProperty = aliasProperty();
-			ObservableStringValue versionNumber = getVersionNumber();
 
 			{
-				bind(aliasProperty, versionNumber);
+				bind(aliasProperty);
 			}
 
 			@Override
 			protected String computeValue() {
 				String alias = aliasProperty.get();
 				if (alias == null) {
-					return versionNumber.get();
+					return getVersionNumber();
 				}
 				return alias;
 			}

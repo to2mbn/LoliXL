@@ -29,10 +29,12 @@ import javafx.collections.ObservableList;
 
 @Service({ SideBarTileService.class, ConfigurationCategory.class })
 @Properties({
-		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = SideBarTileService.CATEGORY_SIDEBAR_TILES)
+		@Property(name = ConfigurationCategory.PROPERTY_CATEGORY, value = SideBarTileServiceImpl.CATEGORY_SIDEBAR_TILES)
 })
 @Component(immediate = true)
 public class SideBarTileServiceImpl implements SideBarTileService, ConfigurationCategory<SideBarTileList> {
+
+	public static final String CATEGORY_SIDEBAR_TILES = "org.to2mbn.lolixl.ui.impl.sideBarTiles";
 
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
