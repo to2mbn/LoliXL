@@ -22,7 +22,6 @@ import org.to2mbn.lolixl.utils.ObservableServiceTracker;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
