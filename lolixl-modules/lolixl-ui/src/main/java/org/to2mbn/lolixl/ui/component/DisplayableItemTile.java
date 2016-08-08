@@ -2,7 +2,6 @@ package org.to2mbn.lolixl.ui.component;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.beans.value.WeakChangeListener;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
@@ -43,14 +42,14 @@ public class DisplayableItemTile extends Tile {
 			}
 		});
 		// for animation:
-		prefWidthProperty().addListener(new WeakChangeListener<>(((observable, oldValue, newValue) -> {
+		prefWidthProperty().addListener(((observable, oldValue, newValue) -> {
 			graphic.setPrefWidth(newValue.doubleValue());
 			graphic.resize(newValue.doubleValue(), getPrefHeight());
-		})));
-		prefHeightProperty().addListener(new WeakChangeListener<>(((observable, oldValue, newValue) -> {
+		}));
+		prefHeightProperty().addListener(((observable, oldValue, newValue) -> {
 			graphic.setPrefHeight(newValue.doubleValue());
 			graphic.resize(getPrefWidth(), newValue.doubleValue());
-		})));
+		}));
 		FXUtils.setButtonGraphic(this, graphic);
 	}
 }

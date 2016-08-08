@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.ui.impl.component.view.panel;
 
-import javafx.beans.value.WeakChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -59,14 +58,14 @@ public class PanelView extends BorderPane {
 		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());
-		panel.contentProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
+		panel.contentProperty().addListener((observable, oldValue, newValue) -> {
 			if (oldValue != null) {
 				panelContentContainer.getChildren().remove(oldValue);
 			}
 			panelContentContainer.getChildren().add(newValue);
-		}));
+		});
 		iconView.imageProperty().bind(panel.iconProperty());
-		iconView.imageProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> checkEmptyIcon()));
+		iconView.imageProperty().addListener((observable, oldValue, newValue) -> checkEmptyIcon());
 		checkEmptyIcon();
 	}
 

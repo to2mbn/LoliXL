@@ -133,14 +133,14 @@ public class GameVersionProviderManagerImpl implements GameVersionProviderManage
 						LOGGER.fine("Set alias for GameVersionProvider " + location + " : " + entry.alias);
 					}
 					GameVersionProviderEntry entry0 = entry; // for lambda
-					service.aliasProperty().addListener(new WeakInvalidationListener(dummy -> {
+					service.aliasProperty().addListener((Observable dummy) -> {
 						String newAlias = service.aliasProperty().get();
 						if (!Objects.equals(newAlias, entry0.alias)) {
 							entry0.alias = newAlias;
 							LOGGER.fine("Alias of GameVersionProvider " + location + " changed to: " + newAlias);
 							observableContext.notifyChanged();
 						}
-					}));
+					});
 
 					// process versions
 					service.getVersions().addListener(new WeakListChangeListener<>(change -> {

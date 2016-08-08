@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import javafx.beans.WeakInvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 
 public final class CollectionUtils {
@@ -22,7 +22,7 @@ public final class CollectionUtils {
 	}
 
 	public static <T> void bindList(ObservableList<T> src, ObservableList<? super T> dest) {
-		src.addListener(new WeakInvalidationListener(dummy -> dest.setAll(src)));
+		src.addListener((Observable dummy) -> dest.setAll(src));
 	}
 
 }
