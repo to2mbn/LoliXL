@@ -1,9 +1,9 @@
 package org.to2mbn.lolixl.ui.component;
 
 public class VersionTag {
-	public static final VersionTag PURE_RELEASE = new VersionTag("game-version-tag-pure-release");
-	public static final VersionTag PURE_SNAPSHOT = new VersionTag("game-version-tag-pure-snapshot");
-	public static final VersionTag PURE_BETA = new VersionTag("game-version-tag-pure-beta");
+	public static final VersionTag VANILLA_RELEASE = new VersionTag("game-version-tag-vanilla-release");
+	public static final VersionTag VANILLA_SNAPSHOT = new VersionTag("game-version-tag-vanilla-snapshot");
+	public static final VersionTag VANILLA_BETA = new VersionTag("game-version-tag-vanilla-beta");
 	public static final VersionTag PURE_OLD = new VersionTag("game-version-tag-pure-old");
 	public static final VersionTag FORGE_RELEASE = new VersionTag("game-version-tag-forge-release");
 	public static final VersionTag FORGE_BETA = new VersionTag("game-version-tag-forge-beta");
