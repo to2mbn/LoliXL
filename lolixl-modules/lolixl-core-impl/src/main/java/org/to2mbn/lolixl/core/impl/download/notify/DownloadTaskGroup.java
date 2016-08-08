@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.core.download.notify;
+package org.to2mbn.lolixl.core.impl.download.notify;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;

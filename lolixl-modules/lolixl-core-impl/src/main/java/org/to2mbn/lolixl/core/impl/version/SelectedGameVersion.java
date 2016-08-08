@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.version;
+package org.to2mbn.lolixl.core.impl.version;
 
 import java.io.Serializable;
 import java.util.Objects;

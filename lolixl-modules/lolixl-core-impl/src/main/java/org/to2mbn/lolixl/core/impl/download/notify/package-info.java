@@ -5,4 +5,4 @@
  * 
  * @author yushijinhun
  */
-package org.to2mbn.lolixl.core.download.notify;
+package org.to2mbn.lolixl.core.impl.download.notify;

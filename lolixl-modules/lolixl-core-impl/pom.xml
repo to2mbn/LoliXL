@@ -6,31 +6,33 @@
 		<artifactId>lolixl-modules</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>lolixl-core</artifactId>
+	<artifactId>lolixl-core-impl</artifactId>
 	<packaging>bundle</packaging>
-	<name>lolixl-core</name>
-	<description>LoliXL Core module</description>
+	<name>lolixl-core-impl</name>
+	<description>LoliXL Core implementation module</description>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Export-Package>org.to2mbn.lolixl.core.impl.download.notify</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
-			<artifactId>lolixl-utils</artifactId>
+			<artifactId>lolixl-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.to2mbn.lolixl</groupId>
-			<artifactId>lolixl-ui</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.to2mbn</groupId>
-			<artifactId>jmccc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.to2mbn</groupId>
-			<artifactId>jmccc-yggdrasil-authenticator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.to2mbn</groupId>
-			<artifactId>jmccc-mcdownloader</artifactId>
+			<artifactId>lolixl-ehcache</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

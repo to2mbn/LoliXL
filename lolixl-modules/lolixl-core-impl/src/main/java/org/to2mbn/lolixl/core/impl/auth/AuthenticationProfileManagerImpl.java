@@ -1,12 +1,19 @@
-package org.to2mbn.lolixl.ui.impl.auth;
+package org.to2mbn.lolixl.core.impl.auth;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
@@ -23,23 +30,16 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationProfile;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileEvent;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
-import org.to2mbn.lolixl.ui.impl.auth.AuthenticationProfileList.AuthenticationProfileEntry;
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
+import org.to2mbn.lolixl.core.impl.auth.AuthenticationProfileList.AuthenticationProfileEntry;
 import org.to2mbn.lolixl.utils.GsonUtils;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 @Service({ AuthenticationProfileManager.class, ConfigurationCategory.class })
 @Properties({

@@ -430,6 +430,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.to2mbn.lolixl</groupId>
+				<artifactId>lolixl-core-impl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.to2mbn.lolixl</groupId>
 				<artifactId>lolixl-ui-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>

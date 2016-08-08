@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.auth;
+package org.to2mbn.lolixl.core.impl.auth;
 
 import java.io.Serializable;
 import java.util.List;

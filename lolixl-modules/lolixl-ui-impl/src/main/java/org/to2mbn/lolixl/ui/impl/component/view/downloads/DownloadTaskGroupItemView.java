@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.to2mbn.lolixl.core.download.notify.DownloadTaskGroup;
+import org.to2mbn.lolixl.core.impl.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;

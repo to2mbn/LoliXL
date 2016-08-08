@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.version;
+package org.to2mbn.lolixl.core.impl.version;
 
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.core.game.version.GameVersionProvider;
 import org.to2mbn.lolixl.core.game.version.GameVersionProviderManager;
-import org.to2mbn.lolixl.ui.impl.version.GameVersionConfig.GameVersionProviderEntry;
+import org.to2mbn.lolixl.core.impl.version.GameVersionConfig.GameVersionProviderEntry;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ObservableServiceTracker;
 import org.to2mbn.lolixl.utils.ServiceUtils;
