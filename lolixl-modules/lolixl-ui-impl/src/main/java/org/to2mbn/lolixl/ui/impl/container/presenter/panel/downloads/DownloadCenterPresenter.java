@@ -22,6 +22,7 @@ import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemI
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.FXUtils;
 import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Timer;
@@ -95,7 +96,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 		tile.prefWidthProperty().bind(view.itemContainer.widthProperty().subtract(view.itemContainer.getPadding().getRight()));
 		DownloadTaskGroupItemView itemView = new DownloadTaskGroupItemView(group);
 		DownloadTaskGroupItemInfoView infoView = new DownloadTaskGroupItemInfoView(group);
-		tile.setGraphic(itemView);
+		FXUtils.setButtonGraphic(tile, itemView);
 		tile.setOnAction(event -> {
 			Panel panel = displayService.newPanel();
 			panel.titleProperty().bind(itemView.nameLabel.textProperty());

@@ -26,6 +26,7 @@ import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeServiceImpl;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
+import org.to2mbn.lolixl.utils.FXUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -71,7 +72,7 @@ public class ThemesPresenter extends Presenter<ThemesView> implements EventHandl
 			ThemeTileView graphic = new ThemeTileView();
 			graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
 			graphic.iconView.imageProperty().bind(theme.getIcon());
-			tile.setGraphic(graphic);
+			FXUtils.setButtonGraphic(tile, graphic);
 			tile.setUserData(theme);
 			tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
 				updateInfoPane((Theme) tile.getUserData());

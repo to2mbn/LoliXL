@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root id="game-version-editor-root-container" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="850.0" type="GridPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="690.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="35.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="340.0" minHeight="10.0" prefHeight="332.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Label id="game-version-editor-mcdir-path-label" fx:id="mcdirPathLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+      <Label id="game-version-editor-version-number-label" fx:id="versionNumberLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
+      <Label id="game-version-editor-alias-label" fx:id="aliasLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
+      <Label id="game-version-editor-tags-label" fx:id="tagsLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="4" />
+      <Label id="game-version-editor-mcdir-path-content-label" fx:id="mcdirPathContentLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+      <Label id="game-version-editor-version-number-content-label" fx:id="versionNumberContentLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <HBox id="game-version-editor-tags-container" fx:id="tagsContainer" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label id="game-version-editor-release-time-label" fx:id="releaseTimeLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="3" />
+      <Label id="game-version-editor-release-time-content-label" fx:id="releaseTimeContentLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <TextField id="game-version-editor-alias-input" fx:id="aliasInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </GridPane.margin>
+      </TextField>
+   </children>
+</fx:root>

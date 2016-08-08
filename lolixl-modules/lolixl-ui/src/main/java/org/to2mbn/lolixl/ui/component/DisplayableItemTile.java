@@ -7,6 +7,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import org.to2mbn.lolixl.utils.FXUtils;
 
 /**
  * 从 {@link DisplayableItem} 创建的磁贴。
@@ -50,6 +51,6 @@ public class DisplayableItemTile extends Tile {
 			graphic.setPrefHeight(newValue.doubleValue());
 			graphic.resize(getPrefWidth(), newValue.doubleValue());
 		})));
-		setGraphic(graphic);
+		FXUtils.setButtonGraphic(this, graphic);
 	}
 }

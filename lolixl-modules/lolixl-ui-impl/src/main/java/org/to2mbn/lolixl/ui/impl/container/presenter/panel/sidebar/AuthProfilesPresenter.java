@@ -18,6 +18,7 @@ import org.to2mbn.lolixl.ui.impl.component.view.auth.AddNewProfileTileView;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.AuthProfilesView;
 import org.to2mbn.lolixl.utils.CollectionUtils;
+import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.List;
 
@@ -34,7 +35,8 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 	@Reference
 	private DefaultSideBarPresenter sideBarPresenter;
 
-	private MappedObservableList<AuthenticationProfile<?>, Tile> profileTiles;
+	private MappedObservableList<AuthenticationProfile<?>, Tile> mappedProfileTiles;
+	private Tile addProfileTile = new Tile();
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -48,22 +50,33 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 
 	@Override
 	protected void initializePresenter() {
-		Tile addProfileTile = new Tile();
-		addProfileTile.setGraphic(new AddNewProfileTileView());
+		FXUtils.setButtonGraphic(addProfileTile, new AddNewProfileTileView());
 		addProfileTile.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar.authtypes.button.add.text"));
 		Panel panel = displayService.newPanel();
 		panel.bindButton(addProfileTile);
 		view.rootContainer.setBottom(addProfileTile);
 
+		authProfileManager.selectedProfileProperty().addListener((ob, oldVal, newVal) -> {
+			Tile tile = null;
+			if (newVal != null) {
+				tile = mappedProfileTiles.mapping().get(newVal);
+			}
+			if (tile == null) {
+				tile = addProfileTile;
+			}
+			sideBarPresenter.getView().userProfileContainer.getChildren().setAll(tile);
+		});
+
 		List<Node> children = view.profilesContainer.getChildren();
-		profileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
+		mappedProfileTiles = new MappedObservableList<>(authProfileManager.getProfiles(), profile -> {
 			Tile t = profile.createTile(); // TODO: graphic->AuthProfileTileView?
 			t.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
+				authProfileManager.selectedProfileProperty().set(profile);
 				sideBarPresenter.getView().userProfileContainer.getChildren().setAll(t);
 			}));
 			children.add(t);
 			return t;
 		});
-		CollectionUtils.bindList(profileTiles, view.profilesContainer.getChildren());
+		CollectionUtils.bindList(mappedProfileTiles, view.profilesContainer.getChildren());
 	}
 }

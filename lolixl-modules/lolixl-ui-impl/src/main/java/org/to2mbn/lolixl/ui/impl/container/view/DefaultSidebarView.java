@@ -21,7 +21,10 @@ public class DefaultSidebarView extends View {
 	public StackPane userProfileContainer;
 
 	@FXML
-	public BorderPane functionalTileContainer;
+	public BorderPane functionalTileRootContainer;
+
+	@FXML
+	public StackPane functionalTileTopContainer;
 
 	@FXML
 	public VBox functionalTileCenterContainer;

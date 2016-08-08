@@ -1,18 +1,25 @@
 package org.to2mbn.lolixl.core.version.mcdir;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Path;
+import com.sun.javafx.binding.ObjectConstant;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.scene.image.Image;
 import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import org.to2mbn.lolixl.ui.component.Tile;
+import org.to2mbn.lolixl.ui.component.view.version.GameVersionItemView;
+import org.to2mbn.lolixl.utils.FXUtils;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 
 public class McdirGameVersion implements GameVersion {
 
 	private StringProperty aliasProperty = new SimpleStringProperty();
+	private ObjectConstant<Image> icon = ObjectConstant.valueOf(new Image("/ui/img/grass_cube.png"));
 
 	private String version;
 	private Path mcdir;
@@ -46,4 +53,20 @@ public class McdirGameVersion implements GameVersion {
 		return aliasProperty;
 	}
 
+	@Override
+	public Tile createTile() {
+		Tile tile = new Tile();
+		tile.setId("version-item-tile");
+		GameVersionItemView view = new GameVersionItemView();
+		view.versionNameLabel.textProperty().bind(getLocalizedName());
+		view.iconView.imageProperty().bind(icon);
+		// resolveTagsForVersion();
+		FXUtils.setButtonGraphic(tile, view);
+		return tile;
+	}
+
+	@Override
+	public ObservableObjectValue<Image> getIcon() {
+		return icon;
+	}
 }

@@ -6,14 +6,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-
-<fx:root id="game-version-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="230.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="game-version-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="230.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <ImageView id="game-version-icon-view" fx:id="iconView" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
    </left>
-   <padding>
-      <Insets left="5.0" />
-   </padding>
    <center>
       <BorderPane id="game-version-info-container" fx:id="infoContainer" BorderPane.alignment="CENTER">
          <padding>
