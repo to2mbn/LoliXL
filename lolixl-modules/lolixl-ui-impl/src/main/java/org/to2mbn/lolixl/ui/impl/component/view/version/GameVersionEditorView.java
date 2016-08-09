@@ -53,8 +53,4 @@ public class GameVersionEditorView extends GridPane {
 			throw new UncheckedIOException(e);
 		}
 	}
-
-	public void onClose() {
-		aliasInput.textProperty().unbind();
-	}
 }

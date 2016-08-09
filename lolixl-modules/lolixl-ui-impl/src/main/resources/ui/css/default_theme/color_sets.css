@@ -49,6 +49,6 @@
     -fx-background-color: rgba(205, 92, 94, 0.3);
 }
 
-#theme-tile-installed {
+.theme-tile-enabled {
     -fx-background-color: rgba(205, 92, 94, 0.8) ;
 }

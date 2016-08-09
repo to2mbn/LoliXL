@@ -26,4 +26,15 @@ public final class FXUtils {
 		component.getStyleClass().setAll(clazz);
 	}
 
+	public static String tagIdToCssClass(String id) {
+		String[] split = id.split("\\.");
+		String result = "";
+		int count = 2;
+		for (int i = split.length - 1; i >= 0 && count >= 0; i--) {
+			result = "-".concat(split[i]).concat(result);
+			count--;
+		}
+		return result.replaceFirst("-", "");
+	}
+
 }

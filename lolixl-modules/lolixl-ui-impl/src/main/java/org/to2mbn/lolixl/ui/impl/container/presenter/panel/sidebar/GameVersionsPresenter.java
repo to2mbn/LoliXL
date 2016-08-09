@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -14,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -22,17 +24,21 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.core.game.version.GameVersionProvider;
 import org.to2mbn.lolixl.core.game.version.GameVersionProviderManager;
+import org.to2mbn.lolixl.core.game.version.tags.VersionTag;
+import org.to2mbn.lolixl.core.game.version.tags.VersionTagResolver;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.view.version.GameVersionGroupView;
+import org.to2mbn.lolixl.ui.component.view.version.GameVersionItemView;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionEditorView;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionItemWrapperView;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
 import org.to2mbn.lolixl.utils.CollectionUtils;
+import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 
 @Service({ GameVersionsPresenter.class })
@@ -48,6 +54,9 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 
 	@Reference
 	private PanelDisplayService displayService;
+
+	@Reference
+	private VersionTagResolver tagResolver;
 
 	private MappedObservableList<GameVersion, Tile> mappedGameVersionTiles;
 	private Tile addNewVersionTile;
@@ -146,21 +155,39 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 
 	private Tile makeTileForVersion(GameVersion version) {
 		Tile tile = version.createTile();
+
+		GameVersionItemView item = (GameVersionItemView) tile.getGraphic();
+		resolveTagsForVersion(item.versionTagContainer, version);
+
 		GameVersionEditorView editorView = makeEditorForVersion(version);
 		Panel editor = displayService.newPanel();
 		editor.bindButton(tile);
 		editor.bindItem(version);
 		editor.contentProperty().set(editorView);
-		editor.onClosedProperty().set(editorView::onClose);
+		editor.onClosedProperty().set(editorView.aliasInput.textProperty()::unbind);
 		tile.setOnAction(event -> {
 			providerManager.selectedVersionProperty().set(version);
 			editor.show();
 		});
+
 		return tile;
 	}
 
 	private void resolveTagsForVersion(HBox tagContainer, GameVersion version) {
-		// TODO
+		ObservableList<Node> children = tagContainer.getChildren();
+		tagResolver.resolveTags(version.getLaunchableVersion())
+				.stream()
+				.map(this::makeTagComponent)
+				.forEach(children::add);
+	}
+
+	private Button makeTagComponent(VersionTag versionTag) {
+		Button button = new Button();
+		button.setPrefWidth(Region.USE_COMPUTED_SIZE);
+		button.setPrefHeight(Region.USE_COMPUTED_SIZE);
+		button.textProperty().bind(versionTag.getDisplayName());
+		FXUtils.setCssClass(button, FXUtils.tagIdToCssClass(versionTag.getId()));
+		return button;
 	}
 
 	private Button makeDeleteMcdirButton(GameVersionProvider provider, Parent parent) {
@@ -179,7 +206,8 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		version.aliasProperty().bind(editor.aliasInput.textProperty());
 		editor.mcdirPathContentLabel.setText(version.getMinecraftDirectory().toString());
 		editor.versionNumberContentLabel.setText(version.getVersionNumber());
-		// TODO: editor.tagsContainer editor.releaseTime
+		GameVersionItemView itemView = (GameVersionItemView) mappedGameVersionTiles.mapping().get(version).getGraphic();
+		editor.tagsContainer.getChildren().setAll(itemView.versionTagContainer.getChildren());
 		return editor;
 	}
 }
