@@ -24,7 +24,7 @@ import org.to2mbn.lolixl.plugin.util.MavenUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
 @Component(immediate = true)
-@Service({ MavenRepository.class })
+@Service({ MavenRepository.class, InternalMavenRepository.class })
 @Properties({
 		@Property(name = "m2repository.chain", value = "remote"),
 		@Property(name = Constants.SERVICE_RANKING, intValue = Integer.MIN_VALUE)
