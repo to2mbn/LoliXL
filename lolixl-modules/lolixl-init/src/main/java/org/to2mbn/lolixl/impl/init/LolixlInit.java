@@ -21,6 +21,10 @@ public class LolixlInit {
 	@Reference
 	private PluginManager pluginManager;
 
+	// InternalMavenRepository必须在LolixlInit前完成初始化
+	@Reference
+	private InternalMavenRepository dummy;
+
 	@Activate
 	public void active(ComponentContext compCtx) throws IOException {
 		LOGGER.info("Initializing JavaFX");
