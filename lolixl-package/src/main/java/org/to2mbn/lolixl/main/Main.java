@@ -82,6 +82,7 @@ class Main {
 		loggingHandler.setLevel(Level.ALL);
 
 		Logger.getLogger("").addHandler(loggingHandler);
+		Logger.getLogger("").setLevel(Level.FINE);
 	}
 
 	private static void processConfiguration(Properties configuration) {
