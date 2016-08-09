@@ -48,7 +48,7 @@
     -fx-text-fill: whitesmoke;
 }
 
-#theme-tile {
+.theme-tile {
     -fx-background-color: transparent;
 }
 
