@@ -22,9 +22,11 @@ public class DisplayableItemTile extends Tile {
 
 	private final DisplayableItem item;
 	private final DisplayableItemTileView graphic;
+	private final Image emptyIcon;
 
 	public DisplayableItemTile(DisplayableItem item) {
 		this.item = item;
+		this.emptyIcon = new Image("/ui/img/no_icon.png");
 		setContentDisplay(ContentDisplay.TOP);
 
 		graphic = new DisplayableItemTileView();
@@ -38,18 +40,9 @@ public class DisplayableItemTile extends Tile {
 
 			@Override
 			protected Image computeValue() {
-				return image.get() != null ? image.get() : new Image("/ui/img/no_icon.png");
+				return image.get() != null ? image.get() : emptyIcon;
 			}
 		});
-		// for animation:
-		prefWidthProperty().addListener(((observable, oldValue, newValue) -> {
-			graphic.setPrefWidth(newValue.doubleValue());
-			graphic.resize(newValue.doubleValue(), getPrefHeight());
-		}));
-		prefHeightProperty().addListener(((observable, oldValue, newValue) -> {
-			graphic.setPrefHeight(newValue.doubleValue());
-			graphic.resize(getPrefWidth(), newValue.doubleValue());
-		}));
 		FXUtils.setButtonGraphic(this, graphic);
 	}
 }

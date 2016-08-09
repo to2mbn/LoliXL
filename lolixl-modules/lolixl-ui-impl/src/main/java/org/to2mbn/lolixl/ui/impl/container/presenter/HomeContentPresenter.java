@@ -4,9 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.WeakEventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -68,28 +66,19 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	}
 
 	private void resolveTile(Tile tile) {
-		TileAnimationHandler animationHandler = new TileAnimationHandler(tile, view.tileContainer);
+		TileAnimationHandler animationHandler = new TileAnimationHandler(tile);
 		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, new WeakEventHandler<>(animationHandler::runRollOutAnimation));
 		tile.addEventHandler(MouseEvent.MOUSE_EXITED, new WeakEventHandler<>(animationHandler::cancelAndFallback));
-		tile.setPadding(Insets.EMPTY);
-
-		tile.setMinWidth(55);
-		tile.setMinHeight(55);
-		tile.setMaxWidth(200);
-		tile.setMinWidth(55);
 		tile.setPrefHeight(55);
 		tile.setPrefWidth(55);
-		tile.resize(55, 55);
 	}
 
 	private class TileAnimationHandler {
 		private final Tile tile;
-		private final Region tileContainer;
 		private final AtomicReference<Timeline> currentAnimation = new AtomicReference<>(null);
 
-		private TileAnimationHandler(Tile _tile, Region _tileContainer) {
+		private TileAnimationHandler(Tile _tile) {
 			tile = _tile;
-			tileContainer = _tileContainer;
 		}
 
 		private void runRollOutAnimation(MouseEvent mouseEvent) {
@@ -104,7 +93,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getMaxWidth()))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 200))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
@@ -123,7 +112,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getMinWidth()))
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 55))
 			);
 			newOne.setOnFinished(event -> currentAnimation.set(null));
 			currentAnimation.set(newOne);
