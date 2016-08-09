@@ -32,9 +32,9 @@ import org.to2mbn.jmccc.mcdownloader.download.tasks.DownloadTask;
 import org.to2mbn.jmccc.mcdownloader.provider.MinecraftDownloadProvider;
 import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
+import org.to2mbn.lolixl.core.download.CompletableFutureAdapter;
 import org.to2mbn.lolixl.core.download.DownloadCenter;
 import org.to2mbn.lolixl.core.download.DownloadStartEvent;
-import org.to2mbn.lolixl.core.impl.download.CompletableFutureAdapter;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
 @Service({ DownloadCenter.class, DownloadCenterNotifier.class, EventHandler.class })

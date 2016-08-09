@@ -1,6 +1,7 @@
-package org.to2mbn.lolixl.core.impl.download;
+package org.to2mbn.lolixl.core.download;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.to2mbn.jmccc.mcdownloader.download.concurrent.Callback;
 import org.to2mbn.jmccc.mcdownloader.download.concurrent.Cancelable;
@@ -33,6 +34,10 @@ public class CompletableFutureAdapter<T> implements Callback<T> {
 
 	private volatile Cancelable adaptedCancelable;
 	private AtomicBoolean underlyingCancelled = new AtomicBoolean();
+
+	public void setAdaptedCancelable(Future<?> adaptedCancelableFuture) {
+		setAdaptedCancelable(mayInterruptIfRunning -> adaptedCancelableFuture.cancel(mayInterruptIfRunning));
+	}
 
 	public void setAdaptedCancelable(Cancelable adaptedCancelable) {
 		this.adaptedCancelable = adaptedCancelable;

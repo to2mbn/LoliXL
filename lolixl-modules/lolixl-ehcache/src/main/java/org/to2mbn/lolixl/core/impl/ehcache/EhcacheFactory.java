@@ -5,7 +5,10 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.MemoryUnit;
 import org.osgi.service.component.ComponentContext;
 
 @Component
@@ -20,6 +23,10 @@ public class EhcacheFactory {
 		LOGGER.info("Starting Ehcache");
 		cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
 				.with(CacheManagerBuilder.persistence(".lolixl/ehcache"))
+				.withCache("org.to2mbn.lolixl.core.impl.texture.binary",
+						CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, byte[].class,
+								ResourcePoolsBuilder.newResourcePoolsBuilder()
+										.disk(16, MemoryUnit.MB, true)))
 				.build(true);
 		compCtx.getBundleContext().registerService(CacheManager.class, cacheManager, null);
 	}
