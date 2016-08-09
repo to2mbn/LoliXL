@@ -69,6 +69,7 @@ public class TextureCachingService {
 				if (cached != null) {
 					LOGGER.fine("Texture cache hit: " + texture);
 					result.put(textureType, rebuildTexture(texture, cached));
+					continue;
 				}
 				LOGGER.info("Downloading texture" + texture + " using jmccc-mcdownloader");
 				URI uri;
