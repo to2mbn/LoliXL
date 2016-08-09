@@ -23,7 +23,7 @@ import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 import org.to2mbn.lolixl.plugin.util.MavenUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
-@Component
+@Component(immediate = true)
 @Service({ MavenRepository.class })
 @Properties({
 		@Property(name = "m2repository.chain", value = "remote"),

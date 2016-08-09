@@ -23,7 +23,7 @@ import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
 import static java.lang.String.format;
 
-@Component
+@Component(immediate = true)
 @Service({ MavenRepository.class })
 @Properties({
 		@Property(name = "m2repository.type", value = "remote")

@@ -33,7 +33,7 @@ import org.to2mbn.lolixl.utils.PathUtils;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 import org.to2mbn.lolixl.utils.GsonUtils;
 
-@Component
+@Component(immediate = true)
 @Service({ LocalMavenRepository.class })
 @Properties({
 		@Property(name = "m2repository.type", value = "local")
