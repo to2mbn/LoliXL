@@ -60,7 +60,6 @@ public class McdirGameVersion implements GameVersion {
 		GameVersionItemView view = new GameVersionItemView();
 		view.versionNameLabel.textProperty().bind(getLocalizedName());
 		view.iconView.imageProperty().bind(icon);
-		// resolveTagsForVersion();
 		FXUtils.setButtonGraphic(tile, view);
 		return tile;
 	}

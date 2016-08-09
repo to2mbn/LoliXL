@@ -48,10 +48,6 @@
     -fx-text-fill: whitesmoke;
 }
 
-#theme-tile {
-    -fx-background-color: transparent;
-}
-
 #tile-root-container {
     -fx-background-color: blue;
 }
@@ -68,4 +64,26 @@
 
 #mcpath-editor {
     -fx-font-size: 18;
+}
+
+.theme-tile {
+    -fx-background-color: transparent;
+}
+
+.version-tags-snapshot {
+    -fx-background-color: #c40003;
+    -fx-text-fill: whitesmoke;
+    -fx-font-size: 8;
+}
+
+.version-tags-beta {
+    -fx-background-color: #3a9fc4;
+    -fx-text-fill: whitesmoke;
+    -fx-font-size: 8;
+}
+
+.version-tags-alpha {
+    -fx-background-color: #9c6228;
+    -fx-text-fill: whitesmoke;
+    -fx-font-size: 8;
 }

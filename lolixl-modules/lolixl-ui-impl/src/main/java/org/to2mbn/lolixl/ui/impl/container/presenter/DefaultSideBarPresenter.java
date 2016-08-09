@@ -78,7 +78,6 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	@Override
 	protected void initializePresenter() {
 		startAlertDisplayWorkCycle();
-		// TODO: view.userProfileContainer.getChildren().add();
 		view.sidebarContainer.getChildren().addListener(new WeakListChangeListener<>(change -> {
 			if (change.getList().size() > 0) {
 				view.sidebarContainer.setId(view.sidebarContainer.getId().concat("-onpaneladded"));
