@@ -54,3 +54,5 @@ target/
 *~
 dependency-reduced-pom.xml
 .lolixl
+
+*__git_ignore.java
