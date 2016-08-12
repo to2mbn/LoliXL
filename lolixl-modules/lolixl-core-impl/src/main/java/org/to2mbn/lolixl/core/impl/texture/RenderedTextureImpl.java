@@ -11,19 +11,31 @@ public class RenderedTextureImpl implements RenderedTexture {
 	 * The specification of skin can be found at https://github.com/minotar/skin-spec
 	 */
 
+	static final int head_front_x = 1;
+	static final int head_front_y = 1;
+	static final int head_front_w = 1;
+	static final int head_front_h = 1;
+
+	static final int helm_front_x = 5;
+	static final int helm_front_y = 1;
+	static final int helm_front_w = 1;
+	static final int helm_front_h = 1;
+
 	SkinModel model;
 	int skinScale;
 	Color[][] skinImg;
 
 	@Override
 	public void renderAvatar(GraphicsContext ctx, double width) {
-		// width/height = 1/1
+		double helmBs = width / (1d * skinScale);
+		double headBs = (width - 1d * helmBs) / (1d * skinScale);
+		double headOffset = helmBs / 2d;
 
 		// render head.front
-		renderRange(ctx, skinImg, 1 * skinScale, 1 * skinScale, 1 * skinScale, 1 * skinScale, 0, 0, width / (1 * skinScale));
+		renderRange(ctx, skinImg, head_front_x * skinScale, head_front_y * skinScale, head_front_w * skinScale, head_front_h * skinScale, headOffset, headOffset, headBs);
 
 		// render helm.front
-		renderRange(ctx, skinImg, 5 * skinScale, 1 * skinScale, 1 * skinScale, 1 * skinScale, 0, 0, width / (1 * skinScale));
+		renderRange(ctx, skinImg, helm_front_x * skinScale, helm_front_y * skinScale, helm_front_w * skinScale, helm_front_h * skinScale, 0d, 0d, helmBs);
 	}
 
 	@Override
