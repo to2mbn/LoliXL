@@ -217,23 +217,44 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	}
 
 	@Override
-	public void enable(Theme theme) {
-		setEnable(theme, true);
+	public void enable(Theme theme, boolean forcibly) {
+		setEnable(theme, true, forcibly);
 	}
 
 	@Override
-	public void disable(Theme theme) {
-		setEnable(theme, false);
+	public void disable(Theme theme, boolean forcibly) {
+		setEnable(theme, false, forcibly);
 	}
 
-	private void setEnable(Theme theme, boolean enable) {
+	private void setEnable(Theme theme, boolean enable, boolean forcibly) {
 		Objects.requireNonNull(theme);
 		synchronized (config.themes) {
 			for (ThemeEntry entry : config.themes) {
 				if (entry.theme == theme && entry.enabled != enable) {
 					LOGGER.fine((enable ? "Enabling" : "Disabling") + " theme " + entry.id);
+					if (!forcibly) {
+						String type = getThemeType(entry.serviceRef);
+						List<ThemeEntry> availableThemes = filterAvailableThemes(type);
+						if (enable) {
+							// 需要禁用其它同类的
+							for (ThemeEntry anotherTheme : availableThemes) {
+								if (anotherTheme.enabled) {
+									anotherTheme.enabled = false;
+								}
+							}
+						} else {
+							if (Theme.TYPE_THEME_PACKAGE.equals(type)) {
+								if (countEnabledThemes(availableThemes) == 0) {
+									if (!availableThemes.isEmpty()) {
+										availableThemes.get(0).enabled = true;
+									}
+								}
+							}
+						}
+					}
 					entry.enabled = enable;
 					updateThemesList();
+					break;
 				}
 			}
 		}

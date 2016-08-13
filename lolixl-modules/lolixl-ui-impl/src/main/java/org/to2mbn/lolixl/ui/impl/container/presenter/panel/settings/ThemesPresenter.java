@@ -70,14 +70,14 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 	private void enableTheme(Tile tile, Theme theme) {
 		if (!isThemeEnabled(theme)) {
 			FXUtils.setCssClass(tile, "theme-tile-enabled");
-			themeService.enable(theme);
+			themeService.enable(theme, false);
 		}
 	}
 
 	private void disableTheme(Tile tile, Theme theme) {
 		if (isThemeEnabled(theme)) {
 			FXUtils.setCssClass(tile, "theme-tile");
-			themeService.disable(theme);
+			themeService.disable(theme, false);
 		}
 	}
 

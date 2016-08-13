@@ -4,8 +4,8 @@ import javafx.collections.ObservableList;
 
 public interface ThemeService {
 
-	void enable(Theme theme);
-	void disable(Theme theme);
+	void enable(Theme theme, boolean forcibly);
+	void disable(Theme theme, boolean forcibly);
 
 	ObservableList<Theme> getEnabledThemes();
 	ObservableList<Theme> getDisabledThemes();
