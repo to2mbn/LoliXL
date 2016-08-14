@@ -46,7 +46,7 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 				new MappedObservableList<>(themeService.getAllThemes(),
 						theme -> {
 							Tile tile = new Tile();
-							FXUtils.setCssClass(tile, "-xl-theme-tile"); // TODO
+							FXUtils.setCssClass(tile, "-xl-theme-tile");
 							ThemeTileView graphic = new ThemeTileView();
 							graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
 							graphic.iconView.imageProperty().bind(theme.getIcon());

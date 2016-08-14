@@ -87,3 +87,11 @@
     -fx-text-fill: whitesmoke;
     -fx-font-size: 8;
 }
+
+.-xl-panel-previous-button {
+    -fx-image: url("/ui/img/previous_button.png");
+}
+
+.-xl-panel-previous-button:hover {
+    -fx-image: url("/ui/img/previous_button_hover.png");
+}
