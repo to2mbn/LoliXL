@@ -9,6 +9,7 @@ import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
+// TODO: 移至ui-impl
 public class GameVersionGroupView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/game_version_group_item.fxml";
 

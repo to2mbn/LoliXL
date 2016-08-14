@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.image.Image;
 
+@SuppressWarnings("restriction")
 public interface DisplayableItem {
 
 	ObservableStringValue getLocalizedName();

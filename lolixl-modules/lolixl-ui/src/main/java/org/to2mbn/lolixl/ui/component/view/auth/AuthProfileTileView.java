@@ -9,6 +9,8 @@ import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
+// TODO: 移动至ui-impl模块中
+//       外界通过工厂方法创建实例
 public class AuthProfileTileView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/auth_profile_tile.fxml";
 

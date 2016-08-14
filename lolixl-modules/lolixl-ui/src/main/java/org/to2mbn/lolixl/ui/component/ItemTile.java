@@ -10,6 +10,7 @@ import javafx.css.StyleablePropertyFactory;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import java.util.List;
+import java.util.Objects;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
 
 /**
@@ -26,14 +27,11 @@ public class ItemTile extends Tile {
 
 	public static final String CSS_CLASS_ITEM_TILE = "xl-item-tile";
 
-	private DisplayableItem item;
-
 	private DoubleProperty iconWidthProperty = new SimpleStyleableDoubleProperty(StyleableProperties.ICON_WIDTH, this, "iconWidth", 0d);
 	private DoubleProperty iconHeightProperty = new SimpleStyleableDoubleProperty(StyleableProperties.ICON_HEIGHT, this, "iconHeight", 0d);
 
 	public ItemTile(DisplayableItem item) {
-		this.item = item;
-
+		Objects.requireNonNull(item);
 		getStyleClass().add(CSS_CLASS_ITEM_TILE);
 
 		textProperty().bind(item.getLocalizedName());

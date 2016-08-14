@@ -13,6 +13,7 @@ import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
+// TODO: 移动至offline auth模块中
 public class OfflineAuthProfileView extends BorderPane {
 	private static final String FXML_LOCATION = "/ui/fxml/component/offline_auth_profile_panel.fxml";
 
