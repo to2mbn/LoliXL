@@ -125,7 +125,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 
 		// make editable:
 		TextField input = new TextField();
-		input.setId("mcpath-editor");
+		input.setId("-xl-mcpath-editor");
 		input.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ENTER) {
 				groupView.setTop(null);

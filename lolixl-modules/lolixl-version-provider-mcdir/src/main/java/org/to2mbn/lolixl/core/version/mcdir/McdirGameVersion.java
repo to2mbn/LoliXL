@@ -56,7 +56,7 @@ public class McdirGameVersion implements GameVersion {
 	@Override
 	public Tile createTile() {
 		Tile tile = new Tile();
-		tile.setId("version-item-tile");
+		tile.setId("-xl-version-item-tile");
 		GameVersionItemView view = new GameVersionItemView();
 		view.versionNameLabel.textProperty().bind(getLocalizedName());
 		view.iconView.imageProperty().bind(icon);

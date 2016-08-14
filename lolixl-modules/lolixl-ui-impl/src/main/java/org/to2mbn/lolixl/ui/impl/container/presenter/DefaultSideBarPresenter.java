@@ -4,7 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
-import javafx.collections.WeakListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Duration;
@@ -78,13 +78,13 @@ public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> imple
 	@Override
 	protected void initializePresenter() {
 		startAlertDisplayWorkCycle();
-		view.sidebarContainer.getChildren().addListener(new WeakListChangeListener<>(change -> {
+		view.sidebarContainer.getChildren().addListener((ListChangeListener<? super Node>) change -> {
 			if (change.getList().size() > 0) {
 				view.sidebarContainer.setId(view.sidebarContainer.getId().concat("-onpaneladded"));
 			} else {
 				view.sidebarContainer.setId(view.sidebarContainer.getId().replace("-onpaneladded", ""));
 			}
-		}));
+		});
 	}
 
 	private void startAlertDisplayWorkCycle() {

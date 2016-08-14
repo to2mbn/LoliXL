@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="game-versions-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView">
+<BorderPane id="-xl-game-versions-root-container" fx:id="rootContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView">
    <center>
-       <ScrollPane id="game-versions-content-container" fx:id="contentContainer" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+       <ScrollPane id="-xl-game-versions-content-container" fx:id="contentContainer" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefHeight="440.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
            <content>
-               <VBox id="game-versions-versions-container" fx:id="versionsContainer" maxHeight="1.7976931348623157E308" spacing="5.0">
+               <VBox id="-xl-game-versions-versions-container" fx:id="versionsContainer" maxHeight="1.7976931348623157E308" spacing="5.0">
                <padding>
                   <Insets left="2.0" right="2.0" top="2.0" />
                </padding></VBox>
@@ -19,7 +19,7 @@
 
    </center>
    <top>
-      <StackPane id="game-versions-top-container" fx:id="topContainer" prefHeight="65.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+      <StackPane id="-xl-game-versions-top-container" fx:id="topContainer" prefHeight="65.0" prefWidth="250.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>

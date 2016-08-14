@@ -46,7 +46,7 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 				new MappedObservableList<>(themeService.getAllThemes(),
 						theme -> {
 							Tile tile = new Tile();
-							FXUtils.setCssClass(tile, "theme-tile"); // TODO
+							FXUtils.setCssClass(tile, "-xl-theme-tile"); // TODO
 							ThemeTileView graphic = new ThemeTileView();
 							graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
 							graphic.iconView.imageProperty().bind(theme.getIcon());
@@ -69,14 +69,14 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 
 	private void enableTheme(Tile tile, Theme theme) {
 		if (!isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "theme-tile-enabled");
+			FXUtils.setCssClass(tile, "-xl-theme-tile-enabled");
 			themeService.enable(theme);
 		}
 	}
 
 	private void disableTheme(Tile tile, Theme theme) {
 		if (isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "theme-tile");
+			FXUtils.setCssClass(tile, "-xl-theme-tile");
 			themeService.disable(theme);
 		}
 	}

@@ -2,11 +2,13 @@ package org.to2mbn.lolixl.ui.component;
 
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
  * 从 {@link DisplayableItem} 创建的磁贴。
@@ -26,12 +28,14 @@ public class DisplayableItemTile extends Tile {
 
 	public DisplayableItemTile(DisplayableItem item) {
 		this.item = item;
-		this.emptyIcon = new Image("/ui/img/no_icon.png");
-		setContentDisplay(ContentDisplay.TOP);
-
-		graphic = new DisplayableItemTileView();
-		graphic.textLabel.textProperty().bind(item.getLocalizedName());
-		graphic.iconView.imageProperty().bind(new ObjectBinding<Image>() {
+		try {
+			this.emptyIcon = new Image(BundleUtils.getInputStreamFromBundle(getClass(), "/ui/img/no_icon.png"));
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		this.graphic = new DisplayableItemTileView();
+		this.graphic.textLabel.textProperty().bind(item.getLocalizedName());
+		this.graphic.iconView.imageProperty().bind(new ObjectBinding<Image>() {
 			ObservableObjectValue<Image> image = item.getIcon();
 
 			{
@@ -43,6 +47,6 @@ public class DisplayableItemTile extends Tile {
 				return image.get() != null ? image.get() : emptyIcon;
 			}
 		});
-		FXUtils.setButtonGraphic(this, graphic);
+		FXUtils.setButtonGraphic(this, this.graphic);
 	}
 }

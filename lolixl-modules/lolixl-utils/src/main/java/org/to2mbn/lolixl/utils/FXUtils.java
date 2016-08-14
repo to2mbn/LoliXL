@@ -17,9 +17,9 @@ public final class FXUtils {
 	}
 
 	public static void setButtonGraphic(Button button, Node graphic) {
+		button.setGraphic(graphic);
 		button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		button.setPadding(Insets.EMPTY);
-		button.setGraphic(graphic);
 	}
 
 	public static void setCssClass(Styleable component, String... clazz) {
@@ -34,7 +34,7 @@ public final class FXUtils {
 			result = "-".concat(split[i]).concat(result);
 			count--;
 		}
-		return result.replaceFirst("-", "");
+		return "-xl-".concat(result.replaceFirst("-", ""));
 	}
 
 }
