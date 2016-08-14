@@ -2,9 +2,12 @@ package org.to2mbn.lolixl.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.WeakInvalidationListener;
 import javafx.collections.ObservableList;
 
 public final class CollectionUtils {
@@ -23,6 +26,35 @@ public final class CollectionUtils {
 
 	public static <T> void bindList(ObservableList<T> src, ObservableList<? super T> dest) {
 		src.addListener((Observable dummy) -> dest.setAll(src));
+	}
+
+	public static <T, C extends Collection<T> & Observable> InvalidationListener addDiffListener(C collection, Consumer<? super T> foreachAdd, Consumer<? super T> foreachRemove) {
+		CollectionDiffListener<T> differ = new CollectionDiffListener<>();
+		differ.target = collection;
+		differ.foreachAdd = foreachAdd;
+		differ.foreachRemove = foreachRemove;
+		collection.addListener(new WeakInvalidationListener(differ));
+		differ.invalidated(collection);
+		return differ;
+	}
+
+	private static class CollectionDiffListener<T> implements InvalidationListener {
+
+		Collection<T> target;
+		Consumer<? super T> foreachAdd;
+		Consumer<? super T> foreachRemove;
+
+		Collection<T> lastSnapshot = Collections.emptyList();
+		Object lock = new Object();
+
+		@Override
+		public void invalidated(Observable observable) {
+			synchronized (lock) {
+				diff(lastSnapshot, target, foreachAdd, foreachRemove);
+				lastSnapshot = new ArrayList<>(target);
+			}
+		}
+
 	}
 
 }

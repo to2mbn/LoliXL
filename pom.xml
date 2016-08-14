@@ -212,7 +212,7 @@
 					<extensions>true</extensions>
 					<configuration>
 						<instructions>
-							<Import-Package>!javafx.*,!com.sun.javafx.*,*</Import-Package>
+							<Import-Package>!javafx.*,!com.sun.javafx.*,!sun.*,*</Import-Package>
 						</instructions>
 					</configuration>
 				</plugin>

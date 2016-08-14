@@ -16,12 +16,24 @@ public final class FXUtils {
 			throw new IllegalStateException("Not on FX application thread; currentThread = " + Thread.currentThread().getName());
 	}
 
+	public static boolean isFxInitialized() {
+		try {
+			Platform.runLater(() -> {});
+		} catch (IllegalStateException e) {
+			return false;
+		}
+		return true;
+	}
+
+	// TODO: 删除此方法
+	@Deprecated
 	public static void setButtonGraphic(Button button, Node graphic) {
 		button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		button.setPadding(Insets.EMPTY);
 		button.setGraphic(graphic);
 	}
 
+	// TODO: 删除此方法
 	public static void setCssClass(Styleable component, String... clazz) {
 		component.getStyleClass().setAll(clazz);
 	}

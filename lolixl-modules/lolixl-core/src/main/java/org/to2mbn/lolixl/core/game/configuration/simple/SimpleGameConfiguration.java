@@ -2,8 +2,10 @@ package org.to2mbn.lolixl.core.game.configuration.simple;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.to2mbn.jmccc.option.JavaEnvironment;
@@ -32,6 +34,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleSetProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 
 public class SimpleGameConfiguration implements GameConfiguration {
 
@@ -52,7 +55,7 @@ public class SimpleGameConfiguration implements GameConfiguration {
 	private ObjectProperty<JavaPathStrategy> javaPathStrategyProperty = new SimpleObjectProperty<>(JavaPathStrategy.AUTOMATIC);
 	private StringProperty customizedJavaPathProperty = new SimpleStringProperty();
 
-	private SetProperty<DefaultArgumentOption> defaultArgumentOptionsProperty = new SimpleSetProperty<>();
+	private SetProperty<DefaultArgumentOption> defaultArgumentOptionsProperty = new SimpleSetProperty<>(FXCollections.observableSet(new TreeSet<>()));
 
 	private BooleanProperty disableOSXArgumentsProperty = new SimpleBooleanProperty(false);
 
@@ -62,10 +65,10 @@ public class SimpleGameConfiguration implements GameConfiguration {
 	private IntegerProperty customizedWindowWidthProperty = new SimpleIntegerProperty();
 	private IntegerProperty customizedWindowHeightProperty = new SimpleIntegerProperty();
 
-	private ListProperty<String> customizedJvmArgumentsProperty = new SimpleListProperty<>();
-	private ListProperty<String> customizedMinecraftArgumentsProperty = new SimpleListProperty<>();
-	private MapProperty<String, String> customizedCommandlineVariablesProperty = new SimpleMapProperty<>();
-	private SetProperty<String> customizedClasspathProperty = new SimpleSetProperty<>();
+	private ListProperty<String> customizedJvmArgumentsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+	private ListProperty<String> customizedMinecraftArgumentsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+	private MapProperty<String, String> customizedCommandlineVariablesProperty = new SimpleMapProperty<>(FXCollections.observableMap(new LinkedHashMap<>()));
+	private SetProperty<String> customizedClasspathProperty = new SimpleSetProperty<>(FXCollections.observableSet(new TreeSet<>()));
 
 	@Override
 	public LaunchOption process(AuthenticationProfile<?> authentication, GameVersion versionToLaunch) {

@@ -5,7 +5,7 @@ import org.osgi.framework.Bundle;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginDescription;
 
-public class PluginImpl implements Plugin {
+public class PluginImpl implements Plugin, Comparable<Plugin> {
 
 	PluginServiceImpl container;
 	PluginDescription description;
@@ -24,6 +24,11 @@ public class PluginImpl implements Plugin {
 	@Override
 	public CompletableFuture<Void> unload() {
 		return container.unloadPlugin(this);
+	}
+
+	@Override
+	public int compareTo(Plugin o) {
+		return description.getArtifact().compareTo(o.getDescription().getArtifact());
 	}
 
 }

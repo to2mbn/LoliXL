@@ -7,12 +7,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.plugin.LocalPluginRepository;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginManager;
@@ -23,6 +30,11 @@ import org.to2mbn.lolixl.plugin.impl.resolver.VersionComparator;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.utils.AsyncUtils;
+import org.to2mbn.lolixl.utils.BundleUtils;
+import org.to2mbn.lolixl.utils.FXUtils;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 @Service({ PluginManager.class })
 @Component
@@ -43,8 +55,27 @@ public class PluginManagerImpl implements PluginManager {
 	private ExecutorService localIOPool;
 
 	private Comparator<String> versionComparator = new VersionComparator();
+	private BundleListener bundleListener = event -> {
+		int type = event.getType();
+		if (type == BundleEvent.STARTED || type == BundleEvent.STOPPED)
+			updateEnabledPlugins();
+	};
 
 	private Map<MavenArtifact, CompletableFuture<Void>> inProgressDownloads = new HashMap<>();
+
+	private volatile ObservableList<Plugin> enabledPlugins;
+	private volatile ObservableList<Plugin> enabledPluginsView;
+	private Object enabledPluginsLock = new Object();
+
+	@Activate
+	public void active(ComponentContext compCtx) {
+		compCtx.getBundleContext().addBundleListener(bundleListener);
+	}
+
+	@Deactivate
+	public void deactive(ComponentContext compCtx) {
+		compCtx.getBundleContext().removeBundleListener(bundleListener);
+	}
 
 	@Override
 	public PluginService getService() {
@@ -136,6 +167,35 @@ public class PluginManagerImpl implements PluginManager {
 			}
 			return future;
 		}
+	}
+
+	@Override
+	public ObservableList<Plugin> enabledPluginsList() {
+		if (enabledPluginsView != null) {
+			return enabledPluginsView;
+		}
+		if (!FXUtils.isFxInitialized()) {
+			throw new IllegalStateException("JavaFX not initialized");
+		}
+		synchronized (enabledPluginsLock) {
+			if (enabledPlugins == null) {
+				enabledPlugins = FXCollections.observableArrayList();
+				enabledPluginsView = FXCollections.unmodifiableObservableList(enabledPlugins);
+			}
+			updateEnabledPlugins();
+		}
+		return enabledPluginsView;
+	}
+
+	private void updateEnabledPlugins() {
+		Set<Plugin> sorted = new TreeSet<>();
+		for (Plugin plugin : pluginService.getLoadedPlugins()) {
+			BundleUtils.waitBundleStarted(plugin.getBundle());
+			if (plugin.getBundle().getState() == Bundle.ACTIVE) {
+				sorted.add(plugin);
+			}
+		}
+		Platform.runLater(() -> enabledPlugins.setAll(sorted));
 	}
 
 }

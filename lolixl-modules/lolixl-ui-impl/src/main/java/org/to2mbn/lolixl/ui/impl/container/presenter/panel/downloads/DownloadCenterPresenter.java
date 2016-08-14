@@ -3,7 +3,9 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.downloads;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -13,6 +15,7 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.impl.download.notify.DownloadCenterNotifier;
 import org.to2mbn.lolixl.core.impl.download.notify.DownloadTaskGroup;
 import org.to2mbn.lolixl.i18n.I18N;
+import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.SideBarAlertService;
@@ -156,6 +159,11 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 		panel.onClosedProperty().set(this::resumeUpdateCycle);
 
 		return tile;
+	}
+
+	@Override
+	public ObservableObjectValue<Image> getIcon() {
+		return ImageLoading.load("img/org.to2mbn.lolixl.ui.impl.download_center/icon.png");
 	}
 
 }

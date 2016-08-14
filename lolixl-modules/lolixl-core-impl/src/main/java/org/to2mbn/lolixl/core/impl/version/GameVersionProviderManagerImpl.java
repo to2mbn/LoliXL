@@ -143,32 +143,34 @@ public class GameVersionProviderManagerImpl implements GameVersionProviderManage
 
 					// process versions
 					service.getVersions().addListener(new WeakListChangeListener<>(change -> {
-						change.getAddedSubList().forEach(added -> {
-							String versionNumber = added.getVersionNumber();
-							String versionAlias = entry0.versionAlias.get(versionNumber);
-							LOGGER.fine("Added version " + versionNumber + ", owner=" + location);
-							if (versionAlias != null) {
-								added.aliasProperty().set(versionAlias);
-								LOGGER.fine("Set alias for version " + versionNumber + " : " + entry0.alias + ", owner=" + location);
-							}
-							added.aliasProperty().addListener((Observable dummy) -> {
-								String newVersionAlias = added.aliasProperty().get();
-								if (!Objects.equals(newVersionAlias, entry0.versionAlias.get(versionNumber))) {
-									entry0.versionAlias.put(versionNumber, newVersionAlias);
-									LOGGER.fine("Alias of version " + versionNumber + " changed to " + newVersionAlias + " , owner=" + location);
-									observableContext.notifyChanged();
+						while (change.next()) {
+							change.getAddedSubList().forEach(added -> {
+								String versionNumber = added.getVersionNumber();
+								String versionAlias = entry0.versionAlias.get(versionNumber);
+								LOGGER.fine("Added version " + versionNumber + ", owner=" + location);
+								if (versionAlias != null) {
+									added.aliasProperty().set(versionAlias);
+									LOGGER.fine("Set alias for version " + versionNumber + " : " + entry0.alias + ", owner=" + location);
+								}
+								added.aliasProperty().addListener((Observable dummy) -> {
+									String newVersionAlias = added.aliasProperty().get();
+									if (!Objects.equals(newVersionAlias, entry0.versionAlias.get(versionNumber))) {
+										entry0.versionAlias.put(versionNumber, newVersionAlias);
+										LOGGER.fine("Alias of version " + versionNumber + " changed to " + newVersionAlias + " , owner=" + location);
+										observableContext.notifyChanged();
+									}
+								});
+
+								boolean isSelectedVersion = config.selected != null &&
+										Objects.equals(config.selected.getProviderName(), location) &&
+										Objects.equals(config.selected.getVersionName(), versionNumber);
+								boolean needSelectVersion = config.selected == null;
+								if (isSelectedVersion || needSelectVersion) {
+									selectedVersionProperty.set(added);
 								}
 							});
-
-							boolean isSelectedVersion = config.selected != null &&
-									Objects.equals(config.selected.getProviderName(), location) &&
-									Objects.equals(config.selected.getVersionName(), versionNumber);
-							boolean needSelectVersion = config.selected == null;
-							if (isSelectedVersion || needSelectVersion) {
-								selectedVersionProperty.set(added);
-							}
-						});
-						change.getRemoved().forEach(removed -> entry0.versionAlias.remove(removed.getVersionNumber()));
+							change.getRemoved().forEach(removed -> entry0.versionAlias.remove(removed.getVersionNumber()));
+						}
 					}));
 
 					if (config.selected != null && Objects.equals(location, config.selected.getProviderName())) {

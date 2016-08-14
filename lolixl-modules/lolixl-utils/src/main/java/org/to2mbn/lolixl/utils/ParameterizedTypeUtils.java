@@ -98,7 +98,7 @@ public final class ParameterizedTypeUtils {
 		}
 	}
 
-	public static ParameterizedType createParameterizedType(Class<?> rawType, Type[] actualTypeArguments) {
+	public static ParameterizedType createParameterizedType(Class<?> rawType, Type... actualTypeArguments) {
 		return new ParameterizedTypeImpl(rawType, actualTypeArguments);
 	}
 

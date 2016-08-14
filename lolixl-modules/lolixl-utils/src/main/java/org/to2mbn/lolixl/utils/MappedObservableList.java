@@ -12,7 +12,7 @@ import javafx.collections.ObservableList;
 public class MappedObservableList<SRC, DEST> extends ListBinding<DEST> {
 
 	private ObservableList<SRC> src;
-	private Function<SRC, DEST> func;
+	private Function<SRC, DEST> mapper;
 
 	private Map<SRC, DEST> mapping = new ConcurrentHashMap<>();
 	private Map<DEST, SRC> mappingR = new ConcurrentHashMap<>();
@@ -20,9 +20,9 @@ public class MappedObservableList<SRC, DEST> extends ListBinding<DEST> {
 	private Map<SRC, DEST> mappingView = Collections.unmodifiableMap(mapping);
 	private Map<DEST, SRC> mappingRView = Collections.unmodifiableMap(mappingR);
 
-	public MappedObservableList(ObservableList<SRC> src, Function<SRC, DEST> func) {
+	public MappedObservableList(ObservableList<SRC> src, Function<SRC, DEST> mapper) {
 		this.src = src;
-		this.func = func;
+		this.mapper = mapper;
 		bind(src);
 	}
 
@@ -31,7 +31,7 @@ public class MappedObservableList<SRC, DEST> extends ListBinding<DEST> {
 		synchronized (mapping) {
 			CollectionUtils.diff(mapping.keySet(), src,
 					added -> {
-						DEST mapped = func.apply(added);
+						DEST mapped = mapper.apply(added);
 						mapping.put(added, mapped);
 						mappingR.put(mapped, added);
 					},
@@ -39,7 +39,7 @@ public class MappedObservableList<SRC, DEST> extends ListBinding<DEST> {
 			return FXCollections.unmodifiableObservableList(
 					FXCollections.observableList(
 							src.stream()
-									.map(func)
+									.map(mapper)
 									.collect(toList())));
 		}
 	}

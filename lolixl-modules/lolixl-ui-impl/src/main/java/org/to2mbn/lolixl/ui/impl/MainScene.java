@@ -28,15 +28,11 @@ public class MainScene {
 	@Reference
 	private DefaultFramePresenter defaultFramePresenter;
 
-	private static final String DEFAULT_METRO_STYLE_SHEET = "/ui/css/metro.css";
-
 	@Activate
 	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {
 		Platform.runLater(() -> {
 			LOGGER.fine("Creating main scene");
 			Scene scene = new Scene(defaultFramePresenter.getView().rootContainer);
-			Thread.currentThread().setContextClassLoader(getClass().getClassLoader()); // 防止StyleManager智障读不到CSS
-			scene.getStylesheets().add(DEFAULT_METRO_STYLE_SHEET);
 			stage.setScene(scene);
 			stage.show();
 

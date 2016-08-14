@@ -317,9 +317,12 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 				installed -> {
 					LOGGER.fine("Loading theme " + installed);
 					ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
-					Thread.currentThread().setContextClassLoader(installed.getResourceLoader());
-					scene.getStylesheets().addAll(installed.getStyleSheets());
-					Thread.currentThread().setContextClassLoader(ctxLoader);
+					try {
+						Thread.currentThread().setContextClassLoader(installed.getResourceLoader());
+						scene.getStylesheets().addAll(installed.getStyleSheets());
+					} finally {
+						Thread.currentThread().setContextClassLoader(ctxLoader);
+					}
 				},
 				uninstalled -> {
 					LOGGER.fine("Unloading theme " + uninstalled);

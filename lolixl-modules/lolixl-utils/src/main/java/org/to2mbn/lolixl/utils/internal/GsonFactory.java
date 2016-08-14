@@ -11,7 +11,7 @@ import javafx.beans.property.Property;
 @Component
 public class GsonFactory {
 
-	public static Gson instance;
+	public static volatile Gson instance;
 
 	@Activate
 	public void activate(ComponentContext compCtx) {

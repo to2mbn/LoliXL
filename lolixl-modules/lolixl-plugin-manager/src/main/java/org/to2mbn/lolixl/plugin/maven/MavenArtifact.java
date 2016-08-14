@@ -8,7 +8,7 @@ import java.util.Objects;
  * 
  * @author yushijinhun
  */
-public class MavenArtifact implements Serializable {
+public class MavenArtifact implements Serializable, Comparable<MavenArtifact> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,6 +51,11 @@ public class MavenArtifact implements Serializable {
 	@Override
 	public String toString() {
 		return groupId + ":" + artifactId + ":" + version;
+	}
+
+	@Override
+	public int compareTo(MavenArtifact o) {
+		return toString().compareTo(o.toString());
 	}
 
 }

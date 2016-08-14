@@ -49,7 +49,7 @@
 }
 
 #tile-root-container {
-    -fx-background-color: blue;
+    -fx-background-color: transparent;
 }
 
 #displayable-tile {

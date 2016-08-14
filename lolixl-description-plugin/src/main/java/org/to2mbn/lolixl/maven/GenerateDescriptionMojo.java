@@ -53,9 +53,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}")
 	private File artifactOutputDir;
 
-	@Parameter
-	private Set<String> languageFiles;
-
 	@Component
 	private BuildContext buildContext;
 
@@ -89,14 +86,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			File outputDescriptionFileParent = outputDescriptionFile.getParentFile();
 			if (!outputDescriptionFileParent.exists()) {
 				outputDescriptionFileParent.mkdirs();
-			}
-
-			if (languageFiles != null && !languageFiles.isEmpty()) {
-				Element eleLanguageFiles = doc.createElement("languageFiles");
-				languageFiles.forEach(lang -> {
-					addTextElement(doc, eleLanguageFiles, "languageFile", lang);
-				});
-				elePlugin.appendChild(eleLanguageFiles);
 			}
 
 			try (Writer writer = new OutputStreamWriter(new BufferedOutputStream(buildContext.newFileOutputStream(outputDescriptionFile)), "UTF-8")) {

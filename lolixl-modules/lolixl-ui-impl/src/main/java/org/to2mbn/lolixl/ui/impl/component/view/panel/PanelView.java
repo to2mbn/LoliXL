@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.component.view.panel;
 
+import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -8,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
@@ -15,10 +17,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 public class PanelView extends BorderPane {
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
 
-	private static final Image PREVIOUS_BUTTON_IMG = new Image("/ui/img/previous_button.png");
-	private static final Image PREVIOUS_BUTTON_HOVER_IMG = new Image("/ui/img/previous_button_hover.png");
+	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
 
 	@FXML
 	public HBox headerContainer;
@@ -52,9 +52,13 @@ public class PanelView extends BorderPane {
 
 	private void initComponent() {
 		FXUtils.checkFxThread();
-		previousButton.setImage(PREVIOUS_BUTTON_IMG); // TODO: css
-		previousButton.setOnMouseMoved(event -> previousButton.setImage(PREVIOUS_BUTTON_HOVER_IMG));
-		previousButton.setOnMouseExited(event -> previousButton.setImage(PREVIOUS_BUTTON_IMG));
+
+		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("/ui/img/previous_button.png"); // TODO: 换路径名
+		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("/ui/img/previous_button_hover.png"); // TODO: 换路径名
+
+		previousButton.imageProperty().bind(previous_button_img);
+		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));
+		previousButton.setOnMouseExited(event -> previousButton.imageProperty().bind(previous_button_img));
 		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());

@@ -44,6 +44,7 @@ import org.to2mbn.lolixl.utils.MappedObservableList;
 @Service({ GameVersionsPresenter.class })
 @Component(immediate = true)
 public class GameVersionsPresenter extends Presenter<GameVersionsView> {
+
 	private static final String FXML_LOCATION = "/ui/fxml/panel/game_versions_panel.fxml";
 
 	@Reference
@@ -58,6 +59,14 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 	@Reference
 	private VersionTagResolver tagResolver;
 
+	private MappedObservableList<GameVersionProvider, GameVersionGroupView> mappedGameVersionProviderViews;
+
+	// FIXME: 变量意义不明
+	// 1. 这是干嘛的
+	// 2. 对于该变量，有可能的空指针访问
+	// 3. 在该变量赋值处，仅仅将一个Provider的GameVersions赋值了过来
+	//    如果说这是显示在侧边栏处的GameVersions，则此处设计有误。
+	//    侧边栏应当显示所有Provider的GameVersions。
 	private MappedObservableList<GameVersion, Tile> mappedGameVersionTiles;
 	private Tile addNewVersionTile;
 
@@ -74,9 +83,9 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 
 	@Override
 	protected void initializePresenter() {
-		MappedObservableList<GameVersionProvider, GameVersionGroupView> mapped =
-				new MappedObservableList<>(providerManager.getProviders(), this::makeViewForProvider);
-		CollectionUtils.bindList(mapped, view.versionsContainer.getChildren());
+		mappedGameVersionProviderViews = new MappedObservableList<>(providerManager.getProviders(), this::makeViewForProvider);
+		CollectionUtils.bindList(mappedGameVersionProviderViews, view.versionsContainer.getChildren());
+
 		providerManager.selectedVersionProperty().addListener((ob, oldVal, newVal) -> {
 			Node child = null;
 			Tile cachedTile = mappedGameVersionTiles.mapping().get(newVal);
@@ -101,6 +110,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		GameVersionGroupView groupView = new GameVersionGroupView();
 		Label pathLabel = groupView.mcdirPathLabel;
 		StringBinding pathAliasBinding = new StringBinding() {
+
 			private StringProperty aliasProperty = provider.aliasProperty();
 
 			{

@@ -124,7 +124,6 @@ class InternalBundleRepository {
 	}
 
 	public FileChannel openChannel(String groupId, String artifactId, String version, String classifier, String type) throws IOException {
-		LOGGER.fine(format("Try opening channel groupId=[%s], artifactId=[%s], version=[%s], classifier=[%s], type=[%s]", groupId, artifactId, version, classifier, type));
 		if (!artifacts.contains(groupId + ":" + artifactId)) {
 			return null;
 		}

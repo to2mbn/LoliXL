@@ -1,7 +1,10 @@
 package org.to2mbn.lolixl.utils;
 
 import static java.lang.String.format;
+import java.util.function.Function;
 import java.util.logging.Logger;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 public final class ServiceUtils {
@@ -22,6 +25,20 @@ public final class ServiceUtils {
 		}
 		// fallback
 		return service.getClass().getName().replace('$', '.');
+	}
+
+	public static <T, S> T doWithService(Class<S> service, Class<?> serviceUser, Function<S, T> action) {
+		BundleContext ctx = FrameworkUtil.getBundle(serviceUser).getBundleContext();
+		ServiceReference<S> ref = ctx.getServiceReference(service);
+		if (ref == null) {
+			throw new IllegalStateException(format("Service %s is not available", service.getName()));
+		}
+		S s = ctx.getService(ref);
+		try {
+			return action.apply(s);
+		} finally {
+			ctx.ungetService(ref);
+		}
 	}
 
 }

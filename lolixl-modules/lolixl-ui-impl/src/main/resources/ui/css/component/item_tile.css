@@ -1,0 +1,7 @@
+/*
+ * CSS for org.to2mbn.lolixl.ui.component.ItemTile
+ */
+
+.xl-tiem-tile {
+	-fx-content-display: right;
+}

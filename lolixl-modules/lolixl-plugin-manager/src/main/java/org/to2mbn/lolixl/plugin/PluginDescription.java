@@ -15,6 +15,4 @@ public interface PluginDescription {
 	 */
 	Set<MavenArtifact> getDependencies();
 
-	Set<String> getLanguageFiles();
-
 }

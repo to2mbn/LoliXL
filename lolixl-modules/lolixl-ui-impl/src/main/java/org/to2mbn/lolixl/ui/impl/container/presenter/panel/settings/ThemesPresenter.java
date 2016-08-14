@@ -30,6 +30,8 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 	@Reference
 	private ThemeService themeService;
 
+	private MappedObservableList<Theme, Tile> tilesMapping;
+
 	@Activate
 	public void active(ComponentContext compCtx) {
 		super.active();
@@ -42,29 +44,28 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 
 	@Override
 	protected void initializePresenter() {
-		CollectionUtils.bindList(
-				new MappedObservableList<>(themeService.getAllThemes(),
-						theme -> {
-							Tile tile = new Tile();
-							FXUtils.setCssClass(tile, "theme-tile"); // TODO
-							ThemeTileView graphic = new ThemeTileView();
-							graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
-							graphic.iconView.imageProperty().bind(theme.getIcon());
-							FXUtils.setButtonGraphic(tile, graphic);
-							tile.setUserData(theme);
-							tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
-								updateInfoPane((Theme) tile.getUserData());
-							}));
-							tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
-								if (isThemeEnabled(theme)) {
-									disableTheme(tile, theme);
-								} else {
-									enableTheme(tile, theme);
-								}
-							}));
-							return tile;
-						}),
-				view.themesContainer.getChildren());
+		tilesMapping = new MappedObservableList<>(themeService.getAllThemes(),
+				theme -> {
+					Tile tile = new Tile();
+					FXUtils.setCssClass(tile, "theme-tile"); // TODO
+					ThemeTileView graphic = new ThemeTileView();
+					graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
+					graphic.iconView.imageProperty().bind(theme.getIcon());
+					FXUtils.setButtonGraphic(tile, graphic);
+					tile.setUserData(theme);
+					tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
+						updateInfoPane((Theme) tile.getUserData());
+					}));
+					tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
+						if (isThemeEnabled(theme)) {
+							disableTheme(tile, theme);
+						} else {
+							enableTheme(tile, theme);
+						}
+					}));
+					return tile;
+				});
+		CollectionUtils.bindList(tilesMapping, view.themesContainer.getChildren());
 	}
 
 	private void enableTheme(Tile tile, Theme theme) {
