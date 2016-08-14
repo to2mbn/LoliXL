@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.core.impl.version.tags;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +20,8 @@ public class VersionTypeTagSolution implements VersionTagSolution {
 	
 	private static final String[][] types={
 			{ "snapshot", "org.to2mbn.lolixl.core.impl.version.tags.snapshot" },
-			{ "old_beta", "org.to2mbn.lolixl.core.impl.version.tags.beta" },
-			{ "old_alpha", "org.to2mbn.lolixl.core.impl.version.tags.alpha" },
+			{ "old-beta", "org.to2mbn.lolixl.core.impl.version.tags.beta" },
+			{ "old-alpha", "org.to2mbn.lolixl.core.impl.version.tags.alpha" },
 	};
 
 	private Map<String, VersionTag> type2tag = new HashMap<>();
@@ -28,7 +29,7 @@ public class VersionTypeTagSolution implements VersionTagSolution {
 	@Activate
 	public void active(ComponentContext compCtx) {
 		for (String[] kvPair : types) {
-			type2tag.put(kvPair[0], new VersionTag(kvPair[1], RANKING));
+			type2tag.put(kvPair[0], new VersionTag(kvPair[1], RANKING, Collections.singletonList("xl-version-tag-" + kvPair[0])));
 		}
 	}
 

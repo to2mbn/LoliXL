@@ -1,11 +1,13 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
-import com.sun.javafx.binding.StringConstant;
+import static java.util.stream.Collectors.*;
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
-import javafx.event.WeakEventHandler;
+import javafx.collections.ObservableList;
 import javafx.scene.input.MouseEvent;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -17,8 +19,10 @@ import org.to2mbn.lolixl.ui.impl.component.view.theme.ThemeTileView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
+import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Component(immediate = true)
@@ -30,6 +34,12 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 	private ThemeService themeService;
 
 	private MappedObservableList<Theme, Tile> tilesMapping;
+
+	// 用于维护WeakListener的引用
+	@SuppressWarnings("unused")
+	private InvalidationListener enabledThemesListener;
+	@SuppressWarnings("unused")
+	private InvalidationListener disabledThemesListener;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -46,37 +56,43 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 		tilesMapping = new MappedObservableList<>(themeService.getAllThemes(),
 				theme -> {
 					Tile tile = new Tile();
-					FXUtils.setCssClass(tile, "xl-theme-tile"); // TODO
+					tile.getStyleClass().add("xl-theme-tile");
 					ThemeTileView graphic = new ThemeTileView();
 					graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
 					graphic.iconView.imageProperty().bind(theme.getIcon());
 					FXUtils.setButtonGraphic(tile, graphic);
 					tile.setUserData(theme);
-					tile.addEventHandler(MouseEvent.MOUSE_MOVED, new WeakEventHandler<>(event -> {
-						updateInfoPane((Theme) tile.getUserData());
-					}));
-					tile.addEventHandler(MouseEvent.MOUSE_CLICKED, new WeakEventHandler<>(event -> {
+					tile.addEventHandler(MouseEvent.MOUSE_MOVED, event -> updateInfoPane((Theme) tile.getUserData()));
+					tile.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 						if (isThemeEnabled(theme)) {
 							disableTheme(tile, theme);
 						} else {
 							enableTheme(tile, theme);
 						}
-					}));
+					});
 					return tile;
 				});
+		enabledThemesListener = bindCssClass(themeService.getEnabledThemes(), "xl-theme-tile-enabled");
+		disabledThemesListener = bindCssClass(themeService.getDisabledThemes(), "xl-theme-tile-disabled");
 		Bindings.bindContent(view.themesContainer.getChildren(), tilesMapping);
+	}
+
+	private InvalidationListener bindCssClass(ObservableList<Theme> themes, String cssClass) {
+		return CollectionUtils.addDiffListener(themes, operateCssClass(added -> added.add(cssClass)), operateCssClass(removed -> removed.remove(cssClass)));
+	}
+
+	private Consumer<Theme> operateCssClass(Consumer<ObservableList<String>> operation) {
+		return theme -> Platform.runLater(() -> operation.accept(tilesMapping.mapping().get(theme).getStyleClass()));
 	}
 
 	private void enableTheme(Tile tile, Theme theme) {
 		if (!isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "xl-theme-tile-enabled");
 			themeService.enable(theme, false);
 		}
 	}
 
 	private void disableTheme(Tile tile, Theme theme) {
 		if (isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "xl-theme-tile");
 			themeService.disable(theme, false);
 		}
 	}
@@ -100,8 +116,8 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 			protected String computeValue() {
 				return Stream
 						.of(authorsBinding.getValue())
-						.reduce(StringConstant.valueOf(""), (str, next) -> Bindings.concat(str.get() + ", " + next.get()))
-						.get();
+						.map(ObservableStringValue::get)
+						.collect(joining(", "));
 			}
 		});
 	}

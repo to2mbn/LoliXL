@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.core.version.mcdir;
 
-import com.sun.javafx.binding.ObjectConstant;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -9,6 +8,7 @@ import org.to2mbn.jmccc.option.MinecraftDirectory;
 import org.to2mbn.jmccc.version.Version;
 import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
+import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.component.view.version.GameVersionItemView;
 import org.to2mbn.lolixl.utils.FXUtils;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 public class McdirGameVersion implements GameVersion {
 
 	private StringProperty aliasProperty = new SimpleStringProperty();
-	private ObjectConstant<Image> icon = ObjectConstant.valueOf(new Image("/ui/img/grass_cube.png"));
+	private ObservableObjectValue<Image> icon = ImageLoading.load("img/org.to2mbn.lolixl.version.mcdir/version_icon.png");
 
 	private String version;
 	private Path mcdir;

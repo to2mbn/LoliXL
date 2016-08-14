@@ -163,7 +163,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	@Override
 	public ObservableObjectValue<Image> getIcon() {
-		return ImageLoading.load("img/org.to2mbn.lolixl.ui.impl.download_center/icon.png");
+		return ImageLoading.load("img/org.to2mbn.lolixl.ui.download_center/icon.png");
 	}
 
 }

@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
-import javafx.collections.ObservableList;
 
 public final class CollectionUtils {
 
@@ -22,10 +21,6 @@ public final class CollectionUtils {
 		List<T> removed = new ArrayList<>(from);
 		removed.removeAll(to);
 		removed.forEach(foreachRemove);
-	}
-
-	public static <T> void bindList(ObservableList<T> src, ObservableList<? super T> dest) {
-		src.addListener((Observable dummy) -> dest.setAll(src));
 	}
 
 	public static <T, C extends Collection<T> & Observable> InvalidationListener addDiffListener(C collection, Consumer<? super T> foreachAdd, Consumer<? super T> foreachRemove) {

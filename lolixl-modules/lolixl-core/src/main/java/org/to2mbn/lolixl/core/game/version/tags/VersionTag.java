@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.core.game.version.tags;
 
+import java.util.List;
 import java.util.Objects;
 import org.to2mbn.lolixl.i18n.I18N;
 import javafx.beans.value.ObservableStringValue;
@@ -8,15 +9,17 @@ public class VersionTag implements Comparable<VersionTag> {
 
 	private String id;
 	private int ranking;
+	private List<String> cssClasses;
 	private ObservableStringValue displayName;
 
-	public VersionTag(String id, int ranking) {
-		this(id, ranking, I18N.localize(id));
+	public VersionTag(String id, int ranking, List<String> cssClasses) {
+		this(id, ranking, cssClasses, I18N.localize(id));
 	}
 
-	public VersionTag(String id, int ranking, ObservableStringValue displayName) {
+	public VersionTag(String id, int ranking, List<String> cssClasses, ObservableStringValue displayName) {
 		this.id = Objects.requireNonNull(id);
 		this.ranking = ranking;
+		this.cssClasses = Objects.requireNonNull(cssClasses);
 		this.displayName = Objects.requireNonNull(displayName);
 	}
 
@@ -30,6 +33,10 @@ public class VersionTag implements Comparable<VersionTag> {
 
 	public int getRanking() {
 		return ranking;
+	}
+
+	public List<String> getCssClasses() {
+		return cssClasses;
 	}
 
 	@Override

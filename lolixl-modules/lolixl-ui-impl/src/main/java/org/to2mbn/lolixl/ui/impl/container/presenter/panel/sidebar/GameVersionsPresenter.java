@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -28,6 +29,7 @@ import org.to2mbn.lolixl.core.game.version.GameVersionProviderManager;
 import org.to2mbn.lolixl.core.game.version.tags.VersionTag;
 import org.to2mbn.lolixl.core.game.version.tags.VersionTagResolver;
 import org.to2mbn.lolixl.i18n.I18N;
+import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
@@ -38,7 +40,6 @@ import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionEditorView;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionItemWrapperView;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
-import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 
 @Service({ GameVersionsPresenter.class })
@@ -196,13 +197,15 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		button.setPrefWidth(Region.USE_COMPUTED_SIZE);
 		button.setPrefHeight(Region.USE_COMPUTED_SIZE);
 		button.textProperty().bind(versionTag.getDisplayName());
-		FXUtils.setCssClass(button, FXUtils.tagIdToCssClass(versionTag.getId()));
+		button.getStyleClass().add("xl-version-tag");
+		button.getStyleClass().addAll(versionTag.getCssClasses());
 		return button;
 	}
 
 	private Button makeDeleteMcdirButton(GameVersionProvider provider, Parent parent) {
 		Button button = new Button();
-		button.setBackground(new Background(new BackgroundImage(new Image("/ui/img/delete_mcdir.png"), null, null, null, null)));
+		ObservableObjectValue<Image> deleteIcon = ImageLoading.load("img/org.to2mbn.lolixl.ui.sidebar.version/delete_mcdir.png");
+		button.backgroundProperty().bind(Bindings.createObjectBinding(() -> new Background(new BackgroundImage(deleteIcon.get(), null, null, null, null)), deleteIcon));
 		button.setOnAction(event -> {
 			// YUSHI'S TODO: delete the mcdir?
 			view.versionsContainer.getChildren().remove(parent);

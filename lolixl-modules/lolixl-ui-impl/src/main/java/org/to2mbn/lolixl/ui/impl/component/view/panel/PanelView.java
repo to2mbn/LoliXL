@@ -53,8 +53,8 @@ public class PanelView extends BorderPane {
 	private void initComponent() {
 		FXUtils.checkFxThread();
 
-		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("/ui/img/previous_button.png"); // TODO: 换路径名
-		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("/ui/img/previous_button_hover.png"); // TODO: 换路径名
+		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("img/org.to2mbn.lolixl.ui/previous_button.png");
+		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("img/org.to2mbn.lolixl.ui/previous_button_hover.png");
 
 		previousButton.imageProperty().bind(previous_button_img);
 		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));
