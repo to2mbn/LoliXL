@@ -1,68 +1,68 @@
-#default-frame-shadow-container,
-#default-sidebar-root-container,
-#default-sidebar-functional-tile-container,
-#default-sidebar-sidebar-container,
-#default-sidebar-user-profile-container,
-#panel-root-container,
-#panel-content-container,
-#theme-tile-root-container,
-#theme-tile-content-container {
+#-xl-default-frame-shadow-container,
+#-xl-default-sidebar-root-container,
+#-xl-default-sidebar-functional-tile-container,
+#-xl-default-sidebar-sidebar-container,
+#-xl-default-sidebar-user-profile-container,
+#-xl-panel-root-container,
+#-xl-panel-content-container,
+#-xl-theme-tile-root-container,
+#-xl-theme-tile-content-container {
     -fx-background-color: transparent;
 }
 
-#content-panel-title-label {
+#-xl-content-panel-title-label {
     -fx-text-fill: whitesmoke;
     -fx-font-size: 26;
 }
 
-#content-panel-previous-button {
+#-xl-content-panel-previous-button {
     -fx-text-fill: transparent;
 }
 
-#tile {
+#-xl-tile {
     -fx-text-fill: whitesmoke;
 }
 
-#download-group-item-name-label {
+#-xl-download-group-item-name-label {
     -fx-font-size: 24;
     -fx-text-fill: whitesmoke;
 }
 
-#download-group-item-status-label {
+#-xl-download-group-item-status-label {
     -fx-font-size: 28;
     -fx-font-weight: bold;
     -fx-text-fill: whitesmoke;
 }
 
-#displayable-item-tile-text-label {
+#-xl-displayable-item-tile-text-label {
     -fx-font-size: 24;
     -fx-font-weight: bold;
     -fx-text-fill: whitesmoke;
 }
 
-#displayable-item-tile-root-container {
+#-xl-displayable-item-tile-root-container {
     -fx-background-color: transparent;
 }
 
-#theme-tile-name-label {
+#-xl-theme-tile-name-label {
     -fx-text-fill: whitesmoke;
 }
 
-#tile-root-container {
+#-xl-tile-root-container {
     -fx-background-color: blue;
 }
 
-#displayable-tile {
+#-xl-displayable-tile {
     -fx-text-fill: transparent;
 }
 
-#game-version-group-mcdir-path-label {
+#-xl-game-version-group-mcdir-path-label {
     -fx-text-fill: lightgrey;
     -fx-font-style: italic;
     -fx-font-size: 18;
 }
 
-#mcpath-editor {
+#-xl-mcpath-editor {
     -fx-font-size: 18;
 }
 

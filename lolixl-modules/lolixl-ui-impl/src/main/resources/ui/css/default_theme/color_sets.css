@@ -1,7 +1,7 @@
-#default-sidebar-main-content-container,
-#default-sidebar-sidebar-container-onpaneladded,
-#panel-blur-container,
-#tile-blur-container {
+#-xl-default-sidebar-main-content-container,
+#-xl-default-sidebar-sidebar-container-onpaneladded,
+#-xl-panel-blur-container,
+#-xl-tile-blur-container {
     -fx-background-color: rgba(205, 92, 94, 0.3);
 }
 
