@@ -12,4 +12,6 @@ public interface GameVersionProvider extends DisplayableTile, Aliasable {
 	ObservableList<GameVersion> getVersions();
 	Path getMinecraftDirectory();
 
+	void delete();
+
 }

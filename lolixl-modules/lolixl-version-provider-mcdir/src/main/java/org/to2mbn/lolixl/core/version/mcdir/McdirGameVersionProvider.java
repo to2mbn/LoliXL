@@ -18,16 +18,19 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+@SuppressWarnings("restriction")
 public class McdirGameVersionProvider implements GameVersionProvider {
 
 	private StringProperty aliasProperty = new SimpleStringProperty();
 	private Path location;
+	private Runnable remover;
 	private ObservableList<GameVersion> gameVersions = FXCollections.observableArrayList();
 	private ObservableList<GameVersion> gameVersionsReadOnlyView = FXCollections.unmodifiableObservableList(gameVersions);
 	private Map<String, GameVersion> versionMapping = new ConcurrentHashMap<>();
 
-	public McdirGameVersionProvider(Path location) {
+	public McdirGameVersionProvider(Path location, Runnable remover) {
 		this.location = location;
+		this.remover = remover;
 		refreshVersions();
 	}
 
@@ -85,6 +88,11 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public void delete() {
+		remover.run();
 	}
 
 }

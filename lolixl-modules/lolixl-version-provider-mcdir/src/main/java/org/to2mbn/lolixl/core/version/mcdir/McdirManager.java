@@ -84,26 +84,31 @@ public class McdirManager implements ConfigurationCategory<McdirList> {
 	 */
 	public boolean removeMcdir(String path) {
 		Path absPath = Paths.get(path).toAbsolutePath();
-		boolean changed = false;
 		synchronized (mcdirList.mcdirs) {
 			for (McdirEntry entry : mcdirList.mcdirs)
 				if (absPath.equals(Paths.get(entry.path).toAbsolutePath())) {
 					mcdirList.mcdirs.remove(entry);
 					unregisterMcdir(entry);
 					observableContext.notifyChanged();
-					changed = true;
-					break;
+					return true;
 				}
 		}
-		if (changed)
-			observableContext.notifyChanged();
-		return changed;
+		return false;
+	}
+
+	private void removeMcdir(McdirEntry entry) {
+		synchronized (mcdirList.mcdirs) {
+			if (mcdirList.mcdirs.remove(entry)) {
+				unregisterMcdir(entry);
+				observableContext.notifyChanged();
+			}
+		}
 	}
 
 	private void registerMcdir(McdirEntry entry) {
 		synchronized (entry) {
 			if (entry.registration == null) {
-				entry.service = new McdirGameVersionProvider(Paths.get(entry.path));
+				entry.service = new McdirGameVersionProvider(Paths.get(entry.path), () -> removeMcdir(entry));
 				Map<String, Object> properties = new HashMap<>();
 				properties.put(Constants.SERVICE_RANKING, entry.service.getRanking());
 				properties.put(GameVersionProvider.PROPERTY_PROVIDER_LOCATION, "org.to2mbn.lolixl.core.version.mcdir:" + entry.path);

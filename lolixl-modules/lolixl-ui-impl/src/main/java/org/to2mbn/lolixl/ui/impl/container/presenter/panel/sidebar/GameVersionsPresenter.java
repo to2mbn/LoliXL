@@ -206,10 +206,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		Button button = new Button();
 		ObservableObjectValue<Image> deleteIcon = ImageLoading.load("img/org.to2mbn.lolixl.ui.sidebar.version/delete_mcdir.png");
 		button.backgroundProperty().bind(Bindings.createObjectBinding(() -> new Background(new BackgroundImage(deleteIcon.get(), null, null, null, null)), deleteIcon));
-		button.setOnAction(event -> {
-			// YUSHI'S TODO: delete the mcdir?
-			view.versionsContainer.getChildren().remove(parent);
-		});
+		button.setOnAction(event -> provider.delete());
 		return button;
 	}
 

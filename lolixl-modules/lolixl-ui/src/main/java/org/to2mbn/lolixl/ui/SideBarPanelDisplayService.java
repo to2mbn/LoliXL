@@ -20,7 +20,7 @@ public interface SideBarPanelDisplayService extends PanelFactory {
 	 * @return
 	 */
 	@Override
-	Panel newPanel(); // TODO: 可能需要返回一个特别的继承自Panel的子类
+	Panel newPanel();
 
 	/**
 	 * 获取当前打开的Panel。
