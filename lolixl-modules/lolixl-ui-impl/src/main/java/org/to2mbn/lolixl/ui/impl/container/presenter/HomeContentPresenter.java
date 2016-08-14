@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
-import javafx.event.WeakEventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
@@ -27,6 +26,12 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";
 
+	private static final String CSS_CLASS_TILE = "xl-sidebar-tile";
+	private static final String CSS_CLASS_TILE_EXPANDED = "xl-sidebar-tile-expanded";
+	private static final String CSS_CLASS_TILE_UNEXPANDED = "xl-sidebar-tile-unexpanded";
+	private static final String CSS_CLASS_TILE_EXPANDING = "xl-sidebar-tile-expanding";
+
+	// Magic numbers
 	private int tileAnimationDuration = 100;
 
 	@Reference
@@ -52,7 +57,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			return tile;
 		});
 		Bindings.bindContent(view.tileContainer.getChildren(), tilesMapping);
-		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.homecontent.button.startgame.text"));
+		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.homecontent.launch_button.text"));
 	}
 
 	/**
@@ -61,19 +66,20 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	 * @param tile
 	 */
 	public void setManagementTile(Tile tile) {
-		resolveTile(tile);
+		tile.getStyleClass().add("xl-sidebar-tile-management");
 		view.tileRootContainer.setBottom(tile);
 	}
 
 	private void resolveTile(Tile tile) {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile);
-		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, new WeakEventHandler<>(animationHandler::runRollOutAnimation));
-		tile.addEventHandler(MouseEvent.MOUSE_EXITED, new WeakEventHandler<>(animationHandler::cancelAndFallback));
-		tile.setPrefHeight(55);
-		tile.setPrefWidth(55);
+		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::runRollOutAnimation);
+		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
+		tile.getStyleClass().add(CSS_CLASS_TILE);
+		tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
 	}
 
 	private class TileAnimationHandler {
+
 		private final Tile tile;
 		private final AtomicReference<Timeline> currentAnimation = new AtomicReference<>(null);
 
@@ -91,12 +97,18 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			} else {
 				time = Duration.millis(tileAnimationDuration);
 			}
+
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 200))
-			);
-			newOne.setOnFinished(event -> currentAnimation.set(null));
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), -1))); // FIXME: use a fit width here
+			newOne.setOnFinished(event -> {
+				currentAnimation.set(null);
+				tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDING);
+				tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDED);
+			});
 			currentAnimation.set(newOne);
+			tile.getStyleClass().remove(CSS_CLASS_TILE_UNEXPANDED);
+			tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDING);
 			newOne.play();
 		}
 
@@ -112,10 +124,15 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			}
 			Timeline newOne = new Timeline(
 					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), 55))
-			);
-			newOne.setOnFinished(event -> currentAnimation.set(null));
+					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getPrefHeight()))); // let width be the same as height
+			newOne.setOnFinished(event -> {
+				currentAnimation.set(null);
+				tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDING);
+				tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
+			});
 			currentAnimation.set(newOne);
+			tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDED);
+			tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDING);
 			newOne.play();
 		}
 	}

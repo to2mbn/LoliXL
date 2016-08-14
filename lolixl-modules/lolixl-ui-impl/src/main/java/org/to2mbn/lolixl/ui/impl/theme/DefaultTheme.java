@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 
+@SuppressWarnings("restriction")
 @Service({ Theme.class })
 @Properties({
 		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.impl.theme.default"),

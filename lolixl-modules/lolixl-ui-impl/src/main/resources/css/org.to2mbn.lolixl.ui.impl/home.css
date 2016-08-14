@@ -1,0 +1,27 @@
+.xl-sidebar-tile {
+}
+
+.xl-sidebar-tile-unexpanded {
+	-fx-padding: 5;
+	-fx-pref-width: 60;
+	-fx-pref-height: 60;
+	-fx-content-display: graphic-only;
+}
+
+.xl-sidebar-tile-expanding {
+	-fx-padding: 5 15;
+	-fx-content-display: right;
+}
+
+.xl-sidebar-tile-expanded {
+	-fx-padding: 5 10;
+	-fx-pref-height: 60;
+	-fx-content-display: right;
+}
+
+.xl-sidebar-tile-management {
+	-fx-padding: 5;
+	-fx-pref-width: 60;
+	-fx-pref-height: 60;
+	-fx-content-display: right;
+}

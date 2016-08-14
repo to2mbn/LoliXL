@@ -11,14 +11,18 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.SideBarTileService.StackingStatus;
+import org.to2mbn.lolixl.ui.component.ItemTile;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
+import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
+import com.sun.javafx.binding.StringConstant;
 
+@SuppressWarnings("restriction")
 @Component(immediate = true)
 public class TileManagingPresenter extends Presenter<TileManagingView> implements DisplayableTile {
 
@@ -81,7 +85,13 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	}
 
 	private void bindManagementTile() {
-		Tile tile = DisplayableTile.super.createTile();
+		Tile tile = new ItemTile(new DisplayableItem() {
+
+			@Override
+			public ObservableStringValue getLocalizedName() {
+				return StringConstant.valueOf("...");
+			}
+		});
 		Panel panel = panelDisplayService.newPanel();
 		panel.bindButton(tile);
 		panel.bindItem(this);

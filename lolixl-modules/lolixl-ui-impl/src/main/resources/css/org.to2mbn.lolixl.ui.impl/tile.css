@@ -5,4 +5,5 @@
 .xl-item-tile {
 	-xl-icon-width: 50;
 	-xl-icon-height: 50;
+	-fx-graphic-text-gap: 6;
 }
