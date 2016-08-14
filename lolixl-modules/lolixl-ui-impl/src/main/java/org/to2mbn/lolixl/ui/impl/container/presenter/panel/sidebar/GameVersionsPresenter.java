@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
@@ -37,7 +38,6 @@ import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionEditorView;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionItemWrapperView;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
-import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 
@@ -84,7 +84,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 	@Override
 	protected void initializePresenter() {
 		mappedGameVersionProviderViews = new MappedObservableList<>(providerManager.getProviders(), this::makeViewForProvider);
-		CollectionUtils.bindList(mappedGameVersionProviderViews, view.versionsContainer.getChildren());
+		Bindings.bindContent(view.versionsContainer.getChildren(), mappedGameVersionProviderViews);
 
 		providerManager.selectedVersionProperty().addListener((ob, oldVal, newVal) -> {
 			Node child = null;
@@ -159,7 +159,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 		});
 
 		mappedGameVersionTiles = new MappedObservableList<>(provider.getVersions(), this::makeTileForVersion);
-		CollectionUtils.bindList(mappedGameVersionTiles, view.versionsContainer.getChildren());
+		Bindings.bindContent(view.versionsContainer.getChildren(), mappedGameVersionTiles);
 		return groupView;
 	}
 

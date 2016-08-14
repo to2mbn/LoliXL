@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar;
 
+import javafx.beans.binding.Bindings;
 import javafx.event.WeakEventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -17,7 +18,6 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.auth.AddNewProfileTileView;
 import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.AuthProfilesView;
-import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.List;
@@ -77,6 +77,6 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 			children.add(t);
 			return t;
 		});
-		CollectionUtils.bindList(mappedProfileTiles, view.profilesContainer.getChildren());
+		Bindings.bindContent(view.profilesContainer.getChildren(), mappedProfileTiles);
 	}
 }

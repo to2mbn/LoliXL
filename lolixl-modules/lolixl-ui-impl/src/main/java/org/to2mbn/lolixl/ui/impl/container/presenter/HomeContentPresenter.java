@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.event.WeakEventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
@@ -17,7 +18,6 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
-import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -51,7 +51,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			resolveTile(tile);
 			return tile;
 		});
-		CollectionUtils.bindList(tilesMapping, view.tileContainer.getChildren());
+		Bindings.bindContent(view.tileContainer.getChildren(), tilesMapping);
 		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.homecontent.button.startgame.text"));
 	}
 

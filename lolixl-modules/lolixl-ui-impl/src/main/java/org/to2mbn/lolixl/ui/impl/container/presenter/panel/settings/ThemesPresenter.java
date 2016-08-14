@@ -17,7 +17,6 @@ import org.to2mbn.lolixl.ui.impl.component.view.theme.ThemeTileView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
-import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import java.util.stream.Stream;
@@ -65,7 +64,7 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 					}));
 					return tile;
 				});
-		CollectionUtils.bindList(tilesMapping, view.themesContainer.getChildren());
+		Bindings.bindContent(view.themesContainer.getChildren(), tilesMapping);
 	}
 
 	private void enableTheme(Tile tile, Theme theme) {

@@ -10,9 +10,9 @@ import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.auth.AuthTypeSelectorView;
-import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import org.to2mbn.lolixl.utils.ObservableServiceTracker;
+import javafx.beans.binding.Bindings;
 
 @Component
 public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
@@ -35,7 +35,7 @@ public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
 
 	@Override
 	protected void initializePresenter() {
-		CollectionUtils.bindList(tilesMapping, view.tilesContainer.getChildren());
+		Bindings.bindContent(view.tilesContainer.getChildren(), tilesMapping);
 	}
 
 	@Override

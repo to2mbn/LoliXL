@@ -188,6 +188,9 @@ public class PluginManagerImpl implements PluginManager {
 	}
 
 	private void updateEnabledPlugins() {
+		if (enabledPlugins == null)
+			return;
+
 		Set<Plugin> sorted = new TreeSet<>();
 		for (Plugin plugin : pluginService.getLoadedPlugins()) {
 			BundleUtils.waitBundleStarted(plugin.getBundle());

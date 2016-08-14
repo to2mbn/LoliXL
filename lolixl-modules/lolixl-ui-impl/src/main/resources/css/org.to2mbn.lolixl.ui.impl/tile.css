@@ -1,0 +1,8 @@
+.xl-effect-tile {
+	-xl-show-tile-effect: true;
+}
+
+.xl-item-tile {
+	-xl-icon-width: 50;
+	-xl-icon-height: 50;
+}
