@@ -312,7 +312,6 @@
     -fx-background-radius: 0 0 0 0, 0 0 0 0, 0 0 0 0;
     -fx-padding: 0.333333em 0em 0.333333em 0em; /* 4 1 4 1 */
 
-    /* TODO: the border color below is not being respected - it appears as gray instead of black*/
     -fx-border-color: #212121;
     -fx-border-style: solid;
 }
@@ -324,7 +323,6 @@
     -fx-border-width: 0.5px;
 }
 
-/* TODO: try to scope the menu-item style to the contextmenu */
 .menu-item {
     -fx-background-color: transparent;
     -fx-padding: 0.666666em 0.999999em 0.4999995em 0.999999em; /*6 12 6 12 */

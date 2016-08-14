@@ -100,10 +100,10 @@ public class DownloadTaskGroupItemInfoView extends BorderPane {
 	private AnchorPane makePaneForEntry(DownloadTaskEntry entry) {
 		AnchorPane pane = new AnchorPane();
 		Label nameLabel = new Label();
-		nameLabel.setId("download-task-group-item-info-item-name-label");
+		nameLabel.setId("-xl-download-task-group-item-info-item-name-label");
 		nameLabel.setText(String.format("[%s/%s]%s", entry.getLastRetry().getCurrent(), entry.getLastRetry().getMax(), entry.getTask().getURI()));
 		Label statusLabel = new Label();
-		statusLabel.setId("download-task-group-item-info-item-status-label");
+		statusLabel.setId("-xl-download-task-group-item-info-item-status-label");
 		StringProperty text = statusLabel.textProperty();
 		if (entry.isCancelled()) {
 			text.bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.status.cancelled"));

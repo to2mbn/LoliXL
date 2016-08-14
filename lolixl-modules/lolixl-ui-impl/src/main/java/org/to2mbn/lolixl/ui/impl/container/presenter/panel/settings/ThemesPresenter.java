@@ -13,7 +13,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.component.view.ThemeTileView;
+import org.to2mbn.lolixl.ui.impl.component.view.theme.ThemeTileView;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.settings.ThemesView;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
@@ -47,7 +47,7 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 		tilesMapping = new MappedObservableList<>(themeService.getAllThemes(),
 				theme -> {
 					Tile tile = new Tile();
-					FXUtils.setCssClass(tile, "theme-tile"); // TODO
+					FXUtils.setCssClass(tile, "xl-theme-tile"); // TODO
 					ThemeTileView graphic = new ThemeTileView();
 					graphic.nameLabel.textProperty().bind(theme.getLocalizedName());
 					graphic.iconView.imageProperty().bind(theme.getIcon());
@@ -70,14 +70,14 @@ public class ThemesPresenter extends Presenter<ThemesView> {
 
 	private void enableTheme(Tile tile, Theme theme) {
 		if (!isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "theme-tile-enabled");
+			FXUtils.setCssClass(tile, "xl-theme-tile-enabled");
 			themeService.enable(theme, false);
 		}
 	}
 
 	private void disableTheme(Tile tile, Theme theme) {
 		if (isThemeEnabled(theme)) {
-			FXUtils.setCssClass(tile, "theme-tile");
+			FXUtils.setCssClass(tile, "xl-theme-tile");
 			themeService.disable(theme, false);
 		}
 	}

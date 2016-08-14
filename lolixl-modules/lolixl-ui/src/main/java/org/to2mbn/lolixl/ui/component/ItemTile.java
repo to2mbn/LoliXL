@@ -1,14 +1,7 @@
 package org.to2mbn.lolixl.ui.component;
 
-import javafx.beans.Observable;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.value.ObservableObjectValue;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.to2mbn.lolixl.ui.component.view.DisplayableItemTileView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
-import org.to2mbn.lolixl.utils.FXUtils;
 
 /**
  * 从 {@link DisplayableItem} 创建的磁贴。

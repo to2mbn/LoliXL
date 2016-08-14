@@ -1,49 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.effect.GaussianBlur?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="1.7976931348623157E308" prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
-   <children>
-      <Pane id="default-sidebar-background-container" fx:id="backgroundContainer">
-         <effect>
-            <GaussianBlur />
-         </effect>
-      </Pane>
-      <BorderPane id="default-sidebar-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" opacity="0.9" prefHeight="440.0" prefWidth="500.0">
+<BorderPane id="-xl-default-sidebar-root-container" fx:id="rootContainer" maxHeight="1.7976931348623157E308" opacity="0.9" prefHeight="440.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView">
+   <center>
+      <StackPane id="-xl-default-sidebar-sidebar-container" fx:id="sidebarContainer" maxHeight="1.7976931348623157E308" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
+   </center>
+   <left>
+      <BorderPane id="-xl-default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+         <top>
+            <StackPane id="-xl-default-sidebar-user-profile-container" fx:id="userProfileContainer" prefHeight="120.0" BorderPane.alignment="CENTER" />
+         </top>
          <center>
-            <StackPane id="default-sidebar-sidebar-container" fx:id="sidebarContainer" maxHeight="1.7976931348623157E308" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
-         </center>
-         <left>
-            <BorderPane id="default-sidebar-main-content-container" fx:id="mainContentContainer" prefHeight="440.0" prefWidth="250.0" BorderPane.alignment="CENTER">
-               <top>
-                  <StackPane id="default-sidebar-user-profile-container" fx:id="userProfileContainer" prefHeight="120.0" BorderPane.alignment="CENTER" />
-               </top>
+            <BorderPane id="-xl-default-sidebar-functional-tile-root-container" fx:id="functionalTileRootContainer" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
                <center>
-                  <BorderPane id="default-sidebar-functional-tile-root-container" fx:id="functionalTileRootContainer" maxHeight="1.7976931348623157E308" BorderPane.alignment="CENTER">
-                     <center>
-                        <VBox id="default-sidebar-functional-tile-container-center-container" fx:id="functionalTileCenterContainer" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
-                     </center>
-                     <bottom>
-                        <StackPane id="default-sidebar-functional-tile-container-bottom-container" fx:id="functionalTileBottomContainer" prefHeight="50.0" prefWidth="250.0" BorderPane.alignment="CENTER">
-                           <BorderPane.margin>
-                              <Insets />
-                           </BorderPane.margin>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </StackPane>
-                     </bottom>
-                     <top>
-                        <StackPane id="default-sidebar-functional-tile-container-top-container" fx:id="functionalTileTopContainer" maxHeight="1.7976931348623157E308" prefHeight="50.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
-                     </top></BorderPane>
+                  <VBox id="-xl-default-sidebar-functional-tile-container-center-container" fx:id="functionalTileCenterContainer" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
                </center>
+               <bottom>
+                  <StackPane id="-xl-default-sidebar-functional-tile-container-bottom-container" fx:id="functionalTileBottomContainer" prefHeight="50.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </StackPane>
+               </bottom>
+               <top>
+                  <StackPane id="-xl-default-sidebar-functional-tile-container-top-container" fx:id="functionalTileTopContainer" maxHeight="1.7976931348623157E308" prefHeight="50.0" prefWidth="250.0" BorderPane.alignment="CENTER" />
+               </top>
             </BorderPane>
-         </left>
+         </center>
       </BorderPane>
-   </children>
-</StackPane>
+   </left>
+</BorderPane>

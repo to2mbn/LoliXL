@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.component.view;
+package org.to2mbn.lolixl.ui.impl.component.view.theme;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,16 +9,16 @@ import org.to2mbn.lolixl.utils.BundleUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-public class DisplayableItemTileView extends BorderPane {
-	private static final String FXML_LOCATION = "/ui/fxml/component/displayable_item_tile.fxml";
+public class ThemeTileView extends BorderPane {
+	private static final String FXML_LOCATION = "/ui/fxml/component/theme_tile.fxml";
+
+	@FXML
+	public Label nameLabel;
 
 	@FXML
 	public ImageView iconView;
 
-	@FXML
-	public Label textLabel;
-
-	public DisplayableItemTileView() {
+	public ThemeTileView() {
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);

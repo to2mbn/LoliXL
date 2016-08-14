@@ -11,11 +11,11 @@ public class DownloadCenterView extends View {
 	public ScrollPane rootContainer;
 
 	@FXML
-	public VBox itemContainer;
+	public VBox itemsContainer;
 
 	@FXML
 	private void initialize() {
-		itemContainer.prefWidthProperty().bind(rootContainer.widthProperty());
-		VBox.setVgrow(itemContainer, Priority.ALWAYS);
+		itemsContainer.prefWidthProperty().bind(rootContainer.widthProperty());
+		VBox.setVgrow(itemsContainer, Priority.ALWAYS);
 	}
 }

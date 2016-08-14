@@ -1,54 +1,10 @@
-.button:default {
-    -fx-background-color: #b85658;
-}
-
-.check-box:selected .mark {
-    -fx-background-color: #b85658;
-}
-
-.check-box:indeterminate .mark {
-    -fx-background-color: #b85658;
-}
-
-.check-box:armed .box {
-    -fx-background-color: white, #cd5c5e;
-}
-
-.radio-button:selected .dot {
-    -fx-background-color: #cd5c5e;
-}
-
-.radio-button:pressed:selected .dot {
-    -fx-background-color: #cd5c5e;
-}
-
-.radio-button:armed .dot {
-    -fx-background-color: #cd5c5e;
-}
-
-.radio-button:focused:armed .radio {
-    -fx-background-color: #cd5c5e;
-}
-
-.combo-box-popup > .list-view .list-cell:filled:selected {
-    -fx-background-color: #dd6365;
-}
-
-.combo-box-popup > .list-view .list-cell:filled:selected:hover {
-    -fx-background-color: #dd6365;
-}
-
-.text-input {
-    -fx-highlight-fill: #dd6365;
-}
-
-#default-sidebar-main-content-container,
-#default-sidebar-sidebar-container-onpaneladded,
-#panel-blur-container,
-#tile-blur-container {
+#-xl-default-sidebar-main-content-container,
+#-xl-default-sidebar-sidebar-container-onpaneladded,
+#-xl-panel-blur-container,
+#-xl-tile-blur-container {
     -fx-background-color: rgba(205, 92, 94, 0.3);
 }
 
-.theme-tile-enabled {
+.-xl-theme-tile-enabled {
     -fx-background-color: rgba(205, 92, 94, 0.8) ;
 }

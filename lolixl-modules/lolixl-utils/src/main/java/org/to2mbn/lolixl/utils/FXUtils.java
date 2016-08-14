@@ -28,12 +28,13 @@ public final class FXUtils {
 	// TODO: 删除此方法
 	@Deprecated
 	public static void setButtonGraphic(Button button, Node graphic) {
+		button.setGraphic(graphic);
 		button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		button.setPadding(Insets.EMPTY);
-		button.setGraphic(graphic);
 	}
 
 	// TODO: 删除此方法
+	@Deprecated
 	public static void setCssClass(Styleable component, String... clazz) {
 		component.getStyleClass().setAll(clazz);
 	}
@@ -46,7 +47,7 @@ public final class FXUtils {
 			result = "-".concat(split[i]).concat(result);
 			count--;
 		}
-		return result.replaceFirst("-", "");
+		return "-xl-".concat(result.replaceFirst("-", ""));
 	}
 
 }

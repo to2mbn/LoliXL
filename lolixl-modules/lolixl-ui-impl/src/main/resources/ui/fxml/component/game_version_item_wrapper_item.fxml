@@ -3,8 +3,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 
-<fx:root id="game-version-item-wrapper-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="250.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="-xl-game-version-item-wrapper-root-container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="250.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <right>
-      <Button id="game-version-item-wrapper-show-button" fx:id="showButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="20.0" text="&gt;" BorderPane.alignment="CENTER" />
+      <Button id="-xl-game-version-item-wrapper-show-button" fx:id="showButton" maxHeight="1.7976931348623157E308" mnemonicParsing="false" prefWidth="20.0" text="&gt;" BorderPane.alignment="CENTER" />
    </right>
 </fx:root>

@@ -96,7 +96,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 		Tile tile = new Tile();
 		tile.setPrefWidth(Region.USE_COMPUTED_SIZE);
 		tile.setPrefHeight(60D);
-		tile.prefWidthProperty().bind(view.itemContainer.widthProperty().subtract(view.itemContainer.getPadding().getRight()));
+		tile.prefWidthProperty().bind(view.itemsContainer.widthProperty().subtract(view.itemsContainer.getPadding().getRight()));
 		DownloadTaskGroupItemView itemView = new DownloadTaskGroupItemView(group);
 		DownloadTaskGroupItemInfoView infoView = new DownloadTaskGroupItemInfoView(group);
 		FXUtils.setButtonGraphic(tile, itemView);
@@ -109,7 +109,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 			panel.show();
 		});
 		// view.itemContainer.setPrefHeight(view.itemContainer.getPrefHeight() + tile.getPrefHeight() + view.itemContainer.getSpacing());
-		view.itemContainer.getChildren().add(tile);
+		view.itemsContainer.getChildren().add(tile);
 		itemMapping.put(group, itemView);
 		itemView.startUpdateCycle();
 		synchronized (taskCountProperty) {

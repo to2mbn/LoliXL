@@ -18,7 +18,7 @@ import java.io.UncheckedIOException;
 
 public class PanelView extends BorderPane {
 
-	private static final String LOCATION_OF_FXML = "/ui/fxml/panel/panel.fxml";
+	private static final String FXML_LOCATION = "/ui/fxml/panel/panel.fxml";
 
 	@FXML
 	public HBox headerContainer;
@@ -39,7 +39,7 @@ public class PanelView extends BorderPane {
 
 	public PanelView(Panel _panel) {
 		panel = _panel;
-		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), LOCATION_OF_FXML));
+		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
 		try {
@@ -59,6 +59,7 @@ public class PanelView extends BorderPane {
 		previousButton.imageProperty().bind(previous_button_img);
 		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));
 		previousButton.setOnMouseExited(event -> previousButton.imageProperty().bind(previous_button_img));
+
 		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());
