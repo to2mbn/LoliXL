@@ -1,11 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.binding.Bindings;
-import javafx.scene.input.MouseEvent;
-import javafx.util.Duration;
+import java.util.List;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -17,8 +12,18 @@ import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import org.to2mbn.lolixl.utils.FunctionInterpolator;
 import org.to2mbn.lolixl.utils.MappedObservableList;
-import java.util.concurrent.atomic.AtomicReference;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
+import javafx.util.Duration;
 
 @Service({ HomeContentPresenter.class })
 @Component(immediate = true)
@@ -31,8 +36,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	private static final String CSS_CLASS_TILE_UNEXPANDED = "xl-sidebar-tile-unexpanded";
 	private static final String CSS_CLASS_TILE_EXPANDING = "xl-sidebar-tile-expanding";
 
-	// Magic numbers
-	private int tileAnimationDuration = 100;
+	private int tileAnimationDuration = 300;
 
 	@Reference
 	private SideBarTileService tileService;
@@ -76,64 +80,92 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
 		tile.getStyleClass().add(CSS_CLASS_TILE);
 		tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
+		tile.maxWidthProperty().set(Region.USE_PREF_SIZE);
+		tile.maxHeightProperty().set(Region.USE_PREF_SIZE);
+		tile.minWidthProperty().set(Region.USE_PREF_SIZE);
+		tile.minHeightProperty().set(Region.USE_PREF_SIZE);
 	}
 
 	private class TileAnimationHandler {
 
-		private final Tile tile;
-		private final AtomicReference<Timeline> currentAnimation = new AtomicReference<>(null);
+		Interpolator interpolator = new FunctionInterpolator(t -> t <= 0.5 ? 4 * t * t * t : 4 * (t - 1) * (t - 1) * (t - 1) + 1);
 
-		private TileAnimationHandler(Tile _tile) {
-			tile = _tile;
+		Tile tile;
+		volatile Timeline current;
+
+		TileAnimationHandler(Tile tile) {
+			this.tile = tile;
 		}
 
-		private void runRollOutAnimation(MouseEvent mouseEvent) {
+		Duration newAnimation() {
 			Duration time;
-			Timeline current = currentAnimation.get();
-			if (current != null) {
-				time = current.getTotalDuration().subtract(current.getCurrentTime());
-				currentAnimation.set(null);
-				current.stop();
-			} else {
-				time = Duration.millis(tileAnimationDuration);
-			}
-
-			Timeline newOne = new Timeline(
-					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), -1))); // FIXME: use a fit width here
-			newOne.setOnFinished(event -> {
-				currentAnimation.set(null);
-				tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDING);
-				tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDED);
-			});
-			currentAnimation.set(newOne);
-			tile.getStyleClass().remove(CSS_CLASS_TILE_UNEXPANDED);
-			tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDING);
-			newOne.play();
-		}
-
-		private void cancelAndFallback(MouseEvent mouseEvent) {
-			Duration time;
-			Timeline current = currentAnimation.get();
 			if (current != null) {
 				time = current.getCurrentTime();
-				currentAnimation.set(null);
 				current.stop();
+				current = null;
 			} else {
 				time = Duration.millis(tileAnimationDuration);
 			}
-			Timeline newOne = new Timeline(
-					new KeyFrame(Duration.ZERO, new KeyValue(tile.prefWidthProperty(), tile.getPrefWidth())),
-					new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), tile.getPrefHeight()))); // let width be the same as height
-			newOne.setOnFinished(event -> {
-				currentAnimation.set(null);
-				tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDING);
-				tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
-			});
-			currentAnimation.set(newOne);
-			tile.getStyleClass().remove(CSS_CLASS_TILE_EXPANDED);
-			tile.getStyleClass().add(CSS_CLASS_TILE_EXPANDING);
-			newOne.play();
+			return time;
 		}
+
+		void runRollOutAnimation(MouseEvent mouseEvent) {
+			Duration time = newAnimation();
+
+			// === calculate targetWidth
+			setTileStateCssClass(tile, null);
+
+			double originPrefWidth = tile.prefWidthProperty().get();
+			Insets originPadding = tile.paddingProperty().get();
+
+			tile.prefWidthProperty().set(-1);
+			tile.contentDisplayProperty().set(ContentDisplay.RIGHT);
+			tile.paddingProperty().set(new Insets(5, 5, 5, 10));
+
+			double targetWidth = tile.prefWidth(-1);
+
+			tile.prefWidthProperty().set(originPrefWidth);
+			tile.paddingProperty().set(originPadding);
+
+			// We don't restore contentDisplay in order to fix that
+			// JFX doesn't apply css on contentDisplay until the animation finished.
+
+			// ===
+
+			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
+
+			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));
+			current.setOnFinished(event -> {
+				current = null;
+				setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDED);
+			});
+			current.play();
+		}
+
+		void cancelAndFallback(MouseEvent mouseEvent) {
+			Duration time = newAnimation();
+
+			double targetWidth = tile.getPrefHeight(); // let width be the same as height
+
+			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
+
+			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));
+			current.setOnFinished(event -> {
+				current = null;
+				setTileStateCssClass(tile, CSS_CLASS_TILE_UNEXPANDED);
+			});
+			current.play();
+		}
+
 	}
+
+	private void setTileStateCssClass(Tile tile, String cssClass) {
+		List<String> cssClasses = tile.getStyleClass();
+		cssClasses.remove(CSS_CLASS_TILE_UNEXPANDED);
+		cssClasses.remove(CSS_CLASS_TILE_EXPANDING);
+		cssClasses.remove(CSS_CLASS_TILE_EXPANDED);
+		if (cssClass != null)
+			cssClasses.add(cssClass);
+	}
+
 }
