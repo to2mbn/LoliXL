@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
@@ -15,6 +17,8 @@ import org.to2mbn.lolixl.utils.ObservableServiceTracker;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.collections.ObservableList;
 
+@Service({ ConfigurationCategoryViewManager.class })
+@Component(immediate = true)
 public class ConfigurationCategoryViewManagerImpl implements ConfigurationCategoryViewManager {
 
 	private Set<String> categoriesTagNames = Collections.newSetFromMap(new ConcurrentHashMap<>());

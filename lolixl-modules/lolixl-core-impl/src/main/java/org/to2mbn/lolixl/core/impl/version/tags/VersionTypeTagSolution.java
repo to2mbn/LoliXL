@@ -17,8 +17,8 @@ import org.to2mbn.lolixl.core.game.version.tags.VersionTagSolution;
 public class VersionTypeTagSolution implements VersionTagSolution {
 
 	public static final int RANKING = 10_000_000;
-	
-	private static final String[][] types={
+
+	private static final String[][] types = {
 			{ "snapshot", "org.to2mbn.lolixl.core.impl.version.tags.snapshot" },
 			{ "old-beta", "org.to2mbn.lolixl.core.impl.version.tags.beta" },
 			{ "old-alpha", "org.to2mbn.lolixl.core.impl.version.tags.alpha" },

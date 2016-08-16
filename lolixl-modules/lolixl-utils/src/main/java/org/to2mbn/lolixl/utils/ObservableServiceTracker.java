@@ -49,8 +49,13 @@ public class ObservableServiceTracker<T> extends LambdaServiceTracker<T> {
 
 	public void updateTrackedList() {
 		Platform.runLater(() -> {
+			ServiceReference<T>[] refs = getServiceReferences();
+			if (refs == null) {
+				// the service tracker has been closed
+				return;
+			}
 			tracked.setAll(
-					mapper.apply(Stream.of(getServiceReferences()))
+					mapper.apply(Stream.of(refs))
 							.collect(toList()));
 		});
 	}

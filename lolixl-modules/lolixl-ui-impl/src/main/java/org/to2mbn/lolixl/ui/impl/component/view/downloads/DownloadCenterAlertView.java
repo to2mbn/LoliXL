@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 public class DownloadCenterAlertView extends BorderPane {
-	private static final String FXML_LOCATION = "/ui/fxml/component/download_center_alert.fxml";
+
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.download_center/download_center_alert.fxml";
 
 	@FXML
 	public Label msgLabel;

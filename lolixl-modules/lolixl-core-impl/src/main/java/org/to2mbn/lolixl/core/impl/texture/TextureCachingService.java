@@ -31,7 +31,7 @@ import org.to2mbn.lolixl.core.download.CompletableFutureAdapter;
 import org.to2mbn.lolixl.utils.AsyncUtils;
 
 @Service({ TextureCachingService.class })
-@Component
+@Component(immediate = true)
 public class TextureCachingService {
 
 	private static final Logger LOGGER = Logger.getLogger(TextureCachingService.class.getCanonicalName());

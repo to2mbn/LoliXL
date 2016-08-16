@@ -192,7 +192,12 @@ public class PluginManagerImpl implements PluginManager {
 			return;
 
 		Set<Plugin> sorted = new TreeSet<>();
-		for (Plugin plugin : pluginService.getLoadedPlugins()) {
+		PluginService l_pluginService = pluginService;
+		if (l_pluginService == null) {
+			// pluginService might be null when plugin-manager is stopping
+			return;
+		}
+		for (Plugin plugin : l_pluginService.getLoadedPlugins()) {
 			BundleUtils.waitBundleStarted(plugin.getBundle());
 			if (plugin.getBundle().getState() == Bundle.ACTIVE) {
 				sorted.add(plugin);

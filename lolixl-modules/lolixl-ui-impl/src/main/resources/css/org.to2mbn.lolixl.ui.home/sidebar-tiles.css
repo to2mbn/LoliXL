@@ -1,0 +1,28 @@
+.xl-sidebar-tile {
+	-fx-pref-height: 60.0;
+}
+
+.xl-sidebar-tile-unexpanded {
+	-fx-padding: 5.0;
+	-fx-pref-width: 60.0;
+	-fx-content-display: graphic-only;
+}
+
+.xl-sidebar-tile-expanding {
+	-fx-padding: 5.0;
+	-fx-content-display: left;
+	-fx-ellipsis-string: '';
+}
+
+.xl-sidebar-tile-expanded {
+	-fx-padding: 5.0 10.0 5.0 5.0;
+	-fx-content-display: left;
+	-fx-ellipsis-string: '...';
+}
+
+.xl-sidebar-tile-management {
+	-fx-padding: 5.0;
+	-fx-pref-width: 60.0;
+	-fx-pref-height: 60.0;
+	-fx-content-display: left;
+}

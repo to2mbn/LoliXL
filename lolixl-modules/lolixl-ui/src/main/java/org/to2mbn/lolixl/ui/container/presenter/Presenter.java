@@ -4,8 +4,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import org.to2mbn.lolixl.ui.container.view.View;
 import org.to2mbn.lolixl.utils.BundleUtils;
-
+import org.to2mbn.lolixl.utils.ClassUtils;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,12 +28,18 @@ public abstract class Presenter<T extends View> {
 		});
 	}
 
-	private void initializeView() throws IOException {
-		FXMLLoader loader = new FXMLLoader();
-		loader.setClassLoader(getClass().getClassLoader());
-		loader.load(BundleUtils.getInputStreamFromBundle(getClass(), getFxmlLocation()));
-		view = loader.getController();
-		// FXMLLoader 会自动close掉InputStream
+	private void initializeView() {
+		ClassUtils.doWithContextClassLoader(getClass().getClassLoader(), () -> {
+			FXMLLoader loader = new FXMLLoader();
+			try {
+				// FXMLLoader 会自动close掉InputStream
+				loader.load(BundleUtils.getInputStreamFromBundle(getClass(), getFxmlLocation()));
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+			view = loader.getController();
+			return null;
+		});
 	}
 
 	protected void initializePresenter() {}

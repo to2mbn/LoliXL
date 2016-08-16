@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+	id="xl-home-root-container"
+	xmlns="http://javafx.com/javafx/8.0.65"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:id="rootContainer"
+	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.HomeContentView">
+
+	<bottom>
+		<AnchorPane
+			id="xl-home-bottom-container"
+			fx:id="bottomContainer">
+			<children>
+				<Button
+					id="xl-home-launch-button"
+					fx:id="startGameButton"
+					defaultButton="true" />
+			</children>
+		</AnchorPane>
+	</bottom>
+
+	<right>
+		<BorderPane
+			id="xl-home-tile-root-container"
+			fx:id="tileRootContainer">
+			<center>
+				<VBox
+					id="xl-home-tile-container"
+					fx:id="tileContainer" />
+			</center>
+		</BorderPane>
+	</right>
+</BorderPane>

@@ -81,7 +81,7 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 
 	@Override
 	public ObservableStringValue getLocalizedName() {
-		return I18N.localize("org.to2mbn.lolixl.ui.impl.container.tiles.management.title");
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.tiles.management.title");
 	}
 
 	private void bindManagementTile() {

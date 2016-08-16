@@ -20,7 +20,7 @@ import org.to2mbn.lolixl.core.game.texture.TextureProcessingService;
 import javafx.scene.paint.Color;
 
 @Service({ TextureProcessingService.class })
-@Component
+@Component(immediate = true)
 public class TextureProcessingServiceImpl implements TextureProcessingService {
 
 	@Reference

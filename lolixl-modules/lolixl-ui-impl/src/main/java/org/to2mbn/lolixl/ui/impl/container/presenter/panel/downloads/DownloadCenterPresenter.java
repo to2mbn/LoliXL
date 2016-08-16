@@ -26,20 +26,17 @@ import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemV
 import org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.FXUtils;
-import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service({ SidebarTileElement.class })
 @Component(immediate = true)
 public class DownloadCenterPresenter extends Presenter<DownloadCenterView> implements SidebarTileElement {
-	private static final Logger LOGGER = Logger.getLogger(DownloadCenterPresenter.class.getCanonicalName());
-	private static final String FXML_LOCATION = "/ui/fxml/panel/download_center_panel.fxml";
+
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.download_center/download_center_panel.fxml";
 
 	@Reference
 	private PanelDisplayService displayService;
@@ -66,12 +63,12 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 	}
 
 	@Override
-	protected void initializePresenter() {
-	}
+	protected void initializePresenter() {}
 
 	public void startUpdateCycle() {
 		Timer timer = new Timer(true);
 		timer.schedule(new TimerTask() {
+
 			@Override
 			public void run() {
 				Platform.runLater(DownloadCenterPresenter.this::updateStatus);
@@ -118,11 +115,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 	}
 
 	private void tryAddItem(DownloadTaskGroup group) {
-		try {
-			addItem(group);
-		} catch (UncheckedIOException ex) {
-			LOGGER.log(Level.WARNING, "Failed to add item for download task group, this should not be happened", ex);
-		}
+		addItem(group);
 	}
 
 	private void updateStatus() {
@@ -143,7 +136,7 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	@Override
 	public ObservableStringValue getLocalizedName() {
-		return I18N.localize("org.to2mbn.lolixl.ui.impl.container.downloads.title");
+		return I18N.localize("org.to2mbn.lolixl.ui.download_center.title");
 	}
 
 	@Override

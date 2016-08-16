@@ -16,8 +16,10 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.impl.MainScene;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
+import org.to2mbn.lolixl.ui.impl.util.CssUtils;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
+import org.to2mbn.lolixl.utils.ClassUtils;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
@@ -315,18 +317,14 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private void processThemesUpdate() {
 		CollectionUtils.diff(lastEnabledThemes, enabledThemes,
 				installed -> {
-					LOGGER.fine("Loading theme " + installed);
-					ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
-					try {
-						Thread.currentThread().setContextClassLoader(installed.getResourceLoader());
-						scene.getStylesheets().addAll(installed.getStyleSheets());
-					} finally {
-						Thread.currentThread().setContextClassLoader(ctxLoader);
-					}
+					List<String> css = CssUtils.mapCssToUrls(installed.getStyleSheets());
+					LOGGER.info("Loading css " + css + " from theme " + installed);
+					ClassUtils.doWithContextClassLoader(installed.getResourceLoader(), () -> scene.getStylesheets().addAll(css));
 				},
 				uninstalled -> {
-					LOGGER.fine("Unloading theme " + uninstalled);
-					scene.getStylesheets().removeAll(uninstalled.getStyleSheets());
+					List<String> css = CssUtils.mapCssToUrls(uninstalled.getStyleSheets());
+					LOGGER.info("Unloading css " + css + " from theme " + uninstalled);
+					scene.getStylesheets().removeAll(css);
 				});
 		lastEnabledThemes.clear();
 		lastEnabledThemes.addAll(enabledThemes);

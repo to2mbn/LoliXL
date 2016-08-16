@@ -56,6 +56,8 @@ class Main {
 		System.setProperty("org.to2mbn.lolixl.version", Metadata.M2_VERSION);
 		System.setProperty("lolixl.readPluginToMem", "true");
 		System.setProperty("lolixl.forciblyExit", "true");
+		System.setProperty("lolixl.overwriteSystemPlugins", "true");
+		System.setProperty("lolixl.hackCss", "true");
 	}
 
 	private static void setupWorkingDir() throws IOException {

@@ -4,6 +4,8 @@
     Author     : Pedro Duque Vieira
     Description:
         Light Metro style sheet for use in JavaFX applications
+
+    Modified by: yushijinhun
 */
 
 .background {
@@ -12,13 +14,13 @@
 
 .header {
     -fx-font-size: 42pt;
-    -fx-font-family: "Segoe UI Light";
+    -fx-font-family: "Segoe UI Light", "Ubuntu Light";
     -fx-text-fill: black;
 }
 
 .item-title {
     -fx-font-size: 11pt;
-    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-family: "Segoe UI Semibold", "Ubuntu";
     -fx-text-fill: black;
     -fx-opacity: 0.6;
 
@@ -37,7 +39,7 @@
 
     -fx-background-color: #cccccc;
 
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
     -fx-font-size: 11pt;
     -fx-text-fill: black;
 }
@@ -86,7 +88,7 @@
 
     -fx-background-color: #cccccc;
 
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
     -fx-font-size: 11pt;
     -fx-text-fill: black;
 }
@@ -289,7 +291,7 @@
     -fx-background-radius: 0 0 0 0;
     -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em;  4 8 4 8
     -fx-effect: dropshadow( one-pass-box , #808080 , 5, 0.0 , 0 , 0 );
-    -fx-font-family: "Segoe UI Semilight", "Segoe UI Light", "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: "Segoe UI Semilight", "Segoe UI Light", "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
     -fx-text-fill: #949494;
 }
 
@@ -331,7 +333,7 @@
 .menu-item .label {
     -fx-padding: 0em 0.5em 0em 0em;
     -fx-text-fill: #212121;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
     -fx-font-size: 11pt;
 }
 
@@ -594,7 +596,7 @@
 }
 
 .list-spinner .text {
-    -fx-font-family: "Segoe UI"
+    -fx-font-family: "Segoe UI", "Ubuntu Mono";
 }
 
 .list-spinner:disabled {

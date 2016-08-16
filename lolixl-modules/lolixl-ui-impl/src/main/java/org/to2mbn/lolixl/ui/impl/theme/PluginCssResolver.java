@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
@@ -9,6 +10,8 @@ import org.osgi.framework.wiring.BundleWiring;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.util.PluginResourceListener;
 import org.to2mbn.lolixl.ui.impl.MainScene;
+import org.to2mbn.lolixl.ui.impl.util.CssUtils;
+import org.to2mbn.lolixl.utils.ClassUtils;
 import org.to2mbn.lolixl.utils.ParameterizedTypeUtils;
 import javafx.scene.Scene;
 
@@ -26,14 +29,9 @@ public class PluginCssResolver {
 	private PluginResourceListener<Set<String>> resourceListener = PluginResourceListener
 			.<Set<String>> json("META-INF/lolixl/css.json", ParameterizedTypeUtils.createParameterizedType(Set.class, String.class))
 			.whenAdding((plugin, cssFiles) -> {
-				LOGGER.info("Loading css " + cssFiles);
-				ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
-				try {
-					Thread.currentThread().setContextClassLoader(plugin.getBundle().adapt(BundleWiring.class).getClassLoader());
-					scene.getStylesheets().addAll(cssFiles);
-				} finally {
-					Thread.currentThread().setContextClassLoader(ctxLoader);
-				}
+				List<String> css = CssUtils.mapCssToUrls(cssFiles);
+				LOGGER.info("Loading css " + css);
+				ClassUtils.doWithContextClassLoader(plugin.getBundle().adapt(BundleWiring.class).getClassLoader(), () -> scene.getStylesheets().addAll(css));
 			})
 			.whenRemoving((plugin, cssFiles) -> {
 				LOGGER.info("Unloading css " + cssFiles);

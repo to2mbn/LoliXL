@@ -17,7 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 @Service({ VersionTagResolver.class })
-@Component
+@Component(immediate = true)
 public class VersionTagResolverImpl implements VersionTagResolver {
 
 	private ObservableServiceTracker<VersionTagSolution> solutions;

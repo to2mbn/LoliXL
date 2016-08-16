@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.settings;
 
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
+import javafx.scene.image.Image;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -8,6 +10,7 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.ConfigurationCategoryViewManager;
+import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
@@ -50,7 +53,7 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 
 	@Override
 	public ObservableStringValue getLocalizedName() {
-		return I18N.localize("org.to2mbn.lolixl.ui.impl.container.tiles.management.title");
+		return I18N.localize("org.to2mbn.lolixl.ui.impl.settings.title");
 	}
 
 	@Override
@@ -64,6 +67,11 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 		panel.contentProperty().set(view.rootContainer);
 
 		return tile;
+	}
+
+	@Override
+	public ObservableObjectValue<Image> getIcon() {
+		return ImageLoading.load("img/org.to2mbn.lolixl.settings/icon.png");
 	}
 
 }

@@ -1,0 +1,20 @@
+#xl-home-root-container {
+}
+
+#xl-home-bottom-container {
+}
+
+#xl-home-launch-button {
+	-fx-pref-width: 300.0;
+	-fx-pref-height: 40.0;
+	-fx-text-alignment: center;
+}
+
+#xl-home-tile-root-container {
+}
+
+#xl-home-tile-container {
+	-fx-spacing: 5.0;
+	-fx-alignment: top-right;
+	-fx-padding: 5.0 0.0;
+}

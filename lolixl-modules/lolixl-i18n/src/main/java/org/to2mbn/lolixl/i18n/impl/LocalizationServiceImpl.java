@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.i18n.impl;
 
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -8,24 +9,26 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.to2mbn.lolixl.i18n.LocalizationService;
 import org.to2mbn.lolixl.i18n.spi.LocalizationProvider;
+import org.to2mbn.lolixl.utils.ObservableServiceTracker;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 @Component(immediate = true)
 @Service({ LocalizationService.class })
-public class LocalizationServiceImpl implements LocalizationService, ServiceTrackerCustomizer<LocalizationProvider, LocalizationProvider> {
+public class LocalizationServiceImpl implements LocalizationService {
 
 	public static volatile LocalizationService public_instance;
 
@@ -79,7 +82,9 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 	private BundleContext bundleContext;
 
 	private Map<LocalizationCacheKey, Optional<String>> caches = new ConcurrentHashMap<>();
-	private ServiceTracker<LocalizationProvider, LocalizationProvider> tracker;
+	private ObservableServiceTracker<LocalizationProvider> serviceTracker;
+
+	private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -87,16 +92,16 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 		bundleContext = compCtx.getBundleContext();
 		currentLocale.set(Locale.getDefault());
 		LOGGER.info("Using locale " + currentLocale);
-		tracker = new ServiceTracker<>(bundleContext, LocalizationProvider.class, this);
-		tracker.open(true);
+		serviceTracker = new ObservableServiceTracker<>(bundleContext, LocalizationProvider.class);
+		serviceTracker.getServiceList().addListener((Observable dummy) -> refresh());
+		serviceTracker.open(true);
 	}
 
 	@Deactivate
 	public void deactive() {
 		public_instance = null;
-		tracker.close();
+		serviceTracker.close();
 	}
-
 
 	@Override
 	public ObjectProperty<Locale> localeProperty() {
@@ -105,6 +110,16 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 	@Override
 	public void refresh() {
+		checkFxThread();
+
+		Lock wlock = rwlock.writeLock();
+		wlock.lock();
+		try {
+			caches.clear();
+		} finally {
+			wlock.unlock();
+		}
+
 		currentLocale.fireValueChangedEvent();
 	}
 
@@ -118,8 +133,15 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 		cache = caches.get(cacheKey);
 		if (cache == null) {
-			cache = lookupLocalizedString(locale, key);
-			caches.put(cacheKey, cache);
+			Lock rlock = rwlock.readLock();
+
+			rlock.lock();
+			try {
+				cache = lookupLocalizedString(locale, key);
+				caches.put(cacheKey, cache);
+			} finally {
+				rlock.unlock();
+			}
 		}
 
 		return cache.orElse(null);
@@ -127,8 +149,12 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 
 	private Optional<String> lookupLocalizedString(Locale idealLocale, String key) {
 		List<Locale> locales = control.getCandidateLocales("org.to2mbn.lolixl.i18n", idealLocale);
+
+		// copy on read
+		LocalizationProvider[] providers = serviceTracker.getServiceList().toArray(new LocalizationProvider[0]);
+
 		for (Locale locale : locales) {
-			for (LocalizationProvider provider : tracker.getServices(new LocalizationProvider[0])) {
+			for (LocalizationProvider provider : providers) {
 				String result = provider.getLocalizedString(locale, key);
 				if (result != null) {
 					return Optional.of(result);
@@ -136,28 +162,6 @@ public class LocalizationServiceImpl implements LocalizationService, ServiceTrac
 			}
 		}
 		return Optional.empty();
-	}
-
-	@Override
-	public LocalizationProvider addingService(ServiceReference<LocalizationProvider> reference) {
-		clearCache();
-		return bundleContext.getService(reference);
-	}
-
-	@Override
-	public void modifiedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
-		clearCache();
-	}
-
-	@Override
-	public void removedService(ServiceReference<LocalizationProvider> reference, LocalizationProvider service) {
-		bundleContext.ungetService(reference);
-		clearCache();
-	}
-
-	private void clearCache() {
-		caches.clear();
-		refresh();
 	}
 
 }

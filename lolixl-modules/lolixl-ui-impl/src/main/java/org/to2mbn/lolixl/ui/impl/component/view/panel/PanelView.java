@@ -18,7 +18,7 @@ import java.io.UncheckedIOException;
 
 public class PanelView extends BorderPane {
 
-	private static final String FXML_LOCATION = "/ui/fxml/panel/panel.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.panel/panel.fxml";
 
 	@FXML
 	public HBox headerContainer;
@@ -53,8 +53,8 @@ public class PanelView extends BorderPane {
 	private void initComponent() {
 		FXUtils.checkFxThread();
 
-		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("img/org.to2mbn.lolixl.ui/previous_button.png");
-		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("img/org.to2mbn.lolixl.ui/previous_button_hover.png");
+		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button.png");
+		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button_hover.png");
 
 		previousButton.imageProperty().bind(previous_button_img);
 		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));

@@ -20,8 +20,10 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
@@ -29,7 +31,7 @@ import javafx.util.Duration;
 @Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 
-	private static final String FXML_LOCATION = "/ui/fxml/container/home_content.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/home_content.fxml";
 
 	private static final String CSS_CLASS_TILE = "xl-sidebar-tile";
 	private static final String CSS_CLASS_TILE_EXPANDED = "xl-sidebar-tile-expanded";
@@ -61,7 +63,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			return tile;
 		});
 		Bindings.bindContent(view.tileContainer.getChildren(), tilesMapping);
-		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.homecontent.launch_button.text"));
+		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.home.launch_button.text"));
 	}
 
 	/**
@@ -72,6 +74,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	public void setManagementTile(Tile tile) {
 		tile.getStyleClass().add("xl-sidebar-tile-management");
 		view.tileRootContainer.setBottom(tile);
+		BorderPane.setAlignment(tile, Pos.CENTER_RIGHT);
 	}
 
 	private void resolveTile(Tile tile) {
@@ -119,8 +122,8 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			Insets originPadding = tile.paddingProperty().get();
 
 			tile.prefWidthProperty().set(-1);
-			tile.contentDisplayProperty().set(ContentDisplay.RIGHT);
-			tile.paddingProperty().set(new Insets(5, 5, 5, 10));
+			tile.contentDisplayProperty().set(ContentDisplay.LEFT);
+			tile.paddingProperty().set(new Insets(5, 10, 5, 5));
 
 			double targetWidth = tile.prefWidth(-1);
 

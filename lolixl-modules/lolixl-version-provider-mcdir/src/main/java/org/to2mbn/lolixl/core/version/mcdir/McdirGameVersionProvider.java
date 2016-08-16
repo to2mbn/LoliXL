@@ -37,7 +37,7 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 	@Override
 	public ObservableStringValue getLocalizedName() {
 		if (isCurrentMcdir()) {
-			return I18N.localize("org.to2mbn.lolixl.core.version.mcdir.default.name");
+			return I18N.localize("org.to2mbn.lolixl.mcdir.default.name");
 		}
 		return StringConstant.valueOf(location.toString());
 	}

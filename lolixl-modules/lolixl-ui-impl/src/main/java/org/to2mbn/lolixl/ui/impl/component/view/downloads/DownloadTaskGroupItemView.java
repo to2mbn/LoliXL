@@ -18,7 +18,8 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DownloadTaskGroupItemView extends BorderPane {
-	private static final String FXML_LOCATION = "/ui/fxml/component/download_group_item.fxml";
+
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.download_center/download_group_item.fxml";
 
 	@FXML
 	public ImageView iconView;
@@ -78,11 +79,11 @@ public class DownloadTaskGroupItemView extends BorderPane {
 	private void updateStatus() {
 		StringProperty text = statusLabel.textProperty();
 		if (taskGroup.isCancelled()) {
-			text.bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.status.cancelled"));
+			text.bind(I18N.localize("org.to2mbn.lolixl.ui.download_center.item.status.cancelled"));
 		} else if (taskGroup.getException() != null) { // 切不可改变判断顺序
-			text.bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.status.error"));
+			text.bind(I18N.localize("org.to2mbn.lolixl.ui.download_center.item.status.error"));
 		} else if (taskGroup.isDone()) {
-			text.bind(I18N.localize("org.to2mbn.lolixl.ui.impl.component.view.downloads.item.status.done"));
+			text.bind(I18N.localize("org.to2mbn.lolixl.ui.download_center.item.status.done"));
 		} else {
 			text.set((taskGroup.getFinishedCount() / taskGroup.getTotalCount()) + "%");
 		}
