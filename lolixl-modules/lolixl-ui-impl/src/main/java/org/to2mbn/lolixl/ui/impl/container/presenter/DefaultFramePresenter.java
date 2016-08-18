@@ -8,7 +8,6 @@ import javafx.beans.Observable;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -17,7 +16,6 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.ui.BackgroundService;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
@@ -25,15 +23,14 @@ import org.to2mbn.lolixl.ui.impl.MainStage;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
-import org.to2mbn.lolixl.utils.FXUtils;
-import java.util.Objects;
+import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Service({ BackgroundService.class, PanelDisplayService.class, DefaultFramePresenter.class })
+@Service({ PanelDisplayService.class, DefaultFramePresenter.class })
 @Component(immediate = true)
-public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements BackgroundService, PanelDisplayService {
+public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements PanelDisplayService {
 
 	private static final String FXML_LOCATION = "/ui/fxml/container/default_frame.fxml";
 
@@ -45,6 +42,9 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 
 	@Reference
 	private HomeContentPresenter homeContentPresenter;
+
+	@Reference
+	private BackgroundService backgroundService;
 
 	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
 
@@ -66,23 +66,13 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 						() -> getCurrent().ifPresent(Panel::hide));
 			}
 		});
+
+		view.rootContainer.backgroundProperty().bind(backgroundService.getCurrentBackground());
 	}
 
 	@Override
 	protected String getFxmlLocation() {
 		return FXML_LOCATION;
-	}
-
-	@Override
-	public void setBackground(Background background) {
-		Objects.requireNonNull(background);
-		FXUtils.checkFxThread();
-		view.rootContainer.setBackground(background);
-	}
-
-	@Override
-	public Background getBackground() {
-		return view.rootContainer.getBackground();
 	}
 
 	@Override

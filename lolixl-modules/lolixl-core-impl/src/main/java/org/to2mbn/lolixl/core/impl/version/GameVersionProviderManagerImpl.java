@@ -34,7 +34,7 @@ import javafx.collections.WeakListChangeListener;
 @Component(immediate = true)
 public class GameVersionProviderManagerImpl implements GameVersionProviderManager, ConfigurationCategory<GameVersionConfig> {
 
-	public static final String CATEGORY_VERSION_PROVIDERS = "org.to2mbn.lolixl.ui.impl.version.manager";
+	public static final String CATEGORY_VERSION_PROVIDERS = "org.to2mbn.lolixl.core.game.version.manager";
 
 	private static final Logger LOGGER = Logger.getLogger(GameVersionProviderManagerImpl.class.getCanonicalName());
 

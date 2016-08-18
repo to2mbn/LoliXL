@@ -8,51 +8,30 @@
 <?import javafx.scene.layout.StackPane?>
 
 <fx:root
-	id="xl-panel-root-container"
+	styleClass="xl-panel-container"
 	type="BorderPane"
 	xmlns="http://javafx.com/javafx/8.0.60"
 	xmlns:fx="http://javafx.com/fxml/1">
 	<top>
 		<HBox
-			id="xl-panel-header-container"
-			fx:id="headerContainer"
-			prefHeight="50.0"
-			prefWidth="850.0"
-			spacing="5.0">
+			styleClass="xl-panel-header-container"
+			fx:id="headerContainer">
 			<children>
 				<ImageView
-					id="xl-panel-previous-button"
+					styleClass="xl-panel-previous-button"
 					fx:id="previousButton"
 					fitHeight="45.0"
 					fitWidth="45.0"
-					pickOnBounds="true"
-					preserveRatio="true">
-					<HBox.margin>
-						<Insets
-							left="3.0"
-							top="3.0" />
-					</HBox.margin>
-				</ImageView>
+					pickOnBounds="true" />
 				<ImageView
-					id="xl-panel-icon-view"
+					styleClass="xl-panel-icon-view"
 					fx:id="iconView"
 					fitHeight="45.0"
 					fitWidth="45.0"
-					pickOnBounds="true"
-					preserveRatio="true">
-					<HBox.margin>
-						<Insets top="3.0" />
-					</HBox.margin>
-				</ImageView>
+					pickOnBounds="true" />
 				<Label
-					id="xl-panel-title-label"
-					fx:id="titleLabel"
-					prefHeight="45.0"
-					prefWidth="750.0">
-					<HBox.margin>
-						<Insets top="3.0" />
-					</HBox.margin>
-				</Label>
+					styleClass="xl-panel-title-label"
+					fx:id="titleLabel" />
 			</children>
 		</HBox>
 	</top>

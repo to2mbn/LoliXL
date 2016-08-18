@@ -48,7 +48,7 @@ import javafx.collections.ObservableList;
 @Component(immediate = true)
 public class AuthenticationProfileManagerImpl implements AuthenticationProfileManager, ConfigurationCategory<AuthenticationProfileList> {
 
-	public static final String CATEGORY_AUTH_PROFILES = "org.to2mbn.lolixl.ui.impl.auth.profiles";
+	public static final String CATEGORY_AUTH_PROFILES = "org.to2mbn.lolixl.core.auth.profiles";
 
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationProfileManagerImpl.class.getCanonicalName());
 

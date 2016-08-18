@@ -34,7 +34,7 @@ import javafx.collections.ObservableList;
 @Component(immediate = true)
 public class SideBarTileServiceImpl implements SideBarTileService, ConfigurationCategory<SideBarTileList> {
 
-	public static final String CATEGORY_SIDEBAR_TILES = "org.to2mbn.lolixl.ui.impl.sideBarTiles";
+	public static final String CATEGORY_SIDEBAR_TILES = "org.to2mbn.lolixl.ui.sideBarTiles";
 
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 

@@ -15,7 +15,7 @@ import javafx.scene.image.Image;
 @SuppressWarnings("restriction")
 @Service({ Theme.class })
 @Properties({
-		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.impl.theme.default"),
+		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.theme.default"),
 		@Property(name = Theme.PROPERTY_THEME_TYPE, value = Theme.TYPE_THEME_PACKAGE)
 })
 @Component(immediate = true)
@@ -28,17 +28,17 @@ public class DefaultTheme implements Theme {
 
 	@Override
 	public ObservableStringValue getLocalizedName() {
-		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.name");
+		return I18N.localize("org.to2mbn.lolixl.ui.theme.default.name");
 	}
 
 	@Override
 	public ObservableValue<ObservableStringValue[]> getAuthors() {
-		return ObjectConstant.valueOf(new ObservableStringValue[] { I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.author.lolixlgroup") });
+		return ObjectConstant.valueOf(new ObservableStringValue[] { I18N.localize("org.to2mbn.lolixl.ui.theme.default.author.lolixlgroup") });
 	}
 
 	@Override
 	public ObservableStringValue getDescription() {
-		return I18N.localize("org.to2mbn.lolixl.ui.impl.theme.default.description");
+		return I18N.localize("org.to2mbn.lolixl.ui.theme.default.description");
 	}
 
 	@Override

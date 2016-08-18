@@ -54,7 +54,7 @@ import java.util.logging.Logger;
 @Component(immediate = true)
 public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<ThemeConfiguration> {
 
-	public static final String CATEGORY_THEME_CONFIG = "org.to2mbn.lolixl.ui.impl.theme.config";
+	public static final String CATEGORY_THEME_CONFIG = "org.to2mbn.lolixl.ui.theme";
 
 	private static final Logger LOGGER = Logger.getLogger(ThemeServiceImpl.class.getCanonicalName());
 

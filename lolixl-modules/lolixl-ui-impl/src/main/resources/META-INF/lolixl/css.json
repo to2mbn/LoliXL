@@ -1,7 +1,7 @@
 [
 	"css/org.to2mbn.lolixl.ui/metro.css",
 	"css/org.to2mbn.lolixl.ui/tile.css",
-
 	"css/org.to2mbn.lolixl.ui.home/sidebar-tiles.css",
-	"css/org.to2mbn.lolixl.ui.home/content.css"
+	"css/org.to2mbn.lolixl.ui.home/content.css",
+	"css/org.to2mbn.lolixl.ui.panel/panel.css"
 ]

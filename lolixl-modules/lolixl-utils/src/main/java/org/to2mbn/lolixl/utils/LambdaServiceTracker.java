@@ -1,7 +1,9 @@
 package org.to2mbn.lolixl.utils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ public class LambdaServiceTracker<T> extends ServiceTracker<T, T> {
 	private List<BiConsumer<ServiceReference<T>, T>> addActions = new Vector<>();
 	private List<BiConsumer<ServiceReference<T>, T>> modifyActions = new Vector<>();
 	private List<BiConsumer<ServiceReference<T>, T>> removeActions = new Vector<>();
+	private Map<T, ServiceReference<T>> serviceRefMapping = new ConcurrentHashMap<>();
 
 	public LambdaServiceTracker(BundleContext context, Class<T> clazz) {
 		super(context, clazz, null);
@@ -49,20 +52,32 @@ public class LambdaServiceTracker<T> extends ServiceTracker<T, T> {
 	@Override
 	public T addingService(ServiceReference<T> reference) {
 		T service = super.addingService(reference);
-		invoke(addActions, reference, service);
+		if (service != null) {
+			serviceRefMapping.put(service, reference);
+			invoke(addActions, reference, service);
+		}
 		return service;
 	}
 
 	@Override
 	public void modifiedService(ServiceReference<T> reference, T service) {
 		super.modifiedService(reference, service);
-		invoke(modifyActions, reference, service);
+		if (service != null) {
+			invoke(modifyActions, reference, service);
+		}
 	}
 
 	@Override
 	public void removedService(ServiceReference<T> reference, T service) {
 		invoke(removeActions, reference, service);
-		super.removedService(reference, service);
+		if (service != null) {
+			super.removedService(reference, service);
+			serviceRefMapping.remove(service);
+		}
+	}
+
+	public ServiceReference<T> getServiceReference(T service) {
+		return serviceRefMapping.get(service);
 	}
 
 	private void invoke(List<BiConsumer<ServiceReference<T>, T>> listeners, ServiceReference<T> reference, T service) {
