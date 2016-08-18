@@ -19,8 +19,8 @@ class TilePerspectiveUtils {
 		double ulx, uly, urx, ury, lrx, lry, llx, lly;
 
 		Perspective(double x, double y, double width, double height, Pos noEffectPos) {
-			double ratioX = x / width / 3;
-			double ratioY = y / height / 3;
+			double ratioX = x / width * 3;
+			double ratioY = y / height * 3;
 			if (ratioY <= 1D) {
 				if (ratioX <= 1D) {
 					ulx = DEEP;
