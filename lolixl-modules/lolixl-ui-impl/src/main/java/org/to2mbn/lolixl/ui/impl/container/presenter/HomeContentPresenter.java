@@ -79,8 +79,10 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private void resolveTile(Tile tile) {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile);
-		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::runRollOutAnimation);
-		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::cancelAndFallback);
+		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::mouseEntered);
+		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::mouseExited);
+		tile.addEventHandler(MouseEvent.MOUSE_PRESSED, animationHandler::mousePressedOrReleased);
+		tile.addEventHandler(MouseEvent.MOUSE_RELEASED, animationHandler::mousePressedOrReleased);
 		tile.getStyleClass().add(CSS_CLASS_TILE);
 		tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
 		tile.maxWidthProperty().set(Region.USE_PREF_SIZE);
@@ -93,11 +95,41 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 		Interpolator interpolator = new FunctionInterpolator(t -> t <= 0.5 ? 4 * t * t * t : 4 * (t - 1) * (t - 1) * (t - 1) + 1);
 
+		static final int UNEXPANDED = 0;
+		static final int EXPANDED = 1;
+
+		int state = UNEXPANDED;
+		boolean mouseIn = false;
 		Tile tile;
-		volatile Timeline current;
+		Timeline current;
 
 		TileAnimationHandler(Tile tile) {
 			this.tile = tile;
+		}
+
+		void mouseEntered(MouseEvent mouseEvent) {
+			mouseIn = true;
+			updateAnimation(mouseEvent);
+		}
+
+		void mouseExited(MouseEvent mouseEvent) {
+			mouseIn = false;
+			updateAnimation(mouseEvent);
+		}
+
+		void mousePressedOrReleased(MouseEvent mouseEvent) {
+			updateAnimation(mouseEvent);
+		}
+
+		void updateAnimation(MouseEvent mouseEvent) {
+			if (tile.isPressed()) {
+				return;
+			}
+			if (mouseIn && state != EXPANDED) {
+				runRollOutAnimation(mouseEvent);
+			} else if (!mouseIn && state != UNEXPANDED) {
+				cancelAndFallback(mouseEvent);
+			}
 		}
 
 		Duration newAnimation() {
@@ -135,6 +167,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 			// ===
 
+			state = EXPANDED;
 			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
 
 			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));
@@ -150,6 +183,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 			double targetWidth = tile.getPrefHeight(); // let width be the same as height
 
+			state = UNEXPANDED;
 			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
 
 			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));

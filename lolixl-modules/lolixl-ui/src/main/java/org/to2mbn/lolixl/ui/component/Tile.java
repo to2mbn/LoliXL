@@ -1,41 +1,35 @@
 package org.to2mbn.lolixl.ui.component;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.css.CssMetaData;
 import javafx.css.SimpleStyleableBooleanProperty;
+import javafx.css.SimpleStyleableObjectProperty;
 import javafx.css.Styleable;
+import javafx.css.StyleableObjectProperty;
 import javafx.css.StyleableProperty;
 import javafx.css.StyleablePropertyFactory;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.input.MouseEvent;
 import java.util.List;
 import org.to2mbn.lolixl.utils.tile.TilePerspectiveUtils;
+import com.sun.javafx.binding.DoubleConstant;
 
 /**
  * 代表一个磁贴。
  * 
  * @author yushijinhun
  */
+@SuppressWarnings("restriction")
 public class Tile extends Button {
 
 	public static final String CSS_CLASS_TILE = "xl-tile";
 
-	/**
-	 * 如果要给一个Tile开启按下特效，则需要：
-	 * 
-	 * <pre>
-	 * <code>
-	 * tile.getStyleClass().add(CSS_CLASS_EFFECT_TILE);
-	 * </code>
-	 * </pre>
-	 * 
-	 * 若要关闭则remove即可。该特效默认关闭。
-	 */
-	public static final String CSS_CLASS_EFFECT_TILE = "xl-effect-tile";
-
 	private BooleanProperty showTileEffectProperty = new SimpleStyleableBooleanProperty(StyleableProperties.SHOW_TILE_EFFECT, this, "showTileEffect", false);
+	private ObjectProperty<Pos> noEffectPosProperty = new SimpleStyleableObjectProperty<Pos>(StyleableProperties.NO_EFFECT_POS, this, "noEffectPos", null);
 
 	public Tile() {
 		addEventHandler(MouseEvent.MOUSE_PRESSED, this::showEffect);
@@ -51,7 +45,12 @@ public class Tile extends Button {
 
 	private void showEffect(MouseEvent event) {
 		if (showTileEffectProperty.get()) {
-			PerspectiveTransform transform = TilePerspectiveUtils.compute(event.getSceneX() - getLayoutX(), event.getSceneY() - getLayoutY(), this);
+			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(
+					DoubleConstant.valueOf(event.getSceneX() - getLayoutX()),
+					DoubleConstant.valueOf(event.getSceneY() - getLayoutY()),
+					widthProperty(),
+					heightProperty(),
+					noEffectPosProperty);
 			setEffect(transform);
 		}
 	}
@@ -68,6 +67,7 @@ public class Tile extends Button {
 		static final StyleablePropertyFactory<Tile> FACTORY = new StyleablePropertyFactory<>(Labeled.getClassCssMetaData());
 
 		static final CssMetaData<Tile, Boolean> SHOW_TILE_EFFECT = FACTORY.createBooleanCssMetaData("-xl-show-tile-effect", s -> (StyleableProperty<Boolean>) s.showTileEffectProperty, false);
+		static final CssMetaData<Tile, Pos> NO_EFFECT_POS = FACTORY.createEnumCssMetaData(Pos.class, "-xl-no-effect-pos", s -> (StyleableObjectProperty<Pos>) s.noEffectPosProperty, null);
 	}
 
 	public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {

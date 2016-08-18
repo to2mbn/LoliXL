@@ -23,7 +23,7 @@ public class DefaultTheme implements Theme {
 
 	@Override
 	public String[] getStyleSheets() {
-		return new String[] { "/ui/css/default_theme/components.css", "/ui/css/default_theme/color_sets.css" };
+		return new String[] { "css/org.to2mbn.lolixl.ui.theme.default/color_set.css" };
 	}
 
 	@Override

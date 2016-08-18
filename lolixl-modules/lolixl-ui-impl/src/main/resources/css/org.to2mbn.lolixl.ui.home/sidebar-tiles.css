@@ -1,5 +1,6 @@
 .xl-sidebar-tile {
 	-fx-pref-height: 60.0;
+	-xl-no-effect-pos: center-right;
 }
 
 .xl-sidebar-tile-unexpanded {
@@ -25,4 +26,5 @@
 	-fx-pref-width: 60.0;
 	-fx-pref-height: 60.0;
 	-fx-content-display: left;
+	-xl-no-effect-pos: center-right;
 }

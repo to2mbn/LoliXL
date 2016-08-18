@@ -37,20 +37,9 @@
     -fx-border-style: null;
     -fx-background-radius: 0;
 
-    -fx-background-color: #cccccc;
-
     -fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
     -fx-font-size: 11pt;
     -fx-text-fill: black;
-}
-
-.button:hover {
-    -fx-background-color: #d8d8d8;
-}
-
-.button:pressed, .button:default:hover:pressed {
-    -fx-background-color: black;
-    -fx-text-fill: white;
 }
 
 .button:focused {
