@@ -12,15 +12,6 @@ import java.util.Optional;
  * 2.不能叠加，如果在显示了A面板同时调用显示B面板，A面板将会被关闭
  */
 public interface SideBarPanelDisplayService extends PanelFactory {
-	/**
-	 * 获取一个新的组成默认侧边栏的侧边栏面板的实例
-	 * <p>
-	 * 默认侧边栏的侧边栏面板不会显示icon和title
-	 *
-	 * @return
-	 */
-	@Override
-	Panel newPanel();
 
 	/**
 	 * 获取当前打开的Panel。

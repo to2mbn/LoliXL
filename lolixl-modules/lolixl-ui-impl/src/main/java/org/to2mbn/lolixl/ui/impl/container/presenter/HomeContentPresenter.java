@@ -5,8 +5,12 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.I18N;
+import org.to2mbn.lolixl.ui.Panel;
+import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
@@ -18,6 +22,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -38,7 +43,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	private static final String CSS_CLASS_TILE_UNEXPANDED = "xl-sidebar-tile-unexpanded";
 	private static final String CSS_CLASS_TILE_EXPANDING = "xl-sidebar-tile-expanding";
 
-	private int tileAnimationDuration = 300;
+	private double tileAnimationDuration = 300.0;
 
 	@Reference
 	private SideBarTileService tileService;
@@ -64,6 +69,18 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		});
 		Bindings.bindContent(view.tileContainer.getChildren(), tilesMapping);
 		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.home.launch_button.text"));
+		// XXX: TEST CODE, delete it
+		view.startGameButton.setOnAction(event -> {
+			BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			SideBarPanelDisplayService display = ctx.getService(ctx.getServiceReference(SideBarPanelDisplayService.class));
+			Platform.runLater(() -> {
+				Panel panel = display.newPanel();
+				SidebarTileElement service = ctx.getService(ctx.getServiceReference(SidebarTileElement.class));
+				panel.bindItem(service);
+				panel.show();
+			});
+		});
+		//
 	}
 
 	/**
@@ -92,8 +109,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	}
 
 	private class TileAnimationHandler {
-
-		Interpolator interpolator = new FunctionInterpolator(t -> t <= 0.5 ? 4 * t * t * t : 4 * (t - 1) * (t - 1) * (t - 1) + 1);
 
 		static final int UNEXPANDED = 0;
 		static final int EXPANDED = 1;
@@ -170,7 +185,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			state = EXPANDED;
 			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
 
-			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));
+			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, FunctionInterpolator.S_CURVE)));
 			current.setOnFinished(event -> {
 				current = null;
 				setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDED);
@@ -186,7 +201,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			state = UNEXPANDED;
 			setTileStateCssClass(tile, CSS_CLASS_TILE_EXPANDING);
 
-			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, interpolator)));
+			current = new Timeline(new KeyFrame(time, new KeyValue(tile.prefWidthProperty(), targetWidth, FunctionInterpolator.S_CURVE)));
 			current.setOnFinished(event -> {
 				current = null;
 				setTileStateCssClass(tile, CSS_CLASS_TILE_UNEXPANDED);

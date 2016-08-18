@@ -34,6 +34,8 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
 
+	private double panelAnimationDuration = 200.0;
+
 	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
 	private Stage stage;
 
@@ -140,14 +142,14 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private ParallelTransition generateAnimation(Region pane, boolean reverse) {
 		// 移动动画
-		TranslateTransition tran = new TranslateTransition(Duration.millis(200), pane);
+		TranslateTransition tran = new TranslateTransition(Duration.millis(panelAnimationDuration), pane);
 		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 15;
 		double toX = view.sidebarPane.getLayoutX();
 		tran.setFromX(reverse ? toX : fromX);
 		tran.setToX(reverse ? fromX : toX);
 
 		// 渐变动画
-		FadeTransition fade = new FadeTransition(Duration.millis(200), pane);
+		FadeTransition fade = new FadeTransition(Duration.millis(panelAnimationDuration), pane);
 		fade.setFromValue(reverse ? pane.getOpacity() : 0);
 		fade.setToValue(reverse ? 0 : pane.getOpacity());
 
@@ -158,7 +160,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	private ParallelTransition fallbackAnimation(Region... panes) {
 		ParallelTransition parallel = new ParallelTransition();
 		for (Region pane : panes) {
-			FadeTransition fade = new FadeTransition(Duration.millis(200), pane);
+			FadeTransition fade = new FadeTransition(Duration.millis(panelAnimationDuration), pane);
 			fade.setFromValue(0);
 			fade.setToValue(pane.getOpacity());
 			parallel.getChildren().add(fade);

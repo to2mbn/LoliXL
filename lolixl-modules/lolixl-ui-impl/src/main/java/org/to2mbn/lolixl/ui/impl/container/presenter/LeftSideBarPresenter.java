@@ -1,10 +1,9 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter;
 
-import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
-import javafx.collections.ListChangeListener;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.collections.ObservableList;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -16,9 +15,12 @@ import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
+import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView;
-import java.util.Objects;
+import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Queue;
 
 @Service({ SideBarPanelDisplayService.class, LeftSideBarPresenter.class })
 @Component(immediate = true)
@@ -26,7 +28,24 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/left_sidebar.fxml";
 
+	private static final String CSS_CLASS_PANEL_SHOWN = "xl-left-sidebar-sidebar-container-shown";
+	private static final String CSS_CLASS_PANEL_HIDDEN = "xl-left-sidebar-sidebar-container-hidden";
+
+	/*
+	 * 关于这个sidebar panel的动画
+	 * 
+	 * 打开一个panel时，若当前无打开panel，则该panel从左侧滑出。
+	 * 关闭一个panel时，则逆转上述过程。
+	 * 若打开一个panel时，已有其它panel在显示，
+	 * 则之前在显示的panel以2倍速度执行关闭动画，
+	 * 之后，要打开的panel以2倍速度执行打开动画。
+	 */
+
+	private double panelAnimationDuration = 600.0;
+	private double sidebarPanelWidth = 250.0;
+
 	private Panel currentPanel;
+	private Queue<Runnable> pendingAnimations = new LinkedList<>();
 
 	@Reference
 	private AuthenticationProfileManager authProfileManager;
@@ -48,44 +67,73 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	@Override
 	public Optional<Panel> getCurrent() {
-		return currentPanel != null ? Optional.of(currentPanel) : Optional.empty();
+		return Optional.ofNullable(currentPanel);
 	}
 
 	@Override
 	protected void initializePresenter() {
-		view.sidebarContainer.getChildren().addListener((ListChangeListener<? super Node>) change -> {
-			if (change.getList().size() > 0) {
-				view.sidebarContainer.setId(view.sidebarContainer.getId().concat("-onpaneladded"));
-			} else {
-				view.sidebarContainer.setId(view.sidebarContainer.getId().replace("-onpaneladded", ""));
-			}
-		});
+		setSidebarPanelStateCssClass(CSS_CLASS_PANEL_HIDDEN);
 	}
 
 	private void showNewPanel(Panel panel) {
-		Objects.requireNonNull(panel);
-		if (currentPanel != null) {
-			currentPanel.hide();
+		if (currentPanel == null) {
+			currentPanel = panel;
+			view.sidebarContainer.getChildren().setAll(new PanelView(panel));
+			showPanel(panelAnimationDuration, false, null);
+		} else {
+			showPanel(panelAnimationDuration / 2.0, true, () -> {
+				currentPanel = panel;
+				view.sidebarContainer.getChildren().setAll(new PanelView(panel));
+				showPanel(panelAnimationDuration / 2.0, false, null);
+			});
 		}
-		currentPanel = panel;
-		Parent pane = panel.contentProperty().get();
-		pane.setVisible(false);
-		view.sidebarContainer.getChildren().add(pane);
-		Animation animation = generateAnimation(pane);
-		pane.setVisible(true);
-		animation.play();
 	}
 
 	private void closeCurrentPanel() {
-		view.sidebarContainer.getChildren().clear();
-		currentPanel = null;
+		if (currentPanel != null) {
+			showPanel(panelAnimationDuration, true, () -> {
+				currentPanel = null;
+				view.sidebarContainer.getChildren().clear();
+			});
+		}
 	}
 
-	private Animation generateAnimation(Parent pane) {
-		TranslateTransition tran = new TranslateTransition(Duration.seconds(1), pane);
-		double from = view.mainContentContainer.getLayoutX();
-		tran.setFromX(from);
-		tran.setToX(from + view.mainContentContainer.getWidth());
-		return tran;
+	private void showPanel(double t, boolean reverse, Runnable callback) {
+		addNewAnimation(() -> {
+			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(t),
+					new KeyValue(view.sidebarContainer.prefWidthProperty(), reverse ? 0.0 : sidebarPanelWidth, FunctionInterpolator.S_CURVE)));
+			setSidebarPanelStateCssClass(null);
+			timeline.setOnFinished(event -> {
+				setSidebarPanelStateCssClass(reverse ? CSS_CLASS_PANEL_HIDDEN : CSS_CLASS_PANEL_SHOWN);
+				if (callback != null)
+					callback.run();
+				onAnimationFinished();
+			});
+			timeline.play();
+		});
+	}
+
+	private void addNewAnimation(Runnable animation) {
+		pendingAnimations.offer(animation);
+		if (pendingAnimations.size() == 1) {
+			animation.run();
+		}
+	}
+
+	private void onAnimationFinished() {
+		pendingAnimations.poll();
+		Runnable next = pendingAnimations.peek();
+		if (next != null) {
+			next.run();
+		}
+	}
+
+	private void setSidebarPanelStateCssClass(String cssClass) {
+		ObservableList<String> styleClasses = view.sidebarContainer.getStyleClass();
+		styleClasses.remove(CSS_CLASS_PANEL_SHOWN);
+		styleClasses.remove(CSS_CLASS_PANEL_HIDDEN);
+		if (cssClass != null) {
+			styleClasses.add(cssClass);
+		}
 	}
 }

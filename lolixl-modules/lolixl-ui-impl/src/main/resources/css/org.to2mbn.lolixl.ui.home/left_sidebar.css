@@ -2,29 +2,35 @@
 }
 
 #xl-left-sidebar-sidebar-container {
-	-fx-pref-width: 250.0;
 }
 
 #xl-left-sidebar-main-content-container {
-	-fx-pref-width: 250.0;
+	-fx-pref-width: 200.0;
 }
 
 #xl-left-sidebar-user-profile-container {
-	-fx-pref-width: 120.0;
+/*	-fx-pref-width: 120.0;*/
 }
 
 #xl-left-sidebar-functional-tile-container-center-container {
-	-fx-pref-width: 250.0;
-	-fx-pref-height: 200.0;
+/*	-fx-pref-width: 250.0;
+	-fx-pref-height: 200.0;*/
 }
 
 #xl-left-sidebar-functional-tile-container-bottom-container {
-	-fx-pref-width: 250.0;
-	-fx-pref-height: 50.0;
+/*	-fx-pref-width: 250.0;
+	-fx-pref-height: 50.0;*/
 	-fx-padding: 5.0;
 }
 
 #xl-left-sidebar-functional-tile-container-top-container {
-	-fx-pref-width: 250.0;
-	-fx-pref-height: 50.0;
+/*	-fx-pref-width: 250.0;
+	-fx-pref-height: 50.0;*/
+}
+
+.xl-left-sidebar-sidebar-container-hidden {
+}
+
+.xl-left-sidebar-sidebar-container-shown {
+	-fx-pref-width: 250.0; /* 注意同步更新 LeftSideBarPresenter.sidebarPanelWidth */
 }
