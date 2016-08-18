@@ -18,7 +18,6 @@ import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
-import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.downloads.DownloadTaskGroupItemInfoView;
@@ -43,9 +42,6 @@ public class DownloadCenterPresenter extends Presenter<DownloadCenterView> imple
 
 	@Reference
 	private DownloadCenterNotifier downloadCenterNotifier;
-
-	@Reference
-	private SideBarAlertService alertService;
 
 	private final ReadOnlyIntegerWrapper taskCountProperty = new ReadOnlyIntegerWrapper(0);
 

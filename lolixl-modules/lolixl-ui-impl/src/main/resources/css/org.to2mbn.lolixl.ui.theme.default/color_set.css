@@ -14,3 +14,7 @@
 .xl-panel-container {
 	-fx-background-color: rgba(205.0, 92.0, 94.0, 0.9);
 }
+
+#xl-left-sidebar-main-content-container {
+	-fx-background-color: rgba(205.0, 92.0, 94.0, 0.9);
+}

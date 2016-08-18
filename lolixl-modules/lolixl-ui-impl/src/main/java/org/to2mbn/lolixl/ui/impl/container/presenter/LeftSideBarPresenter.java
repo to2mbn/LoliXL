@@ -1,8 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
@@ -15,30 +13,20 @@ import org.apache.felix.scr.annotations.Service;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
 import org.to2mbn.lolixl.ui.Panel;
-import org.to2mbn.lolixl.ui.SideBarAlertService;
 import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
-import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
 
-@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class, LeftSideBarPresenter.class })
+@Service({ SideBarPanelDisplayService.class, LeftSideBarPresenter.class })
 @Component(immediate = true)
-public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements SideBarPanelDisplayService, SideBarAlertService {
+public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements SideBarPanelDisplayService {
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/left_sidebar.fxml";
 
-	private final List<Tile> alerts = new Vector<>();
-	private final Timer timer = new Timer(true);
-
 	private Panel currentPanel;
-	private int currentAlertIdx;
 
 	@Reference
 	private AuthenticationProfileManager authProfileManager;
@@ -64,20 +52,7 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 	}
 
 	@Override
-	public void addAlert(Tile alert) {
-		Objects.requireNonNull(alert);
-		alerts.add(alert);
-	}
-
-	@Override
-	public void removeAlert(Tile alert) {
-		Objects.requireNonNull(alert);
-		alerts.remove(alert);
-	}
-
-	@Override
 	protected void initializePresenter() {
-		startAlertDisplayWorkCycle();
 		view.sidebarContainer.getChildren().addListener((ListChangeListener<? super Node>) change -> {
 			if (change.getList().size() > 0) {
 				view.sidebarContainer.setId(view.sidebarContainer.getId().concat("-onpaneladded"));
@@ -85,63 +60,6 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 				view.sidebarContainer.setId(view.sidebarContainer.getId().replace("-onpaneladded", ""));
 			}
 		});
-	}
-
-	private void startAlertDisplayWorkCycle() {
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				nextAlert();
-			}
-		}, 0, 8000); // TODO: make period configurable
-	}
-
-	private void nextAlert() {
-		if (alerts.isEmpty()) {
-			return;
-		}
-		if (currentAlertIdx >= alerts.size()) {
-			currentAlertIdx = 0;
-		}
-		List<Node> children = view.functionalTileBottomContainer.getChildren();
-		Tile current = currentAlertIdx <= 0 ? null : alerts.get(currentAlertIdx - 1);
-		Tile next = alerts.get(currentAlertIdx);
-		if (current != null) {
-			Animation out = generateAlertAnimation(current, true);
-			out.setOnFinished(event -> children.remove(current));
-			out.play();
-		}
-		Animation in = generateAlertAnimation(next, false);
-		next.setVisible(false);
-		children.add(next);
-		in.play();
-		next.setVisible(true);
-	}
-
-	private Animation generateAlertAnimation(Tile alert, boolean goOff) {
-		double y = view.functionalTileBottomContainer.getLayoutY();
-		double height = view.functionalTileBottomContainer.getHeight();
-		TranslateTransition tran = new TranslateTransition(Duration.millis(300), alert);
-		if (goOff) {
-			tran.setFromY(alert.getLayoutY());
-			tran.setToY(y - alert.getHeight() - 10);
-		} else {
-			tran.setFromY(y + height);
-			tran.setToY(height / 2);
-		}
-
-		FadeTransition fade = new FadeTransition(Duration.millis(300), alert);
-		if (goOff) {
-			fade.setFromValue(alert.getOpacity());
-			fade.setToValue(0);
-		} else {
-			fade.setFromValue(0);
-			fade.setToValue(alert.getOpacity());
-		}
-
-		ParallelTransition parallel = new ParallelTransition(tran, fade);
-		parallel.setCycleCount(Animation.INDEFINITE);
-		return parallel;
 	}
 
 	private void showNewPanel(Panel panel) {

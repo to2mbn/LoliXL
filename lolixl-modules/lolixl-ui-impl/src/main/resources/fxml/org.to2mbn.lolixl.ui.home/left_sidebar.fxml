@@ -14,46 +14,35 @@
 	<center>
 		<StackPane
 			id="xl-left-sidebar-sidebar-container"
-			fx:id="sidebarContainer"
-			BorderPane.alignment="CENTER" />
+			fx:id="sidebarContainer" />
 	</center>
 	<left>
 		<BorderPane
 			id="xl-left-sidebar-main-content-container"
-			fx:id="mainContentContainer"
-			BorderPane.alignment="CENTER">
+			fx:id="mainContentContainer">
 			<top>
 				<StackPane
 					id="xl-left-sidebar-user-profile-container"
-					fx:id="userProfileContainer"
-					BorderPane.alignment="CENTER" />
+					fx:id="userProfileContainer" />
 			</top>
 			<center>
 				<BorderPane
 					id="xl-left-sidebar-functional-tile-root-container"
-					fx:id="functionalTileRootContainer"
-					BorderPane.alignment="CENTER">
+					fx:id="functionalTileRootContainer">
 					<center>
 						<VBox
 							id="xl-left-sidebar-functional-tile-container-center-container"
-							fx:id="functionalTileCenterContainer"
-							BorderPane.alignment="CENTER" />
+							fx:id="functionalTileCenterContainer" />
 					</center>
 					<bottom>
 						<StackPane
 							id="xl-left-sidebar-functional-tile-container-bottom-container"
-							fx:id="functionalTileBottomContainer"
-							BorderPane.alignment="CENTER">
-							<BorderPane.margin>
-								<Insets />
-							</BorderPane.margin>
-						</StackPane>
+							fx:id="functionalTileBottomContainer" />
 					</bottom>
 					<top>
 						<StackPane
 							id="xl-left-sidebar-functional-tile-container-top-container"
-							fx:id="functionalTileTopContainer"
-							BorderPane.alignment="CENTER" />
+							fx:id="functionalTileTopContainer" />
 					</top>
 				</BorderPane>
 			</center>
