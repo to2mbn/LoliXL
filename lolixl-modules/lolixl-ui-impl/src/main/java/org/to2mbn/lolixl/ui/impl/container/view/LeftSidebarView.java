@@ -6,7 +6,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.to2mbn.lolixl.ui.container.view.View;
 
-public class DefaultSidebarView extends View {
+public class LeftSidebarView extends View {
+
 	@FXML
 	public BorderPane rootContainer;
 

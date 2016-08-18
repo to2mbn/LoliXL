@@ -20,7 +20,7 @@ import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
-import org.to2mbn.lolixl.ui.impl.container.view.DefaultSidebarView;
+import org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,11 +28,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class, DefaultSideBarPresenter.class })
+@Service({ SideBarPanelDisplayService.class, SideBarAlertService.class, LeftSideBarPresenter.class })
 @Component(immediate = true)
-public class DefaultSideBarPresenter extends Presenter<DefaultSidebarView> implements SideBarPanelDisplayService, SideBarAlertService {
+public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements SideBarPanelDisplayService, SideBarAlertService {
 
-	private static final String FXML_LOCATION = "/ui/fxml/container/default_side_bar.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/left_sidebar.fxml";
 
 	private final List<Tile> alerts = new Vector<>();
 	private final Timer timer = new Timer(true);

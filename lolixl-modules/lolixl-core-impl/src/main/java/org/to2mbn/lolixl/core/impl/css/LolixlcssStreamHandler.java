@@ -11,10 +11,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 import org.osgi.service.url.URLStreamHandlerService;
 import javafx.scene.text.Font;
@@ -30,7 +34,14 @@ public class LolixlcssStreamHandler extends AbstractURLStreamHandlerService {
 
 	static final char[] CSS_PROPERTY_FONT_FAMILY = "-fx-font-family".toCharArray();
 
-	String process(String in) {
+	private BundleContext bundleContext;
+
+	@Activate
+	public void active(ComponentContext compCtx) {
+		bundleContext = compCtx.getBundleContext();
+	}
+
+	private String process(String in) {
 		StringBuilder sb = new StringBuilder();
 		char[] str = in.toCharArray();
 		Set<String> families = new HashSet<>(Font.getFamilies());
@@ -123,7 +134,7 @@ public class LolixlcssStreamHandler extends AbstractURLStreamHandlerService {
 		return sb.toString();
 	}
 
-	String stripQuotes(String str) {
+	private String stripQuotes(String str) {
 		int beginIndex = 0;
 		char openQuote = str.charAt(beginIndex);
 		if (openQuote == '\"' || openQuote == '\'') beginIndex += 1;
@@ -134,7 +145,7 @@ public class LolixlcssStreamHandler extends AbstractURLStreamHandlerService {
 		return str.substring(beginIndex, endIndex);
 	}
 
-	String convertUnicode(String src) {
+	private String convertUnicode(String src) {
 		char[] buf;
 		int bp;
 		int buflen;
@@ -192,13 +203,18 @@ public class LolixlcssStreamHandler extends AbstractURLStreamHandlerService {
 		return new String(dst, 0, dstIndex);
 	}
 
+	private URL lookupResource(String host, String path) {
+		long bundleId = Long.parseLong(host);
+		Bundle bundle = bundleContext.getBundle(bundleId);
+		if (bundle == null) {
+			throw new IllegalArgumentException("Bundle " + bundleId + " not found");
+		}
+		return bundle.getResource(path);
+	}
+
 	@Override
 	public URLConnection openConnection(URL u) throws IOException {
-		ClassLoader ctxLoader = Thread.currentThread().getContextClassLoader();
-		if (ctxLoader == null) {
-			throw new IOException("Couldn't load resources from system class loader");
-		}
-		URL resUrl = ctxLoader.getResource(u.getPath().substring(1));
+		URL resUrl = lookupResource(u.getHost(), u.getPath().substring(1));
 		if (resUrl == null) {
 			throw new IOException("Resource [" + u + "] not found");
 		}
@@ -211,7 +227,12 @@ public class LolixlcssStreamHandler extends AbstractURLStreamHandlerService {
 				out.write(buf, 0, read);
 			}
 		}
-		InputStream instream = new ByteArrayInputStream(process(new String(out.toByteArray(), "UTF-8")).getBytes("UTF-8"));
+		InputStream instream;
+		if ("true".equals(System.getProperty("lolixl.hackCss"))) {
+			instream = new ByteArrayInputStream(process(new String(out.toByteArray(), "UTF-8")).getBytes("UTF-8"));
+		} else {
+			instream = new ByteArrayInputStream(out.toByteArray());
+		}
 
 		return new URLConnection(u) {
 

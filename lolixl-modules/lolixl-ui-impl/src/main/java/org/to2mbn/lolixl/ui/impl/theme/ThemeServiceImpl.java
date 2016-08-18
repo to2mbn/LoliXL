@@ -11,6 +11,7 @@ import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
@@ -19,7 +20,6 @@ import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.impl.util.CssUtils;
 import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
-import org.to2mbn.lolixl.utils.ClassUtils;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
@@ -317,12 +317,12 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private void processThemesUpdate() {
 		CollectionUtils.diff(lastEnabledThemes, enabledThemes,
 				installed -> {
-					List<String> css = CssUtils.mapCssToUrls(installed.getStyleSheets());
+					List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(installed.getClass()), installed.getStyleSheets());
 					LOGGER.info("Loading css " + css + " from theme " + installed);
-					ClassUtils.doWithContextClassLoader(installed.getResourceLoader(), () -> scene.getStylesheets().addAll(css));
+					scene.getStylesheets().addAll(css);
 				},
 				uninstalled -> {
-					List<String> css = CssUtils.mapCssToUrls(uninstalled.getStyleSheets());
+					List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(uninstalled.getClass()), uninstalled.getStyleSheets());
 					LOGGER.info("Unloading css " + css + " from theme " + uninstalled);
 					scene.getStylesheets().removeAll(css);
 				});

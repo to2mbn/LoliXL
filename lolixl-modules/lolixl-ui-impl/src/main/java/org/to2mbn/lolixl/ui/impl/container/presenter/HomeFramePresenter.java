@@ -22,23 +22,23 @@ import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.MainStage;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
-import org.to2mbn.lolixl.ui.impl.container.view.DefaultFrameView;
+import org.to2mbn.lolixl.ui.impl.container.view.HomeFrameView;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Service({ PanelDisplayService.class, DefaultFramePresenter.class })
+@Service({ PanelDisplayService.class, HomeFramePresenter.class })
 @Component(immediate = true)
-public class DefaultFramePresenter extends Presenter<DefaultFrameView> implements PanelDisplayService {
+public class HomeFramePresenter extends Presenter<HomeFrameView> implements PanelDisplayService {
 
-	private static final String FXML_LOCATION = "/ui/fxml/container/default_frame.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
 
 	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
 	private Stage stage;
 
 	@Reference
-	private DefaultSideBarPresenter sideBarPresenter;
+	private LeftSideBarPresenter sideBarPresenter;
 
 	@Reference
 	private HomeContentPresenter homeContentPresenter;
@@ -114,7 +114,7 @@ public class DefaultFramePresenter extends Presenter<DefaultFrameView> implement
 			return;
 		}
 		PanelEntry entry = panels.poll();
-		if (panels.size() <= 0) {
+		if (panels.isEmpty()) {
 			view.sidebarPane.setVisible(false);
 			view.contentPane.setVisible(false);
 			view.rootContainer.setLeft(view.sidebarPane);

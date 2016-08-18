@@ -8,8 +8,8 @@ import com.sun.javafx.binding.ObjectConstant;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.image.Image;
 
-@Service({ImageLoadingService.class})
-@Component(immediate=true)
+@Service({ ImageLoadingService.class })
+@Component(immediate = true)
 public class ImageLoadingServiceImpl implements ImageLoadingService {
 
 	@Override

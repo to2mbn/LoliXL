@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.utils.tile;
+package org.to2mbn.lolixl.ui.component;
 
 import java.util.function.Function;
 import javafx.beans.binding.Bindings;
@@ -9,9 +9,9 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Pos;
 import javafx.scene.effect.PerspectiveTransform;
 
-public class TilePerspectiveUtils {
+class TilePerspectiveUtils {
 
-	private static class Perspective {
+	static class Perspective {
 
 		static final double SHALLOW = 2D;
 		static final double DEEP = 4D;
@@ -175,8 +175,7 @@ public class TilePerspectiveUtils {
 
 	}
 
-	private static DoubleBinding createPerspectivePropertyBinding(Function<Perspective, Double> func, ObservableObjectValue<Perspective> perspective) {
+	static DoubleBinding createPerspectivePropertyBinding(Function<Perspective, Double> func, ObservableObjectValue<Perspective> perspective) {
 		return Bindings.createDoubleBinding(() -> func.apply(perspective.get()), perspective);
 	}
-
 }

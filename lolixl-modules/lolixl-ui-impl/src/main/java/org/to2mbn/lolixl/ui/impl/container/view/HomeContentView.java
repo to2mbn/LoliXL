@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import org.to2mbn.lolixl.ui.container.view.View;
 
 public class HomeContentView extends View {
+
 	@FXML
 	public BorderPane rootContainer;
 
@@ -23,7 +24,4 @@ public class HomeContentView extends View {
 	@FXML
 	public Button startGameButton;
 
-	@FXML
-	private void initialize() {
-	}
 }

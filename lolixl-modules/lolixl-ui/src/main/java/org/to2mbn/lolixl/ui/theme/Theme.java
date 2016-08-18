@@ -15,10 +15,6 @@ public interface Theme extends DisplayableItem {
 
 	String[] getStyleSheets();
 
-	default ClassLoader getResourceLoader() {
-		return getClass().getClassLoader();
-	}
-
 	default String getURI() {
 		return null;
 	}

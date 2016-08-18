@@ -1,0 +1,32 @@
+#xl-left-sidebar-root-container {
+	-fx-opacity: 0.9;
+	-fx-pref-width: 500.0;
+}
+
+#xl-left-sidebar-sidebar-container {
+	-fx-pref-width: 250.0;
+}
+
+#xl-left-sidebar-main-content-container {
+	-fx-pref-width: 250.0;
+}
+
+#xl-left-sidebar-user-profile-container {
+	-fx-pref-width: 120.0;
+}
+
+#xl-left-sidebar-functional-tile-container-center-container {
+	-fx-pref-width: 250.0;
+	-fx-pref-height: 200.0;
+}
+
+#xl-left-sidebar-functional-tile-container-bottom-container {
+	-fx-pref-width: 250.0;
+	-fx-pref-height: 50.0;
+	-fx-padding: 5.0;
+}
+
+#xl-left-sidebar-functional-tile-container-top-container {
+	-fx-pref-width: 250.0;
+	-fx-pref-height: 50.0;
+}

@@ -2,3 +2,15 @@
 	-fx-text-fill: white;
 	-fx-background-color: #cd5c5e;
 }
+
+.button:focused {
+    -fx-border-color: white;
+}
+
+.xl-panel-title-label {
+	-fx-text-fill: white;
+}
+
+.xl-panel-container {
+	-fx-background-color: rgba(205.0, 92.0, 94.0, 0.9);
+}

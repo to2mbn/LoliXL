@@ -16,7 +16,7 @@
 }
 
 .xl-sidebar-tile-expanded {
-	-fx-padding: 5.0 10.0 5.0 5.0;
+	-fx-padding: 5.0;
 	-fx-content-display: left;
 	-fx-ellipsis-string: '...';
 }

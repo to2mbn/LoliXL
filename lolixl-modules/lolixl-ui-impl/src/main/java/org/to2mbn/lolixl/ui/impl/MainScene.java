@@ -7,7 +7,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultFramePresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.HomeFramePresenter;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class MainScene {
 	private Stage stage;
 
 	@Reference
-	private DefaultFramePresenter defaultFramePresenter;
+	private HomeFramePresenter defaultFramePresenter;
 
 	@Activate
 	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {

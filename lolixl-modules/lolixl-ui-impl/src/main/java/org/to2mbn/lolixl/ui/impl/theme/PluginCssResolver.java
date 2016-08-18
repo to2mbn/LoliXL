@@ -6,12 +6,10 @@ import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.osgi.framework.wiring.BundleWiring;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.util.PluginResourceListener;
 import org.to2mbn.lolixl.ui.impl.MainScene;
 import org.to2mbn.lolixl.ui.impl.util.CssUtils;
-import org.to2mbn.lolixl.utils.ClassUtils;
 import org.to2mbn.lolixl.utils.ParameterizedTypeUtils;
 import javafx.scene.Scene;
 
@@ -29,13 +27,14 @@ public class PluginCssResolver {
 	private PluginResourceListener<Set<String>> resourceListener = PluginResourceListener
 			.<Set<String>> json("META-INF/lolixl/css.json", ParameterizedTypeUtils.createParameterizedType(Set.class, String.class))
 			.whenAdding((plugin, cssFiles) -> {
-				List<String> css = CssUtils.mapCssToUrls(cssFiles);
+				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
 				LOGGER.info("Loading css " + css);
-				ClassUtils.doWithContextClassLoader(plugin.getBundle().adapt(BundleWiring.class).getClassLoader(), () -> scene.getStylesheets().addAll(css));
+				scene.getStylesheets().addAll(css);
 			})
 			.whenRemoving((plugin, cssFiles) -> {
-				LOGGER.info("Unloading css " + cssFiles);
-				scene.getStylesheets().removeAll(cssFiles);
+				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
+				LOGGER.info("Unloading css " + css);
+				scene.getStylesheets().removeAll(css);
 			});
 
 	@Activate

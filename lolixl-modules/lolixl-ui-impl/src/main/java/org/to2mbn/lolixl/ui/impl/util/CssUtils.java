@@ -5,30 +5,27 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import org.osgi.framework.Bundle;
 
 public final class CssUtils {
 
 	private CssUtils() {}
 
-	public static String toCssUrl(String cssLocation) {
+	public static String toCssUrl(Bundle bundle, String cssLocation) {
 		Objects.requireNonNull(cssLocation);
-		if ("true".equals(System.getProperty("lolixl.hackCss"))) {
-			return "lolixlcss://current.classloader/" + cssLocation;
-		} else {
-			return cssLocation;
-		}
+		return "lolixlcss://" + bundle.getBundleId() + "/" + cssLocation;
 	}
 
-	public static List<String> mapCssToUrls(Collection<String> css) {
+	public static List<String> mapCssToUrls(Bundle bundle, Collection<String> css) {
 		return css.stream()
-				.map(CssUtils::toCssUrl)
+				.map(cssEntry -> toCssUrl(bundle, cssEntry))
 				.collect(toList());
 	}
 
-	public static List<String> mapCssToUrls(String... css) {
+	public static List<String> mapCssToUrls(Bundle bundle, String... css) {
 		String[] target = new String[css.length];
 		for (int i = 0; i < css.length; i++) {
-			target[i] = toCssUrl(css[i]);
+			target[i] = toCssUrl(bundle, css[i]);
 		}
 		return Arrays.asList(target);
 	}

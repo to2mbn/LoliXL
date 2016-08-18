@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane
+	id="xl-left-sidebar-root-container"
+	fx:id="rootContainer"
+	xmlns="http://javafx.com/javafx/8.0.65"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView">
+	<center>
+		<StackPane
+			id="xl-left-sidebar-sidebar-container"
+			fx:id="sidebarContainer"
+			BorderPane.alignment="CENTER" />
+	</center>
+	<left>
+		<BorderPane
+			id="xl-left-sidebar-main-content-container"
+			fx:id="mainContentContainer"
+			BorderPane.alignment="CENTER">
+			<top>
+				<StackPane
+					id="xl-left-sidebar-user-profile-container"
+					fx:id="userProfileContainer"
+					BorderPane.alignment="CENTER" />
+			</top>
+			<center>
+				<BorderPane
+					id="xl-left-sidebar-functional-tile-root-container"
+					fx:id="functionalTileRootContainer"
+					BorderPane.alignment="CENTER">
+					<center>
+						<VBox
+							id="xl-left-sidebar-functional-tile-container-center-container"
+							fx:id="functionalTileCenterContainer"
+							BorderPane.alignment="CENTER" />
+					</center>
+					<bottom>
+						<StackPane
+							id="xl-left-sidebar-functional-tile-container-bottom-container"
+							fx:id="functionalTileBottomContainer"
+							BorderPane.alignment="CENTER">
+							<BorderPane.margin>
+								<Insets />
+							</BorderPane.margin>
+						</StackPane>
+					</bottom>
+					<top>
+						<StackPane
+							id="xl-left-sidebar-functional-tile-container-top-container"
+							fx:id="functionalTileTopContainer"
+							BorderPane.alignment="CENTER" />
+					</top>
+				</BorderPane>
+			</center>
+		</BorderPane>
+	</left>
+</BorderPane>

@@ -5,7 +5,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.to2mbn.lolixl.ui.container.view.View;
 
-public class DefaultFrameView extends View {
+public class HomeFrameView extends View {
+
 	@FXML
 	public BorderPane rootContainer;
 

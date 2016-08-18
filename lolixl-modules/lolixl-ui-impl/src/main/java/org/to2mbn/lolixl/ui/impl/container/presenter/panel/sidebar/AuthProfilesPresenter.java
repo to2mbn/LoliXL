@@ -16,7 +16,7 @@ import org.to2mbn.lolixl.ui.SideBarPanelDisplayService;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.auth.AddNewProfileTileView;
-import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.LeftSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.AuthProfilesView;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.MappedObservableList;
@@ -33,7 +33,7 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 	private SideBarPanelDisplayService displayService;
 
 	@Reference
-	private DefaultSideBarPresenter sideBarPresenter;
+	private LeftSideBarPresenter sideBarPresenter;
 
 	private MappedObservableList<AuthenticationProfile<?>, Tile> mappedProfileTiles;
 	private Tile addProfileTile = new Tile();

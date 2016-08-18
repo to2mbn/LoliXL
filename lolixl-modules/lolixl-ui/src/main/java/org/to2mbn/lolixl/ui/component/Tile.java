@@ -15,7 +15,6 @@ import javafx.scene.control.Labeled;
 import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.input.MouseEvent;
 import java.util.List;
-import org.to2mbn.lolixl.utils.tile.TilePerspectiveUtils;
 import com.sun.javafx.binding.DoubleConstant;
 
 /**

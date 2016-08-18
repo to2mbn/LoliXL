@@ -38,7 +38,7 @@ import org.to2mbn.lolixl.ui.component.view.version.GameVersionItemView;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionEditorView;
 import org.to2mbn.lolixl.ui.impl.component.view.version.GameVersionItemWrapperView;
-import org.to2mbn.lolixl.ui.impl.container.presenter.DefaultSideBarPresenter;
+import org.to2mbn.lolixl.ui.impl.container.presenter.LeftSideBarPresenter;
 import org.to2mbn.lolixl.ui.impl.container.view.panel.sidebar.GameVersionsView;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 
@@ -52,7 +52,7 @@ public class GameVersionsPresenter extends Presenter<GameVersionsView> {
 	private GameVersionProviderManager providerManager;
 
 	@Reference
-	private DefaultSideBarPresenter sideBarPresenter;
+	private LeftSideBarPresenter sideBarPresenter;
 
 	@Reference
 	private PanelDisplayService displayService;

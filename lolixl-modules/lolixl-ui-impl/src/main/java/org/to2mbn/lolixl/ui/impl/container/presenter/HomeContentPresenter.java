@@ -31,7 +31,7 @@ import javafx.util.Duration;
 @Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 
-	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/home_content.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/content.fxml";
 
 	private static final String CSS_CLASS_TILE = "xl-sidebar-tile";
 	private static final String CSS_CLASS_TILE_EXPANDED = "xl-sidebar-tile-expanded";
@@ -84,7 +84,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		tile.addEventHandler(MouseEvent.MOUSE_PRESSED, animationHandler::mousePressedOrReleased);
 		tile.addEventHandler(MouseEvent.MOUSE_RELEASED, animationHandler::mousePressedOrReleased);
 		tile.getStyleClass().add(CSS_CLASS_TILE);
-		tile.getStyleClass().add(CSS_CLASS_TILE_UNEXPANDED);
+		setTileStateCssClass(tile, CSS_CLASS_TILE_UNEXPANDED);
 		tile.maxWidthProperty().set(Region.USE_PREF_SIZE);
 		tile.maxHeightProperty().set(Region.USE_PREF_SIZE);
 		tile.minWidthProperty().set(Region.USE_PREF_SIZE);

@@ -22,6 +22,11 @@ public class MainStage {
 	public static final String PROPERTY_STAGE_ID = "org.to2mbn.lolixl.ui.impl.stage.id";
 	public static final String MAIN_STAGE_ID = "org.to2mbn.lolixl.ui.impl.stage.main.id";
 
+	private static final double WIDTH = 850.0;
+	private static final double HEIGHT = 450.0;
+	private static final double MIN_WIDTH = 600.0;
+	private static final double MIN_HEIGHT = 340.0;
+
 	@Reference
 	private EventAdmin eventAdmin;
 
@@ -32,6 +37,10 @@ public class MainStage {
 			LOGGER.fine("Creating main stage");
 			Stage stage = new Stage();
 			stage.setOnCloseRequest(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
+			stage.setWidth(WIDTH);
+			stage.setHeight(HEIGHT);
+			stage.setMinWidth(MIN_WIDTH);
+			stage.setMinHeight(MIN_HEIGHT);
 
 			Map<String, Object> properties = new HashMap<>();
 			properties.put(PROPERTY_STAGE_ID, MAIN_STAGE_ID);
