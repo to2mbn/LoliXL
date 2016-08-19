@@ -2,6 +2,14 @@
 }
 
 #xl-left-sidebar-sidebar-container {
+	-fx-hbar-policy: never;
+	-fx-vbar-policy: never;
+	-fx-background-color: transparent;
+	-fx-control-inner-background: transparent;
+}
+
+#xl-left-sidebar-sidebar-container > .viewport {
+	-fx-background-color: transparent;
 }
 
 #xl-left-sidebar-main-content-container {
@@ -29,6 +37,7 @@
 }
 
 .xl-left-sidebar-sidebar-container-hidden {
+	-fx-pref-width: 0.0;
 }
 
 .xl-left-sidebar-sidebar-container-shown {

@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.ui.impl.container.view;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -31,7 +32,7 @@ public class LeftSidebarView extends View {
 	public StackPane functionalTileBottomContainer;
 
 	@FXML
-	public StackPane sidebarContainer;
+	public ScrollPane sidebarContainer;
 
 	@FXML
 	private void initialize() {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -12,8 +12,9 @@
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView">
 	<center>
-		<StackPane
+		<ScrollPane
 			id="xl-left-sidebar-sidebar-container"
+			styleClass="edge-to-edge"
 			fx:id="sidebarContainer" />
 	</center>
 	<left>

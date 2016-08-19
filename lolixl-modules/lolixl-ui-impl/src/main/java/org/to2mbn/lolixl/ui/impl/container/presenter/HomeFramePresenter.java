@@ -34,7 +34,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
 
-	private double panelAnimationDuration = 200.0;
+	private double panelAnimationDuration = 300.0;
 
 	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
 	private Stage stage;
@@ -65,7 +65,13 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 			if (scene != null) {
 				view.rootContainer.getScene().getAccelerators().put(
 						new KeyCodeCombination(KeyCode.ESCAPE),
-						() -> getCurrent().ifPresent(Panel::hide));
+						() -> {
+							if (getCurrent().isPresent()) {
+								getCurrent().get().hide();
+							} else if (sideBarPresenter.getCurrent().isPresent()) {
+								sideBarPresenter.getCurrent().get().hide();
+							}
+						});
 			}
 		});
 

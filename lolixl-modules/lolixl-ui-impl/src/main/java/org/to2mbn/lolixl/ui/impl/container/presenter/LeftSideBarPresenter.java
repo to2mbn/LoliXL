@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.Region;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -41,7 +42,7 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 	 * 之后，要打开的panel以2倍速度执行打开动画。
 	 */
 
-	private double panelAnimationDuration = 600.0;
+	private double panelAnimationDuration = 300.0;
 	private double sidebarPanelWidth = 250.0;
 
 	private Panel currentPanel;
@@ -73,17 +74,27 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 	@Override
 	protected void initializePresenter() {
 		setSidebarPanelStateCssClass(CSS_CLASS_PANEL_HIDDEN);
+		view.sidebarContainer.contentProperty().addListener((observable, oldVal, newVal) -> {
+			if (oldVal instanceof Region) {
+				((Region) oldVal).prefWidthProperty().unbind();
+				((Region) oldVal).prefHeightProperty().unbind();
+			}
+			if (newVal instanceof Region) {
+				((Region) newVal).prefWidthProperty().bind(view.sidebarContainer.widthProperty());
+				((Region) newVal).prefHeightProperty().bind(view.sidebarContainer.heightProperty());
+			}
+		});
 	}
 
 	private void showNewPanel(Panel panel) {
 		if (currentPanel == null) {
 			currentPanel = panel;
-			view.sidebarContainer.getChildren().setAll(new PanelView(panel));
+			view.sidebarContainer.setContent(new PanelView(panel));
 			showPanel(panelAnimationDuration, false, null);
 		} else {
 			showPanel(panelAnimationDuration / 2.0, true, () -> {
 				currentPanel = panel;
-				view.sidebarContainer.getChildren().setAll(new PanelView(panel));
+				view.sidebarContainer.setContent(new PanelView(panel));
 				showPanel(panelAnimationDuration / 2.0, false, null);
 			});
 		}
@@ -93,15 +104,16 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 		if (currentPanel != null) {
 			showPanel(panelAnimationDuration, true, () -> {
 				currentPanel = null;
-				view.sidebarContainer.getChildren().clear();
+				view.sidebarContainer.setContent(null);
 			});
 		}
 	}
 
 	private void showPanel(double t, boolean reverse, Runnable callback) {
 		addNewAnimation(() -> {
+			double endValue = reverse ? 0.0 : sidebarPanelWidth;
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(t),
-					new KeyValue(view.sidebarContainer.prefWidthProperty(), reverse ? 0.0 : sidebarPanelWidth, FunctionInterpolator.S_CURVE)));
+					new KeyValue(view.sidebarContainer.prefWidthProperty(), endValue, FunctionInterpolator.S_CURVE)));
 			setSidebarPanelStateCssClass(null);
 			timeline.setOnFinished(event -> {
 				setSidebarPanelStateCssClass(reverse ? CSS_CLASS_PANEL_HIDDEN : CSS_CLASS_PANEL_SHOWN);
