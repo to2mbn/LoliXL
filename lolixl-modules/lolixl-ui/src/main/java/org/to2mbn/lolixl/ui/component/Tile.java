@@ -40,6 +40,7 @@ public class Tile extends Button {
 		});
 
 		getStyleClass().add(CSS_CLASS_TILE);
+		getStyleClass().remove("button");
 	}
 
 	private void showEffect(MouseEvent event) {

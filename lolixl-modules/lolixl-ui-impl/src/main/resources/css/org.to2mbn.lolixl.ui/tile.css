@@ -1,9 +1,16 @@
 .xl-tile {
+	-fx-padding: 5.0;
 	-xl-show-tile-effect: true;
+    -fx-border-style: null;
+    -fx-background-radius: 0.0;
+    -fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
+    -fx-font-size: 11.0pt;
+    -fx-alignment: CENTER;
+	-fx-border-width: 0.0;
 }
 
 .xl-item-tile {
-	-xl-icon-width: 50;
-	-xl-icon-height: 50;
-	-fx-graphic-text-gap: 6;
+	-xl-icon-width: 50.0;
+	-xl-icon-height: 50.0;
+	-fx-graphic-text-gap: 6.0;
 }

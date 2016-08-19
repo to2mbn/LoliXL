@@ -18,7 +18,6 @@ import org.to2mbn.lolixl.ui.impl.container.view.HomeContentView;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
 import org.to2mbn.lolixl.utils.MappedObservableList;
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -163,14 +162,15 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			Duration time = newAnimation();
 
 			// === calculate targetWidth
-			setTileStateCssClass(tile, null);
-
 			double originPrefWidth = tile.prefWidthProperty().get();
 			Insets originPadding = tile.paddingProperty().get();
 
+			setTileStateCssClass(tile, null);
+			tile.applyCss();
+
 			tile.prefWidthProperty().set(-1);
 			tile.contentDisplayProperty().set(ContentDisplay.LEFT);
-			tile.paddingProperty().set(new Insets(5, 10, 5, 5));
+			tile.paddingProperty().set(new Insets(5, 5, 5, 5));
 
 			double targetWidth = tile.prefWidth(-1);
 
