@@ -51,7 +51,7 @@ public class SimpleFormatter extends Formatter {
 		String msg = record.getMessage();
 
 		return new StringBuilder(
-				4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 3 + 2 + level.length() + 3 + logger.length() + 2 + msg.length() + thrown.length())
+				4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 3 + 2 + level.length() + 3 + logger.length() + 2 + msg.length() + thrown.length() + 1)
 						// @formatter:off
 						.append(year)	// 4
 						.append('-') 	// 1
@@ -73,6 +73,7 @@ public class SimpleFormatter extends Formatter {
 						.append("] ")	// 2
 						.append(msg)	// msg.length()
 						.append(thrown)	// thrown.length()
+						.append('\n')	// 1
 						// @formatter:on
 						.toString();
 	}
