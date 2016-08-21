@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
@@ -19,7 +20,9 @@ import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -38,14 +41,15 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 	 * 打开一个panel时，若当前无打开panel，则该panel从左侧滑出。
 	 * 关闭一个panel时，则逆转上述过程。
 	 * 若打开一个panel时，已有其它panel在显示，
-	 * 则之前在显示的panel以2倍速度执行关闭动画，
-	 * 之后，要打开的panel以2倍速度执行打开动画。
+	 * 则之前在显示的panel以1.5倍速度执行关闭动画，
+	 * 之后，要打开的panel以1.5倍速度执行打开动画。
 	 */
 
 	private double panelAnimationDuration = 300.0;
 	private double sidebarPanelWidth = 250.0;
+	private double doubleOperationTimeMultiplier = 2.0 / 3.0;
 
-	private Panel currentPanel;
+	private PanelView currentPanel;
 	private Queue<Runnable> pendingAnimations = new LinkedList<>();
 
 	@Reference
@@ -68,7 +72,7 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	@Override
 	public Optional<Panel> getCurrent() {
-		return Optional.ofNullable(currentPanel);
+		return Optional.ofNullable(currentPanel).map(view -> view.panel);
 	}
 
 	@Override
@@ -88,14 +92,14 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	private void showNewPanel(Panel panel) {
 		if (currentPanel == null) {
-			currentPanel = panel;
-			view.sidebarContainer.setContent(new PanelView(panel));
+			currentPanel = new PanelView(panel);
+			view.sidebarContainer.setContent(currentPanel);
 			showPanel(panelAnimationDuration, false, null);
 		} else {
-			showPanel(panelAnimationDuration / 2.0, true, () -> {
-				currentPanel = panel;
-				view.sidebarContainer.setContent(new PanelView(panel));
-				showPanel(panelAnimationDuration / 2.0, false, null);
+			showPanel(panelAnimationDuration * doubleOperationTimeMultiplier, true, () -> {
+				currentPanel = new PanelView(panel);
+				view.sidebarContainer.setContent(currentPanel);
+				showPanel(panelAnimationDuration * doubleOperationTimeMultiplier, false, null);
 			});
 		}
 	}
@@ -111,9 +115,20 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	private void showPanel(double t, boolean reverse, Runnable callback) {
 		addNewAnimation(() -> {
-			double endValue = reverse ? 0.0 : sidebarPanelWidth;
-			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(t),
-					new KeyValue(view.sidebarContainer.prefWidthProperty(), endValue, FunctionInterpolator.S_CURVE)));
+			double endWidth = reverse ? 0.0 : sidebarPanelWidth;
+			double startOpacity = reverse ? 1.0 : 0.0;
+			double endOpacity = reverse ? 0.0 : 1.0;
+
+			List<KeyValue> keyValues = new ArrayList<>();
+			keyValues.add(new KeyValue(view.sidebarContainer.prefWidthProperty(), endWidth, FunctionInterpolator.S_CURVE));
+			if (currentPanel != null) {
+				for (Node node : getPanelViewAnimationNodes(currentPanel)) {
+					node.setOpacity(startOpacity);
+					keyValues.add(new KeyValue(node.opacityProperty(), endOpacity, FunctionInterpolator.S_CURVE));
+				}
+			}
+
+			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(t), keyValues.toArray(new KeyValue[keyValues.size()])));
 			setSidebarPanelStateCssClass(null);
 			timeline.setOnFinished(event -> {
 				setSidebarPanelStateCssClass(reverse ? CSS_CLASS_PANEL_HIDDEN : CSS_CLASS_PANEL_SHOWN);
@@ -123,6 +138,15 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 			});
 			timeline.play();
 		});
+	}
+
+	private List<Node> getPanelViewAnimationNodes(PanelView panel) {
+		List<Node> nodes = new ArrayList<>();
+		nodes.add(panel.previousButton);
+		nodes.add(panel.iconView);
+		nodes.add(panel.titleLabel);
+		nodes.add(panel.panelContentContainer);
+		return nodes;
 	}
 
 	private void addNewAnimation(Runnable animation) {

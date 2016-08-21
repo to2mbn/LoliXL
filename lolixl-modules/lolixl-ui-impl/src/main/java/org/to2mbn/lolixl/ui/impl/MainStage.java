@@ -24,7 +24,7 @@ public class MainStage {
 
 	private static final double WIDTH = 850.0;
 	private static final double HEIGHT = 450.0;
-	private static final double MIN_WIDTH = 600.0;
+	private static final double MIN_WIDTH = 650.0;
 	private static final double MIN_HEIGHT = 340.0;
 
 	@Reference

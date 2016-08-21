@@ -35,7 +35,7 @@ public class PanelView extends BorderPane {
 	@FXML
 	public StackPane panelContentContainer;
 
-	private final Panel panel;
+	public final Panel panel;
 
 	public PanelView(Panel _panel) {
 		panel = _panel;
