@@ -20,6 +20,8 @@ import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.FrameworkEvent;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 
 class Main {
 
@@ -58,6 +60,7 @@ class Main {
 		System.setProperty("lolixl.forciblyExit", "true");
 		System.setProperty("lolixl.overwriteSystemPlugins", "true");
 		System.setProperty("lolixl.hackCss", "true");
+		System.setProperty("org.ehcache.sizeof.AgentSizeOf.bypass", "true");
 	}
 
 	private static void setupWorkingDir() throws IOException {
@@ -98,6 +101,9 @@ class Main {
 			setupSystemProperties();
 			setupWorkingDir();
 			configureJUL();
+
+			initFx();
+
 			felixConfiguration = loadConfiguration();
 			processConfiguration(felixConfiguration);
 			AccessEndpoint.internalBundleRepository = new InternalBundleRepository();
@@ -119,7 +125,7 @@ class Main {
 				}
 			} while (event.getType() == FrameworkEvent.WAIT_TIMEDOUT ||
 					event.getType() == FrameworkEvent.STOPPED_UPDATE);
-			clearFelixCache();
+			shutdown();
 		} catch (Throwable e) {
 			if (felix != null) {
 				try {
@@ -128,10 +134,15 @@ class Main {
 					e.addSuppressed(e1);
 				}
 			}
-			clearFelixCache();
+			shutdown();
 			FatalErrorReporter.process(e);
 			System.exit(1);
 		}
+	}
+
+	private static void shutdown() {
+		Platform.exit();
+		clearFelixCache();
 	}
 
 	private static void clearFelixCache() {
@@ -170,5 +181,16 @@ class Main {
 		} else if (Files.isRegularFile(path)) {
 			Files.deleteIfExists(path);
 		}
+	}
+
+	private static void initFx() {
+		new Thread(() -> {
+			try {
+				LOGGER.info("Initializing JavaFX");
+				new JFXPanel(); // init JavaFX
+			} catch (Throwable e) {
+				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX", e);
+			}
+		}, "JavaFX-init").start();
 	}
 }

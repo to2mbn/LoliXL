@@ -63,14 +63,14 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 		Boolean isPlugin = gav2isPlugin.get(artifact.toString());
 		if (isPlugin != null) {
 			if (Files.isRegularFile(repository.getArtifactPath(artifact, null, "jar"))
-					&& (!isPlugin || Files.isRegularFile(repository.getArtifactPath(artifact, "lolixl-plugin", "xml")))) {
+					&& (!isPlugin || Files.isRegularFile(repository.getArtifactPath(artifact, "lolixl-plugin", "json")))) {
 				return CompletableFuture.completedFuture(null);
 			}
 		}
 
 		return repository.install(from, artifact, null, "jar")
 				.thenCombine(
-						repository.install(from, artifact, "lolixl-plugin", "xml")
+						repository.install(from, artifact, "lolixl-plugin", "json")
 								.handle((dummy, ex) -> {
 									if (ex == null)
 										return true;
@@ -88,7 +88,7 @@ public class LocalPluginRepositoryImpl extends AbstractPluginRepository implemen
 	@Override
 	public Stream<MavenArtifact> listPlugins() throws IOException {
 		return repository.listArtifacts()
-				.filter(artifact -> Files.isRegularFile(repository.getArtifactPath(artifact, "lolixl-plugin", "xml")));
+				.filter(artifact -> Files.isRegularFile(repository.getArtifactPath(artifact, "lolixl-plugin", "json")));
 	}
 
 	@Override

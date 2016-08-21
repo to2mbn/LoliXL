@@ -11,21 +11,19 @@ import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.utils.AsyncUtils;
-import org.xml.sax.InputSource;
+import org.to2mbn.lolixl.utils.GsonUtils;
 
 abstract public class AbstractPluginRepository implements PluginRepository {
-
-	private PluginDescriptionResolver descriptionResolver = new PluginDescriptionResolver();
 
 	@Override
 	public CompletableFuture<Optional<PluginDescription>> getPluginDescription(MavenArtifact artifact) {
 		Objects.requireNonNull(artifact);
-		return new ReadToMemoryProcessor(output -> getRepository().downloadArtifact(artifact, "lolixl-plugin", "xml", output))
+		return new ReadToMemoryProcessor(output -> getRepository().downloadArtifact(artifact, "lolixl-plugin", "json", output))
 				.invoke()
 				.handle((data, exception) -> {
 					if (exception == null) {
 						try (Reader reader = new InputStreamReader(new ByteArrayInputStream(data), "UTF-8")) {
-							return Optional.of(descriptionResolver.resolve(new InputSource(reader)));
+							return Optional.of(GsonUtils.instance().fromJson(reader, PluginDescriptionImpl.class));
 						} catch (Exception e) {
 							throw new IllegalArgumentException("${org.to2mbn.lolixl.plugin.badDescription}", e);
 						}

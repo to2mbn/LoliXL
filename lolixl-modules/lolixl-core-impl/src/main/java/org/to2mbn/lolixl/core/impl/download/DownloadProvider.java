@@ -5,6 +5,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
+import org.ehcache.CacheManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
@@ -22,6 +23,9 @@ public class DownloadProvider {
 	@Reference
 	private EventAdmin eventAdmin;
 
+	@Reference
+	private CacheManager cacheManager;
+
 	private MinecraftDownloader downloader;
 	private OSGiDownloadProviderAdapter downloadProviderAdapter;
 	private OSGiDownloadInfoProcessorAdapter downloadInfoProcessorAdapter;
@@ -29,21 +33,23 @@ public class DownloadProvider {
 	@Activate
 	public void active(ComponentContext compCtx) {
 		BundleContext ctx = compCtx.getBundleContext();
-		downloadInfoProcessorAdapter = new OSGiDownloadInfoProcessorAdapter(ctx);
-		downloadProviderAdapter = new OSGiDownloadProviderAdapter(ctx, () -> Collections.emptyList(), downloadInfoProcessorAdapter);
+		new Thread(() -> {
+			downloadInfoProcessorAdapter = new OSGiDownloadInfoProcessorAdapter(ctx);
+			downloadProviderAdapter = new OSGiDownloadProviderAdapter(ctx, () -> Collections.emptyList(), downloadInfoProcessorAdapter);
 
-		downloader = MinecraftDownloaderBuilder.create(
-				DownloaderBuilders.cacheableDownloader(
-						wrapDownloader(
-								DownloaderBuilders.downloader())))
-				.providerChain(DownloadProviderChain.create()
-						.addProvider(downloadProviderAdapter.getDownloadProvider())
-						.addDownloadInfoProcessor(downloadInfoProcessorAdapter))
-				.build();
+			downloader = MinecraftDownloaderBuilder.create(
+					DownloaderBuilders.cacheableDownloader(
+							wrapDownloader(
+									DownloaderBuilders.downloader())))
+					.providerChain(DownloadProviderChain.create()
+							.addProvider(downloadProviderAdapter.getDownloadProvider())
+							.addDownloadInfoProcessor(downloadInfoProcessorAdapter))
+					.build();
 
-		ctx.registerService(MinecraftDownloader.class, downloader, null);
-		ctx.registerService(CombinedDownloader.class, downloader, null);
-		ctx.registerService(Downloader.class, downloader, null);
+			ctx.registerService(MinecraftDownloader.class, downloader, null);
+			ctx.registerService(CombinedDownloader.class, downloader, null);
+			ctx.registerService(Downloader.class, downloader, null);
+		}, "Jmccc-init").start();
 	}
 
 	@Deactivate

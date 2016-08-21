@@ -156,85 +156,85 @@
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-utils</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-plugin-manager</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-i18n</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-init</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-core</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-core-impl</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ui-impl</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-version-provider-mcdir</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-offline-authenticator</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-plugin-center</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-language-pack</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-yggdrasil-authenticator</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.to2mbn.lolixl</groupId>
 									<artifactId>lolixl-ehcache</artifactId>
 									<classifier>lolixl-plugin</classifier>
-									<type>xml</type>
+									<type>json</type>
 								</artifactItem>
 
 							</artifactItems>

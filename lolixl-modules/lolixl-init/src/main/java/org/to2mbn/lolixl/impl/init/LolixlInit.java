@@ -14,7 +14,6 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
-import javafx.embed.swing.JFXPanel;
 
 @Component
 public class LolixlInit {
@@ -44,9 +43,6 @@ public class LolixlInit {
 			Thread.yield();
 
 		try {
-			LOGGER.info("Initializing JavaFX");
-			new JFXPanel(); // init JavaFX
-
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/org.to2mbn.lolixl.init.plugins.list"), "UTF-8"))) {
 				String line;
 				while ((line = reader.readLine()) != null) {

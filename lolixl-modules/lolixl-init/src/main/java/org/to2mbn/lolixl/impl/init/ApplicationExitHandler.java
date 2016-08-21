@@ -15,7 +15,6 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
-import javafx.application.Platform;
 
 @Service({ EventHandler.class })
 @Properties({
@@ -40,7 +39,6 @@ public class ApplicationExitHandler implements EventHandler {
 	public void handleEvent(Event event) {
 		LOGGER.info("Exiting application");
 
-		stopFx();
 		stopFramework();
 
 		if ("true".equals(System.getProperty("lolixl.forciblyExit"))) {
@@ -65,10 +63,6 @@ public class ApplicationExitHandler implements EventHandler {
 		} catch (BundleException e) {
 			LOGGER.log(Level.SEVERE, "Couldn't stop framework", e);
 		}
-	}
-
-	private void stopFx() {
-		Platform.exit();
 	}
 
 }

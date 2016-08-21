@@ -20,15 +20,17 @@ public class EhcacheFactory {
 
 	@Activate
 	public void active(ComponentContext compCtx) {
-		LOGGER.info("Starting Ehcache");
-		cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-				.with(CacheManagerBuilder.persistence(".lolixl/ehcache"))
-				.withCache("org.to2mbn.lolixl.core.impl.texture.binary",
-						CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, byte[].class,
-								ResourcePoolsBuilder.newResourcePoolsBuilder()
-										.disk(16, MemoryUnit.MB, true)))
-				.build(true);
-		compCtx.getBundleContext().registerService(CacheManager.class, cacheManager, null);
+		new Thread(() -> {
+			LOGGER.info("Starting Ehcache");
+			cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+					.with(CacheManagerBuilder.persistence(".lolixl/ehcache"))
+					.withCache("org.to2mbn.lolixl.core.impl.texture.binary",
+							CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, byte[].class,
+									ResourcePoolsBuilder.newResourcePoolsBuilder()
+											.disk(16, MemoryUnit.MB, true)))
+					.build(true);
+			compCtx.getBundleContext().registerService(CacheManager.class, cacheManager, null);
+		}, "Ehcache-init").start();
 	}
 
 	@Deactivate
