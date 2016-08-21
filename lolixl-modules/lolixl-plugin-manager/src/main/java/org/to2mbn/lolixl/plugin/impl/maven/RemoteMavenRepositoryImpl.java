@@ -21,7 +21,6 @@ import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.ArtifactVersioning;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.plugin.maven.MavenRepository;
-import static java.lang.String.format;
 
 @Component(immediate = true)
 @Service({ MavenRepository.class })
@@ -77,7 +76,7 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 			future.completeExceptionally(noProvidersEx);
 			return;
 		}
-		LOGGER.finer(() -> format("Trying repository[%d]: %s", idx, repositories[idx]));
+		LOGGER.finer("Trying repository[" + idx + "]: " + repositories[idx]);
 		CompletableFuture<T> thisStage;
 		try {
 			thisStage = operation.apply(repositories[idx]);

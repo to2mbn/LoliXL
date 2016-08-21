@@ -6,14 +6,11 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
-import org.osgi.framework.ServiceEvent;
-import org.osgi.framework.ServiceListener;
 
-public class OSGiListener implements BundleListener, ServiceListener, FrameworkListener {
+public class OSGiListener implements BundleListener, FrameworkListener {
 
 	private static final Logger LOGGER_FRAMEWORK = Logger.getLogger("org.apache.felix.framework.event.framework");
 	private static final Logger LOGGER_BUNDLE = Logger.getLogger("org.apache.felix.framework.event.bundle");
-	private static final Logger LOGGER_SERVICE = Logger.getLogger("org.apache.felix.framework.event.service");
 
 	@Override
 	public void frameworkEvent(FrameworkEvent event) {
@@ -73,37 +70,6 @@ public class OSGiListener implements BundleListener, ServiceListener, FrameworkL
 					.append("]");
 		}
 		LOGGER_FRAMEWORK.log(level, sb.toString(), event.getThrowable());
-	}
-
-	@Override
-	public void serviceChanged(ServiceEvent event) {
-		String type;
-		Level level = Level.FINE;
-		switch (event.getType()) {
-			case ServiceEvent.REGISTERED:
-				type = "REGISTERED";
-				break;
-			case ServiceEvent.MODIFIED:
-				type = "MODIFIED";
-				break;
-			case ServiceEvent.MODIFIED_ENDMATCH:
-				type = "MODIFIED_ENDMATCH";
-				break;
-			case ServiceEvent.UNREGISTERING:
-				type = "UNREGISTERING";
-				break;
-			default:
-				level = Level.OFF;
-				type = "<Unknown type: " + event.getType() + ">";
-				break;
-		}
-		StringBuilder sb = new StringBuilder();
-		sb.append(type);
-		if (event.getServiceReference() != null) {
-			sb.append(" serviceRef=")
-					.append(event.getServiceReference());
-		}
-		LOGGER_SERVICE.log(level, sb.toString());
 	}
 
 	@Override

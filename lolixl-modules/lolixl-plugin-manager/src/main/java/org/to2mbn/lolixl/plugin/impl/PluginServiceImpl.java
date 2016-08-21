@@ -139,7 +139,7 @@ public class PluginServiceImpl implements PluginService {
 						.invoke(null, gav);
 				descriptionFutures.put(bundle, localPluginRepo.getPluginDescription(artifact));
 				addBundle0(bundle, artifact, data);
-				LOGGER.fine(format("Found bootstrap bundle mapping bundle=[%s], artifact=[%s], data=[%s]", bundle, artifact, data));
+				LOGGER.fine("Found bootstrap bundle mapping bundle=[" + bundle + "], artifact=[" + artifact + "], data=[" + data + "]");
 			}
 			for (Entry<Bundle, CompletableFuture<Optional<PluginDescription>>> entry : descriptionFutures.entrySet()) {
 				Bundle bundle = entry.getKey();
@@ -150,7 +150,7 @@ public class PluginServiceImpl implements PluginService {
 				}
 				PluginDescription description = optionalDescription.get();
 				addPlugin0(bundle, description);
-				LOGGER.fine(format("PluginDescription found for [%s]: %s", bundle, description));
+				LOGGER.fine("PluginDescription found for [" + bundle + "]: " + description);
 			}
 			checkDependenciesState();
 		}

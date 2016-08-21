@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.plugin.impl.maven;
 
-import static java.lang.String.format;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
@@ -100,7 +99,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 		Objects.requireNonNull(from);
 		Objects.requireNonNull(artifact);
 
-		LOGGER.fine(format("Installing %s classifier=%s type=%s from %s", artifact, classifier, type, from));
+		LOGGER.fine("Installing " + artifact + " classifier=" + classifier + " type=" + type + " from " + from);
 		return CompletableFuture.allOf(
 				updateVersioning(from, artifact.getGroupId(), artifact.getArtifactId()),
 				processDownloading(getArtifactPath(artifact, classifier, type), output -> from.downloadArtifact(artifact, classifier, type, output)));
@@ -120,7 +119,7 @@ public class LocalMavenRepositoryImpl implements LocalMavenRepository {
 
 	private CompletableFuture<Void> asyncReadArtifact(Path path, Supplier<WritableByteChannel> output) {
 		return AsyncUtils.asyncRun(() -> {
-			LOGGER.finer(format("Try reading [%s] to [%s]", path, output));
+			LOGGER.finer("Try reading [" + path + "] to [" + output + "]");
 			checkArtifactExisting(path);
 
 			try (FileChannel in = FileChannel.open(path, StandardOpenOption.READ);

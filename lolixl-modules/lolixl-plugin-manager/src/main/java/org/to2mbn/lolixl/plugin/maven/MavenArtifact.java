@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.plugin.maven;
 
 import java.io.Serializable;
 import java.util.Objects;
+import org.to2mbn.lolixl.plugin.impl.resolver.ComparableVersion;
 
 /**
  * 用GAV(groupId, artifactId, version)描述的一个Maven构件。
@@ -15,6 +16,7 @@ public class MavenArtifact implements Serializable, Comparable<MavenArtifact> {
 	private String groupId;
 	private String artifactId;
 	private String version;
+	private transient ComparableVersion comparableVersion;
 
 	public MavenArtifact(String groupId, String artifactId, String version) {
 		this.groupId = Objects.requireNonNull(groupId);
@@ -28,6 +30,13 @@ public class MavenArtifact implements Serializable, Comparable<MavenArtifact> {
 	public String getArtifactId() { return artifactId; }
 	public String getVersion() { return version; }
 	// @formatter:on
+
+	public ComparableVersion getComparableVersion() {
+		if (comparableVersion == null) {
+			comparableVersion = new ComparableVersion(version);
+		}
+		return comparableVersion;
+	}
 
 	@Override
 	public int hashCode() {

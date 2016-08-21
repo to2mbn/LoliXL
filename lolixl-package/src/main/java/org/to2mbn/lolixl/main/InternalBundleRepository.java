@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.main;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -119,7 +118,7 @@ class InternalBundleRepository {
 					.get();
 			String version = artifactNameToInfer.substring(ga.length() + 1, artifactNameToInfer.lastIndexOf('.'));
 			ga2v.put(ga, version);
-			LOGGER.fine(format("Found GAV mapping: %s -> %s", ga, version));
+			LOGGER.fine("Found GAV mapping: " + ga + " -> " + version);
 		});
 	}
 

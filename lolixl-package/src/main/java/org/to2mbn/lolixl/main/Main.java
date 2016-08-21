@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -83,11 +84,17 @@ class Main {
 
 	private static void configureJUL() throws IOException {
 		Handler loggingHandler = new FileHandler(Metadata.LOG_FILE);
-		loggingHandler.setFormatter(new SimpleFormatter("%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL [%4$s] [%3$s] %5$s%6$s%n"));
+		loggingHandler.setFormatter(new SimpleFormatter());
 		loggingHandler.setLevel(Level.ALL);
 
-		Logger.getLogger("").addHandler(loggingHandler);
-		Logger.getLogger("").setLevel(Level.FINE);
+		Logger rootLogger = Logger.getLogger("");
+		rootLogger.addHandler(loggingHandler);
+		rootLogger.setLevel(Level.FINE);
+		for (Handler handler : rootLogger.getHandlers()) {
+			if (handler instanceof ConsoleHandler) {
+				handler.setLevel(Level.WARNING);
+			}
+		}
 	}
 
 	private static void processConfiguration(Properties configuration) {
@@ -113,7 +120,6 @@ class Main {
 			felix.start();
 			OSGiListener osgiListener = new OSGiListener();
 			felix.getBundleContext().addBundleListener(osgiListener);
-			felix.getBundleContext().addServiceListener(osgiListener);
 			felix.getBundleContext().addFrameworkListener(osgiListener);
 			setupFelix(felix);
 

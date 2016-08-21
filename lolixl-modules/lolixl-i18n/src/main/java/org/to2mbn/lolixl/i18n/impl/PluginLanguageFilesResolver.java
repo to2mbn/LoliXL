@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.i18n.impl;
 
-import static java.lang.String.format;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
@@ -29,7 +28,7 @@ public class PluginLanguageFilesResolver {
 				BundleContext ctx = bundle.getBundleContext();
 
 				for (String lang : languageFiles) {
-					LOGGER.info(format("Loading language properties [%s] from plugin [%s]", lang, plugin.getDescription().getArtifact()));
+					LOGGER.info("Loading language properties [" + lang + "] from plugin [" + plugin.getDescription().getArtifact() + "]");
 					ctx.registerService(LocalizationProvider.class, new ResourceLocalizationProvider(bundle, lang), null);
 				}
 			});

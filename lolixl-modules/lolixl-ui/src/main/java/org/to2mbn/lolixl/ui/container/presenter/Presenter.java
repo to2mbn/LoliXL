@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.ui.container.presenter;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import org.to2mbn.lolixl.ui.container.view.View;
-import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.ClassUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -33,7 +32,7 @@ public abstract class Presenter<T extends View> {
 			FXMLLoader loader = new FXMLLoader();
 			try {
 				// FXMLLoader 会自动close掉InputStream
-				loader.load(BundleUtils.getInputStreamFromBundle(getClass(), getFxmlLocation()));
+				loader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(getFxmlLocation()));
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}

@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.plugin.impl.resolver;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,8 +18,6 @@ import static java.util.stream.Collectors.*;
 public final class DependencyResolver {
 
 	private DependencyResolver() {}
-
-	private static Comparator<String> reversedVersionComparator = new VersionComparator().reversed();
 
 	public static Map<MavenArtifact, PluginDescription> toArtifact2DescriptionMap(Set<PluginDescription> descriptions) {
 		return descriptions.stream()
@@ -44,12 +41,12 @@ public final class DependencyResolver {
 	public static Set<MavenArtifact> merge(Set<MavenArtifact> artifacts) {
 		return artifacts.stream()
 				.collect(groupingBy(artifact -> artifact.getGroupId() + ":" + artifact.getArtifactId(),
-						mapping(artifact -> artifact.getVersion(),
-								toCollection(() -> new TreeSet<>(reversedVersionComparator)))))
+						mapping(artifact -> artifact.getComparableVersion(),
+								toCollection(TreeSet::new))))
 				.entrySet().stream()
 				.map(entry -> {
 					String[] splitedGA = entry.getKey().split(":", 2);
-					String version = entry.getValue().first();
+					String version = entry.getValue().last().toString();
 					return new MavenArtifact(splitedGA[0], splitedGA[1], version);
 				})
 				.collect(toSet());

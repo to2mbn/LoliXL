@@ -24,6 +24,7 @@ import java.util.List;
 
 @Component(immediate = true)
 public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
+
 	private static final String FXML_LOCATION = "/ui/fxml/panel/auth_profiles_panel.fxml";
 
 	@Reference
@@ -36,7 +37,7 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 	private LeftSideBarPresenter sideBarPresenter;
 
 	private MappedObservableList<AuthenticationProfile<?>, Tile> mappedProfileTiles;
-	private Tile addProfileTile = new Tile();
+	private Tile addProfileTile;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -50,6 +51,7 @@ public class AuthProfilesPresenter extends Presenter<AuthProfilesView> {
 
 	@Override
 	protected void initializePresenter() {
+		addProfileTile = new Tile();
 		FXUtils.setButtonGraphic(addProfileTile, new AddNewProfileTileView());
 		addProfileTile.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.impl.container.presenter.panel.sidebar.authtypes.button.add.text"));
 		Panel panel = displayService.newPanel();

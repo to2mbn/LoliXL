@@ -56,7 +56,7 @@ abstract public class AbstractReadProcessor<RESULT> implements Supplier<Writable
 			throw new AssertionError("unreachable statement");
 		} else {
 			int idx = openCount.getAndIncrement();
-			LOGGER.finer(() -> format("[%s] opening channel #%d", this, idx));
+			LOGGER.finer("[" + this + "] opening channel #" + idx);
 			try {
 				lastChannel = openChannel();
 				return lastChannel;

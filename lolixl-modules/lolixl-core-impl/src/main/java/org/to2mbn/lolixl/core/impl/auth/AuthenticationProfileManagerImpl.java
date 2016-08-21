@@ -177,7 +177,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 
 		profiles.entries.add(entry);
 
-		LOGGER.fine(format("Created authentication profile %s, service=%s", entry, reference));
+		LOGGER.fine("Created authentication profile " + entry + ", service=" + reference);
 
 		doSetObservableContext(entry.profile, entry);
 
@@ -202,7 +202,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 				if (profiles.entries.remove(entry)) {
 					updateProfile(AuthenticationProfileEvent.TYPE_DELETE, entry);
 					profile.setObservableContext(null);
-					LOGGER.fine(() -> format("Removed auth profile %s", entry));
+					LOGGER.fine("Removed auth profile " + entry);
 
 					if (Objects.equals(entry.uuid, profiles.selectedProfile)) {
 						// find a successor
@@ -303,7 +303,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 			try {
 				synchronized (entry) {
 					GsonUtils.toJson(location, profile.store());
-					LOGGER.fine(() -> format("Saved auth profile %s", entry));
+					LOGGER.fine("Saved auth profile " + entry);
 				}
 			} catch (Exception e) {
 				LOGGER.log(Level.WARNING, format("Couldn't save auth profile %s to [%s]", entry, location), e);
@@ -334,7 +334,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 							}
 						}
 					}
-					LOGGER.fine(() -> format("Loaded auth profile %s, service=%s", entry, reference));
+					LOGGER.fine("Loaded auth profile " + entry + ", service=" + reference);
 					trySetDefaultSelectedProfile(entry);
 				}));
 	}
@@ -364,7 +364,7 @@ public class AuthenticationProfileManagerImpl implements AuthenticationProfileMa
 				entry.serviceRef = null;
 			}
 		}
-		LOGGER.fine(() -> format("Unloaded auth profile %s", entry));
+		LOGGER.fine("Unloaded auth profile " + entry);
 	}
 
 	private Path getProfileLocation(UUID uuid) {

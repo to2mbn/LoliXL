@@ -1,6 +1,5 @@
 package org.to2mbn.lolixl.plugin.impl;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,8 +24,8 @@ import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.PluginRepository;
 import org.to2mbn.lolixl.plugin.PluginService;
+import org.to2mbn.lolixl.plugin.impl.resolver.ComparableVersion;
 import org.to2mbn.lolixl.plugin.impl.resolver.DependencyResolver;
-import org.to2mbn.lolixl.plugin.impl.resolver.VersionComparator;
 import org.to2mbn.lolixl.plugin.maven.ArtifactNotFoundException;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
 import org.to2mbn.lolixl.utils.AsyncUtils;
@@ -54,7 +53,6 @@ public class PluginManagerImpl implements PluginManager {
 	@Reference(target = "(usage=local_io)")
 	private ExecutorService localIOPool;
 
-	private Comparator<String> versionComparator = new VersionComparator();
 	private BundleListener bundleListener = event -> {
 		int type = event.getType();
 		if (type == BundleEvent.STARTED || type == BundleEvent.STOPPED)
@@ -123,8 +121,7 @@ public class PluginManagerImpl implements PluginManager {
 		return remotePluginRepo.getRepository().getVersioning(artifact.getGroupId(), artifact.getArtifactId())
 				.thenApply(versioning -> {
 					String remote = versioning.getLatest();
-					String current = artifact.getVersion();
-					if (versionComparator.compare(remote, current) > 0) {
+					if (new ComparableVersion(remote).compareTo(artifact.getComparableVersion()) > 0) {
 						return Optional.of(new MavenArtifact(artifact.getGroupId(), artifact.getArtifactId(), remote));
 					} else {
 						return Optional.empty();
@@ -139,8 +136,7 @@ public class PluginManagerImpl implements PluginManager {
 			localPluginRepo.getRepository().listArtifacts()
 					.filter(artifact -> {
 						MavenArtifact sameGAInUse = ga2usingArtifact.get(artifact.getGroupId() + ":" + artifact.getArtifactId());
-						return sameGAInUse == null ||
-								versionComparator.compare(artifact.getVersion(), sameGAInUse.getVersion()) < 0;
+						return sameGAInUse == null || artifact.getComparableVersion().compareTo(sameGAInUse.getComparableVersion()) < 0;
 					})
 					.forEach(artifact -> {
 						LOGGER.info("Deleting " + artifact);
