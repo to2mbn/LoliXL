@@ -24,6 +24,8 @@ import org.to2mbn.lolixl.utils.LambdaServiceTracker;
 import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -39,7 +41,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	private static final Logger LOGGER = Logger.getLogger(SideBarTileServiceImpl.class.getCanonicalName());
 
 	private SideBarTileList tiles = new SideBarTileList();
-	private volatile int maxShownTiles = 4; // TODO: compute via window height
+	private IntegerProperty maxShownTilesProperty = new SimpleIntegerProperty();
 
 	private ObservableList<SidebarTileElement> shownTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<SidebarTileElement> hiddenTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
@@ -54,6 +56,11 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	@Activate
 	public void active(ComponentContext compCtx) {
 		bundleContext = compCtx.getBundleContext();
+		maxShownTilesProperty.addListener((dummy, oldV, newV) -> {
+			if (oldV != newV) {
+				updateTiles();
+			}
+		});
 		serviceTracker = new LambdaServiceTracker<>(bundleContext, SidebarTileElement.class)
 				.whenAdding((reference, service) -> {
 					String tagName = ServiceUtils.getIdProperty(SidebarTileElement.PROPERTY_TAG_NAME, reference, service);
@@ -128,7 +135,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 		int size = 0;
 		for (SideBarTileList.TileEntry ele : tiles.entries) {
 			if (ele.tileElement != null) {
-				if (size < maxShownTiles) {
+				if (size < maxShownTilesProperty.get()) {
 					shown.add(ele.tileElement);
 				} else {
 					hidden.add(ele.tileElement);
@@ -137,7 +144,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 			}
 		}
 		shownTiles.setAll(shown);
-		hiddenTiles.setAll(hiddenTiles);
+		hiddenTiles.setAll(hidden);
 	}
 
 	@Override
@@ -150,7 +157,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 			for (SideBarTileList.TileEntry ele : tiles.entries) {
 				if (ele.tileElement != null) {
 					if (ele.tileElement == element) {
-						return idx < maxShownTiles ? StackingStatus.SHOWN : StackingStatus.HIDDEN;
+						return idx < maxShownTilesProperty.get() ? StackingStatus.SHOWN : StackingStatus.HIDDEN;
 					}
 					idx++;
 				}
@@ -232,14 +239,6 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	}
 
 	@Override
-	public void setMaxShownTiles(int newMaxShownTiles) {
-		if (maxShownTiles != newMaxShownTiles) {
-			maxShownTiles = newMaxShownTiles;
-			observableContext.notifyChanged();
-		}
-	}
-
-	@Override
 	public void setObservableContext(ObservableContext ctx) {
 		this.observableContext = ctx;
 	}
@@ -264,6 +263,11 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 	@Override
 	public Class<? extends SideBarTileList> getMementoType() {
 		return SideBarTileList.class;
+	}
+
+	@Override
+	public IntegerProperty maxShownTilesProperty() {
+		return maxShownTilesProperty;
 	}
 
 }

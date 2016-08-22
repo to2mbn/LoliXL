@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.ui.impl.theme;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
@@ -26,16 +27,16 @@ public class PluginCssResolver {
 
 	private PluginResourceListener<Set<String>> resourceListener = PluginResourceListener
 			.<Set<String>> json("META-INF/lolixl/css.json", ParameterizedTypeUtils.createParameterizedType(Set.class, String.class))
-			.whenAdding((plugin, cssFiles) -> {
+			.whenAdding((plugin, cssFiles) -> Optional.ofNullable(this.scene).ifPresent(scene -> {
 				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
 				LOGGER.info("Loading css " + css);
 				scene.getStylesheets().addAll(css);
-			})
-			.whenRemoving((plugin, cssFiles) -> {
+			}))
+			.whenRemoving((plugin, cssFiles) -> Optional.ofNullable(this.scene).ifPresent(scene -> {
 				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
 				LOGGER.info("Unloading css " + css);
 				scene.getStylesheets().removeAll(css);
-			});
+			}));
 
 	@Activate
 	public void active() {

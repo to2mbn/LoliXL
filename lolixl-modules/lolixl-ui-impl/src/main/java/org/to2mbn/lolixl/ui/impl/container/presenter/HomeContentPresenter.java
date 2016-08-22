@@ -23,6 +23,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.IntegerBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -43,9 +44,12 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 	private static final String CSS_CLASS_TILE_EXPANDING = "xl-sidebar-tile-expanding";
 
 	private double tileAnimationDuration = 300.0;
+	private double tileHeight = 60.0;
 
 	@Reference
 	private SideBarTileService tileService;
+
+	private IntegerBinding shownTilesCount;
 
 	private MappedObservableList<SidebarTileElement, Tile> tilesMapping;
 
@@ -68,6 +72,18 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 		});
 		Bindings.bindContent(view.tileContainer.getChildren(), tilesMapping);
 		view.startGameButton.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.home.launch_button.text"));
+
+		shownTilesCount = Bindings.createIntegerBinding(() -> {
+			Insets padding = view.tileContainer.getInsets();
+			double nodeHeight = view.tileContainer.getHeight();
+			double tileSpacing = view.tileContainer.getSpacing();
+			double effectiveHeight = nodeHeight - padding.getBottom() - padding.getTop();
+			int capacity = (int) ((effectiveHeight + tileSpacing) / (tileHeight + tileSpacing));
+			int shownCount = Math.max(capacity - 1, 0);
+			return shownCount;
+		}, view.tileContainer.heightProperty());
+		tileService.maxShownTilesProperty().bind(shownTilesCount);
+
 		// XXX: TEST CODE, delete it
 		view.startGameButton.setOnAction(event -> {
 			BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
@@ -170,7 +186,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 			tile.prefWidthProperty().set(-1);
 			tile.contentDisplayProperty().set(ContentDisplay.LEFT);
-			tile.paddingProperty().set(new Insets(5, 5, 5, 5));
 
 			double targetWidth = tile.prefWidth(-1);
 

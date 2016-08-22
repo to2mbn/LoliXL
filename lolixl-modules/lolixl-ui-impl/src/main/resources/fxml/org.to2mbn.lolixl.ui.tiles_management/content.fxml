@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.FlowPane?>
+
+<BorderPane
+	id="xl-tiles-management-root-container"
+	fx:id="rootContainer"
+	xmlns="http://javafx.com/javafx/8.0.60"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles.TileManagementView">
+	<center>
+		<FlowPane
+			id="xl-tiles-management-tiles-container"
+			fx:id="tilesContainer" />
+	</center>
+</BorderPane>

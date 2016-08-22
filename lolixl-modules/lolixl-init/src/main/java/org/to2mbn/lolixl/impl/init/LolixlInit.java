@@ -8,9 +8,6 @@ import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.plugin.Plugin;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.maven.MavenArtifact;
@@ -23,14 +20,9 @@ public class LolixlInit {
 	@Reference
 	private PluginManager pluginManager;
 
-	private BundleContext bundleContext;
-
 	@Activate
-	public void active(ComponentContext compCtx) {
-		bundleContext = compCtx.getBundleContext();
-		Thread startupThread = new Thread(this::init);
-		startupThread.setName("LoliXL-startup");
-		startupThread.start();
+	public void active() {
+		new Thread(this::init, "LoliXL-startup").start();
 	}
 
 	private boolean shouldOverwriteSystemPlugins() {
@@ -38,10 +30,6 @@ public class LolixlInit {
 	}
 
 	private void init() {
-		Bundle bundle = bundleContext.getBundle();
-		while (bundle.getState() != Bundle.ACTIVE)
-			Thread.yield();
-
 		try {
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/org.to2mbn.lolixl.init.plugins.list"), "UTF-8"))) {
 				String line;
@@ -54,9 +42,9 @@ public class LolixlInit {
 					String artifactId = splited[1];
 					if (shouldOverwriteSystemPlugins()) {
 						pluginManager.getLocalRepository().getRepository().deleteArtifactAllVersions(groupId, artifactId)
-								.handle((result, ex) -> installSystenPlugin(groupId, artifactId)).get().get();
+								.handle((result, ex) -> installInitPlugin(groupId, artifactId)).get().get();
 					} else {
-						installSystenPlugin(groupId, artifactId).get();
+						installInitPlugin(groupId, artifactId).get();
 					}
 
 				}
@@ -66,7 +54,7 @@ public class LolixlInit {
 		}
 	}
 
-	private CompletableFuture<Plugin> installSystenPlugin(String groupId, String artifactId) {
+	private CompletableFuture<Plugin> installInitPlugin(String groupId, String artifactId) {
 		return pluginManager.getRemoteRepository().getRepository().getVersioning(groupId, artifactId)
 				.thenCompose(versioning -> pluginManager.install(new MavenArtifact(groupId, artifactId, versioning.getLatest())))
 				.exceptionally(ex -> {

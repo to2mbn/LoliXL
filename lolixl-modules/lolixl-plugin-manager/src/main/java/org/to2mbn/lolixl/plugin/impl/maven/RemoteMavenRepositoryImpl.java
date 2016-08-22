@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -94,8 +95,7 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 				if (lastEx != null && currentEx != lastEx) {
 					currentEx.addSuppressed(lastEx);
 				}
-				if (currentEx instanceof ArtifactNotFoundException ||
-						currentEx instanceof IOException) {
+				if (isContinuableException(currentEx)) {
 					// continue
 					asyncInvokeChain0(operation, repositories, future, idx + 1, currentEx);
 				} else {
@@ -107,6 +107,17 @@ public class RemoteMavenRepositoryImpl implements MavenRepository {
 				future.complete(result);
 			}
 		});
+	}
+
+	private boolean isContinuableException(Throwable e) {
+		if (e instanceof CompletionException) {
+			Throwable cause = e.getCause();
+			if (cause == null) {
+				return false;
+			}
+			return isContinuableException(cause);
+		}
+		return e instanceof ArtifactNotFoundException || e instanceof IOException;
 	}
 
 }

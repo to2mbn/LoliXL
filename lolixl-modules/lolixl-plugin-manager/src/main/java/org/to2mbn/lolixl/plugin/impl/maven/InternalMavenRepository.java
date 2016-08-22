@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.impl.init;
+package org.to2mbn.lolixl.plugin.impl.maven;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

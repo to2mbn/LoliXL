@@ -44,10 +44,7 @@ public class SettingsPresenter extends Presenter<SettingsView> implements Sideba
 	protected void initializePresenter() {
 		view.categoryContainer.setItems(categoryManager.getProviders());
 		view.categoryContainer.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != null) {
-				view.contentContainer.getChildren().clear();
-			}
-			view.contentContainer.getChildren().add(newValue.getSelectedItem().createConfiguringPanel());
+			view.contentContainer.getChildren().setAll(newValue.getSelectedItem().createConfiguringPanel());
 		});
 	}
 

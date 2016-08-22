@@ -1,6 +1,7 @@
 package org.to2mbn.lolixl.ui;
 
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 
 public interface SideBarTileService {
@@ -47,6 +48,6 @@ public interface SideBarTileService {
 	 */
 	int moveTile(SidebarTileElement element, int offset);
 
-	void setMaxShownTiles(int maxShown);
+	IntegerProperty maxShownTilesProperty();
 
 }

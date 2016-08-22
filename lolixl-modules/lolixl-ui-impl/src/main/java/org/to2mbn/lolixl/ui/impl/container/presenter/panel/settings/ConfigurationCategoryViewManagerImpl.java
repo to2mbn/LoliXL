@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
@@ -52,6 +53,12 @@ public class ConfigurationCategoryViewManagerImpl implements ConfigurationCatego
 
 		categoriesTracker.open(true);
 		viewProvidersTracker.open(true);
+	}
+
+	@Deactivate
+	public void deactive() {
+		categoriesTracker.close();
+		viewProvidersTracker.close();
 	}
 
 	@Override

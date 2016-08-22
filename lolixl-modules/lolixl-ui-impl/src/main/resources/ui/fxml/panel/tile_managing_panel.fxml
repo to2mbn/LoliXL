@@ -6,19 +6,46 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane id="-xl-tile-managin-panel-root-container" fx:id="rootContainer" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView">
-   <center>
-      <ListView id="-xl-tile-managin-panel-list-view" fx:id="listView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-   </center>
-   <right>
-      <VBox id="-xl-tile-managin-panel-button-container" fx:id="buttonContainer" prefHeight="390.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button id="-xl-tile-managin-panel-up-button" fx:id="upButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="190.0" />
-            <Button id="-xl-tile-managin-panel-down-button" fx:id="downButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="190.0" />
-         </children>
-         <padding>
-            <Insets left="5.0" top="5.0" />
-         </padding>
-      </VBox>
-   </right>
+<BorderPane
+	id="xl-tile-managin-panel-root-container"
+	fx:id="rootContainer"
+	xmlns="http://javafx.com/javafx/8.0.60"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView">
+	<center>
+		<ListView
+			id="xl-tile-managin-panel-list-view"
+			fx:id="listView"
+			focusTraversable="false"
+			prefWidth="200.0"
+			BorderPane.alignment="CENTER" />
+	</center>
+	<right>
+		<VBox
+			id="xl-tile-managin-panel-button-container"
+			fx:id="buttonContainer"
+			prefWidth="200.0"
+			spacing="5.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<Button
+					id="xl-tile-managin-panel-up-button"
+					fx:id="upButton"
+					mnemonicParsing="false"
+					prefHeight="40.0"
+					prefWidth="190.0" />
+				<Button
+					id="xl-tile-managin-panel-down-button"
+					fx:id="downButton"
+					mnemonicParsing="false"
+					prefHeight="40.0"
+					prefWidth="190.0" />
+			</children>
+			<padding>
+				<Insets
+					left="5.0"
+					top="5.0" />
+			</padding>
+		</VBox>
+	</right>
 </BorderPane>

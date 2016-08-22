@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import org.to2mbn.lolixl.ui.ImageLoading;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
+import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.FXUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -63,12 +64,7 @@ public class PanelView extends BorderPane {
 		previousButton.setOnMouseClicked(event -> panel.hide());
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(panel.titleProperty());
-		panel.contentProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != null) {
-				panelContentContainer.getChildren().remove(oldValue);
-			}
-			panelContentContainer.getChildren().add(newValue);
-		});
+		CollectionUtils.bindSingleton(panel.contentProperty(), panelContentContainer.getChildren());
 		iconView.imageProperty().bind(panel.iconProperty());
 		iconView.imageProperty().addListener((observable, oldValue, newValue) -> checkEmptyIcon());
 		checkEmptyIcon();

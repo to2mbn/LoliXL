@@ -1,10 +1,9 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles;
 
-import javafx.beans.value.ObservableStringValue;
-import javafx.event.ActionEvent;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
@@ -15,17 +14,17 @@ import org.to2mbn.lolixl.ui.component.ItemTile;
 import org.to2mbn.lolixl.ui.component.Tile;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
 import org.to2mbn.lolixl.ui.impl.container.presenter.HomeContentPresenter;
-import org.to2mbn.lolixl.ui.impl.container.view.panel.tils.TileManagingView;
 import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import com.sun.javafx.binding.StringConstant;
+import javafx.beans.value.ObservableStringValue;
 
-@Component(immediate = true)
-public class TileManagingPresenter extends Presenter<TileManagingView> implements DisplayableTile {
+@Component
+public class TileManagementPresenter extends Presenter<TileManagementView> implements DisplayableTile {
 
-	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";
+	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.tiles_management/content.fxml";
 
 	@Reference
 	private HomeContentPresenter homeContentPresenter;
@@ -45,13 +44,7 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 
 	@Override
 	protected void initializePresenter() {
-		tilesMapping = new MappedObservableList<>(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN),
-				SidebarTileElement::createTile);
-
-		view.upButton.setOnAction(this::onUpButtonClicked);
-		view.downButton.setOnAction(this::onDownButtonClicked);
-
-		view.listView.itemsProperty().bind(tilesMapping);
+		tilesMapping = new MappedObservableList<>(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN), SidebarTileElement::createTile);
 
 		bindManagementTile();
 	}
@@ -59,23 +52,6 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 	@Override
 	protected String getFxmlLocation() {
 		return FXML_LOCATION;
-	}
-
-	private void onUpButtonClicked(ActionEvent event) {
-		Tile selectedTile = view.listView.getSelectionModel().getSelectedItem();
-		moveTile(selectedTile, -1);
-	}
-
-	private void onDownButtonClicked(ActionEvent event) {
-		Tile selectedTile = view.listView.getSelectionModel().getSelectedItem();
-		moveTile(selectedTile, 1);
-	}
-
-	private void moveTile(Tile tile, int offset) {
-		SidebarTileElement entry = tilesMapping.inverseMapping().get(tile);
-		if (entry != null) {
-			tileService.moveTile(entry, offset);
-		}
 	}
 
 	@Override

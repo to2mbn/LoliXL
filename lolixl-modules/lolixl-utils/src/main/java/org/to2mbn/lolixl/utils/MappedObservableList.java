@@ -39,7 +39,7 @@ public class MappedObservableList<SRC, DEST> extends ListBinding<DEST> {
 			return FXCollections.unmodifiableObservableList(
 					FXCollections.observableList(
 							src.stream()
-									.map(mapper)
+									.map(mapping::get)
 									.collect(toList())));
 		}
 	}

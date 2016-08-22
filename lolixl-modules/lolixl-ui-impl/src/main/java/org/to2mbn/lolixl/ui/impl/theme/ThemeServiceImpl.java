@@ -315,17 +315,20 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 	private List<Theme> lastEnabledThemes = new ArrayList<>();
 
 	private void processThemesUpdate() {
-		CollectionUtils.diff(lastEnabledThemes, enabledThemes,
-				installed -> {
-					List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(installed.getClass()), installed.getStyleSheets());
-					LOGGER.info("Loading css " + css + " from theme " + installed);
-					scene.getStylesheets().addAll(css);
-				},
-				uninstalled -> {
-					List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(uninstalled.getClass()), uninstalled.getStyleSheets());
-					LOGGER.info("Unloading css " + css + " from theme " + uninstalled);
-					scene.getStylesheets().removeAll(css);
-				});
+		Scene scene = this.scene;
+		if (scene != null) {
+			CollectionUtils.diff(lastEnabledThemes, enabledThemes,
+					installed -> {
+						List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(installed.getClass()), installed.getStyleSheets());
+						LOGGER.info("Loading css " + css + " from theme " + installed);
+						scene.getStylesheets().addAll(css);
+					},
+					uninstalled -> {
+						List<String> css = CssUtils.mapCssToUrls(FrameworkUtil.getBundle(uninstalled.getClass()), uninstalled.getStyleSheets());
+						LOGGER.info("Unloading css " + css + " from theme " + uninstalled);
+						scene.getStylesheets().removeAll(css);
+					});
+		}
 		lastEnabledThemes.clear();
 		lastEnabledThemes.addAll(enabledThemes);
 	}

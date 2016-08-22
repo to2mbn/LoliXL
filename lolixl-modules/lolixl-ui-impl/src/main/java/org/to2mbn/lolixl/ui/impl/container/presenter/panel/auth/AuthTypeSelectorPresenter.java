@@ -2,6 +2,7 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.auth;
 
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
@@ -16,6 +17,7 @@ import javafx.beans.binding.Bindings;
 
 @Component
 public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
+
 	private static final String FXML_LOCATION = "/ui/fxml/panel/auth_type_selector_panel.fxml";
 
 	@Reference
@@ -31,6 +33,11 @@ public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
 		serviceTracker = new ObservableServiceTracker<>(bundleCtx, AuthenticationService.class);
 		tilesMapping = new MappedObservableList<>(serviceTracker.getServiceList(), AuthenticationService::createTile);
 		serviceTracker.open(true);
+	}
+
+	@Deactivate
+	public void deactive() {
+		serviceTracker.close();
 	}
 
 	@Override

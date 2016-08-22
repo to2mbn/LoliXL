@@ -8,6 +8,8 @@ import java.util.function.Consumer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 
 public final class CollectionUtils {
 
@@ -31,6 +33,20 @@ public final class CollectionUtils {
 		collection.addListener(new WeakInvalidationListener(differ));
 		differ.invalidated(collection);
 		return differ;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> void bindSingleton(ObservableValue<T> singleton, ObservableList<? super T> collection) {
+		InvalidationListener listener = dummy -> {
+			T val = singleton.getValue();
+			if (val == null) {
+				collection.clear();
+			} else {
+				collection.setAll(val);
+			}
+		};
+		singleton.addListener(listener);
+		listener.invalidated(singleton);
 	}
 
 	private static class CollectionDiffListener<T> implements InvalidationListener {
