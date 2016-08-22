@@ -21,6 +21,8 @@ import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.wiring.BundleRevision;
+import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 
@@ -109,6 +111,8 @@ class Main {
 			setupWorkingDir();
 			configureJUL();
 
+			LOGGER.fine("System properties: " + System.getProperties());
+
 			initFx();
 
 			felixConfiguration = loadConfiguration();
@@ -117,6 +121,7 @@ class Main {
 
 			clearFelixCache();
 			felix = new Felix(felixConfiguration);
+			LOGGER.fine("Felix capabilities: " + felix.adapt(BundleRevision.class).getCapabilities(null));
 			felix.start();
 			OSGiListener osgiListener = new OSGiListener();
 			felix.getBundleContext().addBundleListener(osgiListener);
@@ -147,7 +152,12 @@ class Main {
 	}
 
 	private static void shutdown() {
-		Platform.exit();
+		try {
+			Platform.exit();
+		} catch (Throwable e) {
+			// Some java runtimes don't have JavaFX, e.g. OpenJDK
+			LOGGER.log(Level.SEVERE, "Couldn't stop JavaFX", e);
+		}
 		clearFelixCache();
 	}
 
@@ -190,13 +200,17 @@ class Main {
 	}
 
 	private static void initFx() {
-		new Thread(() -> {
+		try {
+			LOGGER.info("Initializing JavaFX");
+			new JFXPanel(); // init JavaFX
+		} catch (Throwable e) {
+			LOGGER.log(Level.WARNING, "Couldn't init JavaFX by invoking javafx.embed.swing.JFXPanel.<init>", e);
 			try {
-				LOGGER.info("Initializing JavaFX");
-				new JFXPanel(); // init JavaFX
-			} catch (Throwable e) {
-				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX", e);
+				PlatformImpl.startup(() -> {});
+			} catch (Throwable e2) {
+				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX by invoking com.sun.javafx.application.PlatformImpl.startup(Runnable)", e);
+				throw new IllegalStateException("Couldn't init JavaFX");
 			}
-		}, "JavaFX-init").start();
+		}
 	}
 }

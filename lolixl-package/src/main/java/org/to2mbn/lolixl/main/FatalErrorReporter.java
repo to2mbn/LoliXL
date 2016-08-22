@@ -22,7 +22,12 @@ class FatalErrorReporter {
 
 	public static void process(Throwable e) {
 		LOGGER.log(Level.SEVERE, "发生致命错误", e);
-		new FatalErrorReporter(e).show();
+		try {
+			new FatalErrorReporter(e).show();
+		} catch (Throwable awtEx) {
+			// AWT/Swing may be not supported
+			LOGGER.log(Level.SEVERE, "Couldn't show error dialog", awtEx);
+		}
 	}
 
 	private static final String BUG_REPORT_EMAIL = "yushijinhun@gmail.com";
