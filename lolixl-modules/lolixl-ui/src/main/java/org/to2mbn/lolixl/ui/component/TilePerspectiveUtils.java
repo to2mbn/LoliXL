@@ -169,10 +169,10 @@ class TilePerspectiveUtils {
 
 	}
 
-	public static PerspectiveTransform computeEnd(ObservableValue<Double> x, ObservableValue<Double> y, ObservableValue<Double> width, ObservableValue<Double> height, ObservableValue<Pos> noEffectPos) {
-		double ratioX = x.getValue() / width.getValue() * 3;
-		double ratioY = y.getValue() / height.getValue() * 3;
-		ObjectBinding<Perspective> perspective = Bindings.createObjectBinding(() -> new Perspective(ratioX, ratioY, width.getValue(), height.getValue(), noEffectPos.getValue()), x, y, width, height, noEffectPos);
+	public static PerspectiveTransform computeEnd(ObservableValue<? extends Number> x, ObservableValue<? extends Number> y, ObservableValue<? extends Number> width, ObservableValue<? extends Number> height, ObservableValue<Pos> noEffectPos) {
+		double ratioX = x.getValue().doubleValue() / width.getValue().doubleValue() * 3;
+		double ratioY = y.getValue().doubleValue() / height.getValue().doubleValue() * 3;
+		ObjectBinding<Perspective> perspective = Bindings.createObjectBinding(() -> new Perspective(ratioX, ratioY, width.getValue().doubleValue(), height.getValue().doubleValue(), noEffectPos.getValue()), width, height, noEffectPos);
 		PerspectiveTransform effect = new PerspectiveTransform();
 		effect.ulxProperty().bind(createPerspectivePropertyBinding(p -> p.ulx, perspective));
 		effect.ulyProperty().bind(createPerspectivePropertyBinding(p -> p.uly, perspective));

@@ -111,10 +111,9 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private void resolveTile(Tile tile) {
 		TileAnimationHandler animationHandler = new TileAnimationHandler(tile);
-		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, animationHandler::mouseEntered);
-		tile.addEventHandler(MouseEvent.MOUSE_EXITED, animationHandler::mouseExited);
-		tile.addEventHandler(MouseEvent.MOUSE_PRESSED, animationHandler::mousePressedOrReleased);
-		tile.addEventHandler(MouseEvent.MOUSE_RELEASED, animationHandler::mousePressedOrReleased);
+		tile.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> animationHandler.mouseEntered());
+		tile.addEventHandler(MouseEvent.MOUSE_EXITED, e -> animationHandler.mouseExited());
+		tile.pressedProperty().addListener(dummy -> animationHandler.updateAnimation());
 		tile.getStyleClass().add(CSS_CLASS_TILE);
 		setTileStateCssClass(tile, CSS_CLASS_TILE_UNEXPANDED);
 		tile.maxWidthProperty().set(Region.USE_PREF_SIZE);
@@ -137,28 +136,24 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			this.tile = tile;
 		}
 
-		void mouseEntered(MouseEvent mouseEvent) {
+		void mouseEntered() {
 			mouseIn = true;
-			updateAnimation(mouseEvent);
+			updateAnimation();
 		}
 
-		void mouseExited(MouseEvent mouseEvent) {
+		void mouseExited() {
 			mouseIn = false;
-			updateAnimation(mouseEvent);
+			updateAnimation();
 		}
 
-		void mousePressedOrReleased(MouseEvent mouseEvent) {
-			updateAnimation(mouseEvent);
-		}
-
-		void updateAnimation(MouseEvent mouseEvent) {
+		void updateAnimation() {
 			if (tile.isPressed()) {
 				return;
 			}
 			if (mouseIn && state != EXPANDED) {
-				runRollOutAnimation(mouseEvent);
+				runRollOutAnimation();
 			} else if (!mouseIn && state != UNEXPANDED) {
-				cancelAndFallback(mouseEvent);
+				cancelAndFallback();
 			}
 		}
 
@@ -174,7 +169,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			return time;
 		}
 
-		void runRollOutAnimation(MouseEvent mouseEvent) {
+		void runRollOutAnimation() {
 			Duration time = newAnimation();
 
 			// === calculate targetWidth
@@ -208,7 +203,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			current.play();
 		}
 
-		void cancelAndFallback(MouseEvent mouseEvent) {
+		void cancelAndFallback() {
 			Duration time = newAnimation();
 
 			double targetWidth = tile.getPrefHeight(); // let width be the same as height

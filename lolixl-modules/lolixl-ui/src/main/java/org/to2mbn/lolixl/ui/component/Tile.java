@@ -56,9 +56,7 @@ public class Tile extends Button {
 		if (showTileEffectProperty.get()) {
 			ObservableValue<Double> xConstant = FxConstants.object(mouseX.get());
 			ObservableValue<Double> yConstant = FxConstants.object(mouseY.get());
-			ObservableValue<Double> widthConstant = FxConstants.object(getWidth());
-			ObservableValue<Double> heightConstant = FxConstants.object(getHeight());
-			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(xConstant, yConstant, widthConstant, heightConstant, noEffectPosProperty);
+			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(xConstant, yConstant, widthProperty(), heightProperty(), noEffectPosProperty);
 			setEffect(transform);
 		}
 	}
