@@ -50,6 +50,8 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	private BackgroundService backgroundService;
 
 	private final Deque<PanelEntry> panels = new LinkedList<>();
+	
+	private ParallelTransition lastParallel; // 上一个回退动画
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -173,11 +175,21 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		ParallelTransition parallel = new ParallelTransition();
 		for (Region pane : panes) {
 			FadeTransition fade = new FadeTransition(Duration.millis(panelAnimationDuration), pane);
+			double val = -1;
+			if (lastParallel != null) { // 如果上一个动画没结束，从动画中获取磁贴的目标透明度
+				for (Animation ani : lastParallel.getChildren())
+					if (ani instanceof FadeTransition && ((FadeTransition) ani).getNode() == pane) {
+						val = ((FadeTransition) ani).getToValue();
+						break;
+					}
+				lastParallel.stop(); //结束上一个动画
+			}
 			fade.setFromValue(0);
-			fade.setToValue(pane.getOpacity());
+			fade.setToValue(val == -1 ? pane.getOpacity() : val); // 如果不能从上个动画获取到磁贴目标透明度，则使用磁贴当前透明度
 			parallel.getChildren().add(fade);
+			parallel.setOnFinished(e -> lastParallel = null); // 若果动画正常完成，那么移除上一个动画缓存
 		}
-		return parallel;
+		return lastParallel = parallel;
 	}
 
 	private static class PanelEntry {
