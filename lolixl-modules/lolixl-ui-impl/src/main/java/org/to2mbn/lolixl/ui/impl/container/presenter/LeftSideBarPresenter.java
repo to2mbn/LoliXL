@@ -20,6 +20,7 @@ import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,11 +68,13 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 
 	@Override
 	public Panel newPanel() {
+		checkFxThread();
 		return new PanelImpl(this::showNewPanel, this::closeCurrentPanel);
 	}
 
 	@Override
 	public Optional<Panel> getCurrent() {
+		checkFxThread();
 		return Optional.ofNullable(currentPanel).map(view -> view.panel);
 	}
 

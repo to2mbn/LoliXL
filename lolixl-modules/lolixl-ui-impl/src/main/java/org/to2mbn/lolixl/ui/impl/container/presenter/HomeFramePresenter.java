@@ -1,5 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter;
 
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -24,9 +25,9 @@ import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeFrameView;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service({ PanelDisplayService.class, HomeFramePresenter.class })
 @Component(immediate = true)
@@ -48,7 +49,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	@Reference
 	private BackgroundService backgroundService;
 
-	private final Queue<PanelEntry> panels = new ConcurrentLinkedQueue<>();
+	private final Deque<PanelEntry> panels = new LinkedList<>();
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -85,24 +86,28 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Override
 	public Panel newPanel() {
+		checkFxThread();
 		return new PanelImpl(this::displayPanelEntry, this::hideCurrent);
 	}
 
 	@Override
 	public Optional<Panel> getCurrent() {
+		checkFxThread();
 		PanelEntry entry = panels.peek();
 		return entry != null ? Optional.of(entry.model) : Optional.empty();
 	}
 
 	@Override
 	public Panel[] getOpenedPanels() {
+		checkFxThread();
 		return panels.stream().map(entry -> entry.model).toArray(Panel[]::new);
 	}
 
 	private void displayPanelEntry(Panel model) {
+		checkFxThread();
 		PanelEntry entry;
 		entry = new PanelEntry(model, new PanelView(model));
-		panels.offer(entry);
+		panels.push(entry);
 		// 先隐藏添加的面板 等待之后的动画效果即将播放了再显示回来
 		entry.view.setVisible(false);
 		if (view.rootContainer.getLeft() != null) { // 如果此时没有已经显示了的面板
@@ -118,10 +123,11 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	}
 
 	private void hideCurrent() {
+		checkFxThread();
 		if (panels.isEmpty()) {
 			return;
 		}
-		PanelEntry entry = panels.poll();
+		PanelEntry entry = panels.pop();
 		if (panels.isEmpty()) {
 			view.sidebarPane.setVisible(false);
 			view.contentPane.setVisible(false);
@@ -132,7 +138,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 			view.sidebarPane.setVisible(true);
 			view.contentPane.setVisible(true);
 		} else { // 如果此时存在多层叠加(逻辑上的)着的面板
-			PanelEntry previous = panels.element();
+			PanelEntry previous = panels.peek();
 			Animation animation = generateAnimation(entry.view, true);
 			animation.setOnFinished(event -> {
 				// 设置为下一层的面板

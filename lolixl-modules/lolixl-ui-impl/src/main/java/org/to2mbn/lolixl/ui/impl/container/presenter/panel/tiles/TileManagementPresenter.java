@@ -1,5 +1,7 @@
 package org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -18,9 +20,15 @@ import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import org.to2mbn.lolixl.utils.binding.FxConstants;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ListBinding;
+import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableStringValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
-@Component
+@Component(immediate = true)
 public class TileManagementPresenter extends Presenter<TileManagementView> implements DisplayableTile {
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.tiles_management/content.fxml";
@@ -35,6 +43,7 @@ public class TileManagementPresenter extends Presenter<TileManagementView> imple
 	private SideBarTileService tileService;
 
 	private MappedObservableList<SidebarTileElement, Tile> tilesMapping;
+	private ObservableList<Node> tileContainerElements;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -43,9 +52,41 @@ public class TileManagementPresenter extends Presenter<TileManagementView> imple
 
 	@Override
 	protected void initializePresenter() {
-		tilesMapping = new MappedObservableList<>(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN), SidebarTileElement::createTile);
+		tilesMapping = new MappedObservableList<>(tileService.getTiles(StackingStatus.SHOWN, StackingStatus.HIDDEN), this::createTile);
+		tileContainerElements = new ListBinding<Node>() {
+
+			ObservableIntegerValue maxShownTiles = tileService.maxShownTilesProperty();
+
+			{
+				bind(tilesMapping, maxShownTiles);
+			}
+
+			@Override
+			protected ObservableList<Node> computeValue() {
+				List<Node> elements = new ArrayList<>();
+				int maxShown = maxShownTiles.get();
+				if (maxShown > 0) {
+					elements.add(view.shownTilesLabel);
+				}
+				int i = 0;
+				for (Tile tile : tilesMapping) {
+					if (i == maxShown) {
+						elements.add(view.hiddenTileLabel);
+					}
+					elements.add(tile);
+					i++;
+				}
+				return FXCollections.observableList(elements);
+			}
+		};
+		Bindings.bindContent(view.tilesContainer.getChildren(), tileContainerElements);
 
 		bindManagementTile();
+	}
+
+	private Tile createTile(SidebarTileElement element) {
+		Tile tile = element.createTile();
+		return tile;
 	}
 
 	@Override

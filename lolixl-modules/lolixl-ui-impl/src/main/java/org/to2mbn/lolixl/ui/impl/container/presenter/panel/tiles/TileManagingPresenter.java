@@ -22,7 +22,7 @@ import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import org.to2mbn.lolixl.utils.binding.FxConstants;
 
-@Component(immediate = true)
+@Component(enabled = false)
 public class TileManagingPresenter extends Presenter<TileManagingView> implements DisplayableTile {
 
 	private static final String FXML_LOCATION = "/ui/fxml/panel/tile_managing_panel.fxml";

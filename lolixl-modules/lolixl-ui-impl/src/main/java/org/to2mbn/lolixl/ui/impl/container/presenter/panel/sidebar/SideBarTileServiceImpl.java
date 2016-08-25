@@ -21,7 +21,6 @@ import org.to2mbn.lolixl.core.config.ConfigurationCategory;
 import org.to2mbn.lolixl.ui.SideBarTileService;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
-import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.beans.property.IntegerProperty;
@@ -45,7 +44,7 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 
 	private ObservableList<SidebarTileElement> shownTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<SidebarTileElement> hiddenTiles = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
-	private ObservableList<SidebarTileElement> allTilesReadOnlyView = new LinkedObservableList<>(shownTiles, hiddenTiles);
+	private ObservableList<SidebarTileElement> allTilesReadOnlyView = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<SidebarTileElement> shownTilesReadOnlyView = FXCollections.unmodifiableObservableList(shownTiles);
 	private ObservableList<SidebarTileElement> hiddenTilesReadOnlyView = FXCollections.unmodifiableObservableList(hiddenTiles);
 
@@ -145,6 +144,11 @@ public class SideBarTileServiceImpl implements SideBarTileService, Configuration
 		}
 		shownTiles.setAll(shown);
 		hiddenTiles.setAll(hidden);
+
+		List<SidebarTileElement> all = new ArrayList<>(shown.size() + hidden.size());
+		all.addAll(shown);
+		all.addAll(hidden);
+		allTilesReadOnlyView.setAll(all);
 	}
 
 	@Override

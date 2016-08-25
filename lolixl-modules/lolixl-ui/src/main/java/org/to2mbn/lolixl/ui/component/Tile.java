@@ -4,6 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.css.CssMetaData;
 import javafx.css.SimpleStyleableBooleanProperty;
 import javafx.css.SimpleStyleableObjectProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.input.MouseEvent;
 import java.util.List;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 
 /**
  * 代表一个磁贴。
@@ -35,8 +37,8 @@ public class Tile extends Button {
 
 	public Tile() {
 		addEventHandler(MouseEvent.ANY, e -> {
-			mouseX.set(e.getSceneX());
-			mouseY.set(e.getSceneY());
+			mouseX.set(e.getX());
+			mouseY.set(e.getY());
 		});
 		addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showEffect());
 		addEventHandler(MouseEvent.MOUSE_RELEASED, e -> hideEffect());
@@ -52,12 +54,11 @@ public class Tile extends Button {
 
 	private void showEffect() {
 		if (showTileEffectProperty.get()) {
-			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(
-					mouseX.subtract(layoutXProperty()),
-					mouseY.subtract(layoutYProperty()),
-					widthProperty(),
-					heightProperty(),
-					noEffectPosProperty);
+			ObservableValue<Double> xConstant = FxConstants.object(mouseX.get());
+			ObservableValue<Double> yConstant = FxConstants.object(mouseY.get());
+			ObservableValue<Double> widthConstant = FxConstants.object(getWidth());
+			ObservableValue<Double> heightConstant = FxConstants.object(getHeight());
+			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(xConstant, yConstant, widthConstant, heightConstant, noEffectPosProperty);
 			setEffect(transform);
 		}
 	}

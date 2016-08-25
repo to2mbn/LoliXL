@@ -22,7 +22,6 @@ import org.to2mbn.lolixl.ui.theme.Theme;
 import org.to2mbn.lolixl.ui.theme.ThemeService;
 import org.to2mbn.lolixl.utils.CollectionUtils;
 import org.to2mbn.lolixl.utils.LambdaServiceTracker;
-import org.to2mbn.lolixl.utils.LinkedObservableList;
 import org.to2mbn.lolixl.utils.ObservableContext;
 import org.to2mbn.lolixl.utils.ServiceUtils;
 import javafx.collections.FXCollections;
@@ -72,7 +71,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	private ObservableList<Theme> enabledThemes = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<Theme> disabledThemes = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
-	private ObservableList<Theme> allTilesReadOnlyView = new LinkedObservableList<>(enabledThemes, disabledThemes);
+	private ObservableList<Theme> allThemesReadOnlyView = FXCollections.synchronizedObservableList(FXCollections.observableArrayList());
 	private ObservableList<Theme> enabledThemesReadOnlyView = FXCollections.unmodifiableObservableList(enabledThemes);
 	private ObservableList<Theme> disabledThemesReadOnlyView = FXCollections.unmodifiableObservableList(disabledThemes);
 
@@ -272,6 +271,11 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 		enabledThemes.setAll(newEnabled);
 		disabledThemes.setAll(newDisabled);
 
+		List<Theme> all = new ArrayList<>(newEnabled.size() + newDisabled.size());
+		all.addAll(newEnabled);
+		all.addAll(newDisabled);
+		allThemesReadOnlyView.setAll(all);
+
 		processThemesUpdate();
 		observableContext.notifyChanged();
 	}
@@ -288,7 +292,7 @@ public class ThemeServiceImpl implements ThemeService, ConfigurationCategory<The
 
 	@Override
 	public ObservableList<Theme> getAllThemes() {
-		return allTilesReadOnlyView;
+		return allThemesReadOnlyView;
 	}
 
 	@Override

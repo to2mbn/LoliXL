@@ -4,8 +4,8 @@ import java.util.function.Function;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.value.ObservableDoubleValue;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.effect.PerspectiveTransform;
 
@@ -13,14 +13,12 @@ class TilePerspectiveUtils {
 
 	static class Perspective {
 
-		static final double SHALLOW = 2D;
-		static final double DEEP = 4D;
+		static final double SHALLOW = 1D;
+		static final double DEEP = 2D;
 
 		double ulx, uly, urx, ury, lrx, lry, llx, lly;
 
-		Perspective(double x, double y, double width, double height, Pos noEffectPos) {
-			double ratioX = x / width * 3;
-			double ratioY = y / height * 3;
+		Perspective(double ratioX, double ratioY, double width, double height, Pos noEffectPos) {
 			if (ratioY <= 1D) {
 				if (ratioX <= 1D) {
 					ulx = DEEP;
@@ -121,56 +119,60 @@ class TilePerspectiveUtils {
 				ury = 0D;
 			}
 
-			switch (noEffectPos) {
-				case BOTTOM_CENTER:
-					llx = 0D;
-					lly = height;
-					lrx = width;
-					lry = height;
-					break;
-				case BOTTOM_LEFT:
-					llx = 0D;
-					lly = height;
-					break;
-				case BOTTOM_RIGHT:
-					lrx = width;
-					lry = height;
-					break;
-				case CENTER_LEFT:
-					ulx = 0D;
-					uly = 0D;
-					llx = 0D;
-					lly = height;
-					break;
-				case CENTER_RIGHT:
-					urx = width;
-					ury = 0D;
-					lrx = width;
-					lry = height;
-					break;
-				case TOP_CENTER:
-					ulx = 0D;
-					uly = 0D;
-					urx = width;
-					ury = 0D;
-					break;
-				case TOP_LEFT:
-					ulx = 0D;
-					uly = 0D;
-					break;
-				case TOP_RIGHT:
-					urx = width;
-					ury = 0D;
-					break;
-				default:
-					break;
+			if (noEffectPos != null) {
+				switch (noEffectPos) {
+					case BOTTOM_CENTER:
+						llx = 0D;
+						lly = height;
+						lrx = width;
+						lry = height;
+						break;
+					case BOTTOM_LEFT:
+						llx = 0D;
+						lly = height;
+						break;
+					case BOTTOM_RIGHT:
+						lrx = width;
+						lry = height;
+						break;
+					case CENTER_LEFT:
+						ulx = 0D;
+						uly = 0D;
+						llx = 0D;
+						lly = height;
+						break;
+					case CENTER_RIGHT:
+						urx = width;
+						ury = 0D;
+						lrx = width;
+						lry = height;
+						break;
+					case TOP_CENTER:
+						ulx = 0D;
+						uly = 0D;
+						urx = width;
+						ury = 0D;
+						break;
+					case TOP_LEFT:
+						ulx = 0D;
+						uly = 0D;
+						break;
+					case TOP_RIGHT:
+						urx = width;
+						ury = 0D;
+						break;
+					default:
+						break;
+				}
 			}
 		}
 
 	}
 
-	public static PerspectiveTransform computeEnd(ObservableDoubleValue x, ObservableDoubleValue y, ObservableDoubleValue width, ObservableDoubleValue height, ObservableObjectValue<Pos> noEffectPos) {
-		ObjectBinding<Perspective> perspective = Bindings.createObjectBinding(() -> new Perspective(x.get(), y.get(), width.get(), height.get(), noEffectPos.get()), x, y, width, height, noEffectPos);
+	public static PerspectiveTransform computeEnd(ObservableValue<Double> x, ObservableValue<Double> y, ObservableValue<Double> width, ObservableValue<Double> height, ObservableValue<Pos> noEffectPos) {
+		double ratioX = x.getValue() / width.getValue() * 3;
+		double ratioY = y.getValue() / height.getValue() * 3;
+		ObjectBinding<Perspective> perspective = Bindings.createObjectBinding(() -> new Perspective(ratioX, ratioY, width.getValue(), height.getValue(), noEffectPos.getValue()), x, y, width, height, noEffectPos);
 		PerspectiveTransform effect = new PerspectiveTransform();
 		effect.ulxProperty().bind(createPerspectivePropertyBinding(p -> p.ulx, perspective));
 		effect.ulyProperty().bind(createPerspectivePropertyBinding(p -> p.uly, perspective));
