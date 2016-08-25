@@ -6,15 +6,33 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 class FatalErrorReporter {
 
@@ -23,10 +41,14 @@ class FatalErrorReporter {
 	public static void process(Throwable e) {
 		LOGGER.log(Level.SEVERE, "发生致命错误", e);
 		try {
-			new FatalErrorReporter(e).show();
-		} catch (Throwable awtEx) {
-			// AWT/Swing may be not supported
-			LOGGER.log(Level.SEVERE, "Couldn't show error dialog", awtEx);
+			showThrowable(e);
+		} catch(Throwable fxEx) {
+			try {
+				new FatalErrorReporter(e).show();
+			} catch (Throwable awtEx) {
+				// AWT/Swing may be not supported
+				LOGGER.log(Level.SEVERE, "Couldn't show error dialog", awtEx);
+			}
 		}
 	}
 
@@ -87,12 +109,12 @@ class FatalErrorReporter {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
 					if (Desktop.isDesktopSupported()) {
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (IOException | URISyntaxException ex) {
-						ex.printStackTrace();
+						try {
+							Desktop.getDesktop().browse(e.getURL().toURI());
+						} catch (IOException | URISyntaxException ex) {
+							ex.printStackTrace();
+						}
 					}
-				}
 			}
 		});
 		ep.setEditable(false);
@@ -108,4 +130,83 @@ class FatalErrorReporter {
 		printWriter.flush();
 		return writer.toString();
 	}
+	
+	private static void showThrowable(Throwable ex){
+		new JFXPanel();
+		Platform.runLater(() -> {
+			Alert alert = new Alert(AlertType.ERROR);
+			Scene scene = alert.getDialogPane().getScene();
+			Stage stage = (Stage) scene.getWindow();
+			stage.setAlwaysOnTop(true);
+			alert.initOwner(null);
+			alert.setTitle("LoliXL");
+			alert.setHeaderText("LoliXL发生致命错误 ！");
+			alert.setContentText(ex.getClass().getName() + ": " + ex.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			String exceptionText = sw.toString();
+			Label label = new Label("The exception stacktrace was:");
+			TextArea textArea = new TextArea(exceptionText);
+			textArea.setEditable(false);
+			textArea.setWrapText(true);
+			textArea.setMaxWidth(Double.MAX_VALUE);
+			textArea.setMaxHeight(Double.MAX_VALUE);
+			GridPane.setVgrow(textArea, Priority.ALWAYS);
+			GridPane.setHgrow(textArea, Priority.ALWAYS);
+			GridPane expContent = new GridPane();
+			expContent.setMaxWidth(Double.MAX_VALUE);
+			expContent.add(label, 0, 0);
+			expContent.add(textArea, 0, 1);
+			VBox vbox = new VBox();
+			Label mavenInfo = new Label(new StringBuilder()
+					.append("Maven版本: ")
+					.append(Metadata.M2_GROUP_ID)
+					.append(':')
+					.append(Metadata.M2_ARTIFACT_ID)
+					.append(':')
+					.append(Metadata.M2_VERSION)
+					.toString());
+			HBox logBox = new HBox();
+			Label log = new Label("日志文件: ");
+			String logUri = new File(Metadata.LOG_FILE).toURI().toString();
+			Label logInfo = makeUnderLinkLabel(logUri, logUri, scene);
+			logBox.getChildren().addAll(log, logInfo);
+			HBox feedbackBox1 = new HBox(), feedbackBox2 = new HBox();
+			feedbackBox1.getChildren().addAll(
+					new Label("我们为对您造成的不便深感抱歉，请将以上错误信息及日志发送到"),
+					makeUnderLinkLabel("mailto:" + BUG_REPORT_EMAIL, BUG_REPORT_EMAIL, scene)
+			);
+			feedbackBox2.getChildren().addAll(
+					new Label("或反馈到"),
+					makeUnderLinkLabel(BUG_REPORT_URL, BUG_REPORT_URL, scene)
+			);
+			vbox.getChildren().addAll(new Label(), mavenInfo, logBox, new Label(), feedbackBox1, feedbackBox2);
+			expContent.add(vbox, 0, 2);
+			alert.getDialogPane().setExpandableContent(expContent);
+			alert.getDialogPane().setExpanded(true);
+			alert.show();
+		});
+	}
+	
+	private static Label makeUnderLinkLabel(String uri, String str, Scene scene) {
+		Label result = new Label(str);
+		result.setUnderline(true);
+		result.setTextFill(Color.web("#0026ff"));
+		result.setOnMouseClicked(e -> labelCallback(uri));
+		result.setOnMouseEntered(e -> scene.setCursor(Cursor.HAND));
+		result.setOnMouseExited(e -> scene.setCursor(Cursor.DEFAULT));
+		return result;
+	}
+	
+	private static void labelCallback(String uri) {
+		if (Desktop.isDesktopSupported()) {
+			try {
+				Desktop.getDesktop().browse(new URI(uri));
+			} catch (IOException | URISyntaxException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	
 }
