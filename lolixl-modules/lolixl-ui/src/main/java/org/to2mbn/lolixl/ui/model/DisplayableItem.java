@@ -1,17 +1,16 @@
 package org.to2mbn.lolixl.ui.model;
 
-import com.sun.javafx.binding.ObjectConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.scene.image.Image;
 
-@SuppressWarnings("restriction")
 public interface DisplayableItem {
 
 	ObservableStringValue getLocalizedName();
 
 	default ObservableObjectValue<Image> getIcon() {
-		return ObjectConstant.valueOf(null);
+		return FxConstants.object(null);
 	}
 
 }

@@ -6,13 +6,12 @@ import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.theme.Theme;
-import com.sun.javafx.binding.ObjectConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 
-@SuppressWarnings("restriction")
 @Service({ Theme.class })
 @Properties({
 		@Property(name = Theme.PROPERTY_THEME_ID, value = "org.to2mbn.lolixl.ui.theme.default"),
@@ -33,7 +32,7 @@ public class DefaultTheme implements Theme {
 
 	@Override
 	public ObservableValue<ObservableStringValue[]> getAuthors() {
-		return ObjectConstant.valueOf(new ObservableStringValue[] { I18N.localize("org.to2mbn.lolixl.ui.theme.default.author.lolixlgroup") });
+		return FxConstants.object(new ObservableStringValue[] { I18N.localize("org.to2mbn.lolixl.ui.theme.default.author.lolixlgroup") });
 	}
 
 	@Override
@@ -43,7 +42,7 @@ public class DefaultTheme implements Theme {
 
 	@Override
 	public ObservableObjectValue<Image> getIcon() {
-		return ObjectConstant.valueOf(null);
+		return FxConstants.object(null);
 	}
 
 }

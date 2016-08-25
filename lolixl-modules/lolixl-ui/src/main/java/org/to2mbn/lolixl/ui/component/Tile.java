@@ -1,7 +1,9 @@
 package org.to2mbn.lolixl.ui.component;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.css.CssMetaData;
 import javafx.css.SimpleStyleableBooleanProperty;
 import javafx.css.SimpleStyleableObjectProperty;
@@ -15,14 +17,12 @@ import javafx.scene.control.Labeled;
 import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.input.MouseEvent;
 import java.util.List;
-import com.sun.javafx.binding.DoubleConstant;
 
 /**
  * 代表一个磁贴。
  * 
  * @author yushijinhun
  */
-@SuppressWarnings("restriction")
 public class Tile extends Button {
 
 	public static final String CSS_CLASS_TILE = "xl-tile";
@@ -30,24 +30,31 @@ public class Tile extends Button {
 	private BooleanProperty showTileEffectProperty = new SimpleStyleableBooleanProperty(StyleableProperties.SHOW_TILE_EFFECT, this, "showTileEffect", false);
 	private ObjectProperty<Pos> noEffectPosProperty = new SimpleStyleableObjectProperty<Pos>(StyleableProperties.NO_EFFECT_POS, this, "noEffectPos", null);
 
+	private DoubleProperty mouseX = new SimpleDoubleProperty();
+	private DoubleProperty mouseY = new SimpleDoubleProperty();
+
 	public Tile() {
-		addEventHandler(MouseEvent.MOUSE_PRESSED, this::showEffect);
+		addEventHandler(MouseEvent.ANY, e -> {
+			mouseX.set(e.getSceneX());
+			mouseY.set(e.getSceneY());
+		});
+		addEventHandler(MouseEvent.MOUSE_PRESSED, e -> showEffect());
 		addEventHandler(MouseEvent.MOUSE_RELEASED, e -> hideEffect());
 		addEventHandler(MouseEvent.MOUSE_EXITED, e -> hideEffect());
 		addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
 			if (isPressed())
-				showEffect(e);
+				showEffect();
 		});
 
 		getStyleClass().add(CSS_CLASS_TILE);
 		getStyleClass().remove("button");
 	}
 
-	private void showEffect(MouseEvent event) {
+	private void showEffect() {
 		if (showTileEffectProperty.get()) {
 			PerspectiveTransform transform = TilePerspectiveUtils.computeEnd(
-					DoubleConstant.valueOf(event.getSceneX() - getLayoutX()),
-					DoubleConstant.valueOf(event.getSceneY() - getLayoutY()),
+					mouseX.subtract(layoutXProperty()),
+					mouseY.subtract(layoutYProperty()),
 					widthProperty(),
 					heightProperty(),
 					noEffectPosProperty);

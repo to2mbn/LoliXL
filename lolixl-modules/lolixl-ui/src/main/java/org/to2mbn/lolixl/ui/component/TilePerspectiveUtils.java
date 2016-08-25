@@ -109,7 +109,16 @@ class TilePerspectiveUtils {
 					lly = height - SHALLOW;
 				}
 			} else {
-				throw new IllegalArgumentException("Illegal width/height");
+				// illegal width/height
+				// fallback
+				llx = 0D;
+				lly = height;
+				lrx = width;
+				lry = height;
+				ulx = 0D;
+				uly = 0D;
+				urx = width;
+				ury = 0D;
 			}
 
 			switch (noEffectPos) {

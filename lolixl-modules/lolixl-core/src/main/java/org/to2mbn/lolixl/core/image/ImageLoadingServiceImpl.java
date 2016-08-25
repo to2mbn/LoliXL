@@ -4,7 +4,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.ui.ImageLoadingService;
 import org.to2mbn.lolixl.utils.ClassUtils;
-import com.sun.javafx.binding.ObjectConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.image.Image;
 
@@ -16,7 +16,7 @@ public class ImageLoadingServiceImpl implements ImageLoadingService {
 	public ObservableObjectValue<Image> load(String location, ClassLoader caller) {
 		// TODO: 使图像可以通过Theme修改
 		// TODO: 图像加载缓存
-		return ObjectConstant.valueOf(ClassUtils.doWithContextClassLoader(caller, () -> new Image(location)));
+		return FxConstants.object(ClassUtils.doWithContextClassLoader(caller, () -> new Image(location)));
 	}
 
 }

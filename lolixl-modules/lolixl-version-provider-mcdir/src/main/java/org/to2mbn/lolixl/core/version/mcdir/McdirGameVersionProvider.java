@@ -11,14 +11,13 @@ import org.to2mbn.jmccc.version.parsing.Versions;
 import org.to2mbn.lolixl.core.game.version.GameVersion;
 import org.to2mbn.lolixl.core.game.version.GameVersionProvider;
 import org.to2mbn.lolixl.i18n.I18N;
-import com.sun.javafx.binding.StringConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-@SuppressWarnings("restriction")
 public class McdirGameVersionProvider implements GameVersionProvider {
 
 	private StringProperty aliasProperty = new SimpleStringProperty();
@@ -39,7 +38,7 @@ public class McdirGameVersionProvider implements GameVersionProvider {
 		if (isCurrentMcdir()) {
 			return I18N.localize("org.to2mbn.lolixl.mcdir.default.name");
 		}
-		return StringConstant.valueOf(location.toString());
+		return FxConstants.string(location.toString());
 	}
 
 	@Override

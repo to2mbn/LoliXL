@@ -20,7 +20,7 @@ import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
-import com.sun.javafx.binding.StringConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 
 @Component(immediate = true)
 public class TileManagingPresenter extends Presenter<TileManagingView> implements DisplayableTile {
@@ -88,7 +88,7 @@ public class TileManagingPresenter extends Presenter<TileManagingView> implement
 
 			@Override
 			public ObservableStringValue getLocalizedName() {
-				return StringConstant.valueOf("...");
+				return FxConstants.string("...");
 			}
 		});
 		Panel panel = panelDisplayService.newPanel();

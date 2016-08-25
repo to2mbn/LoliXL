@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
-import org.omg.CORBA.PRIVATE_MEMBER;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Panel;
@@ -18,7 +17,7 @@ import org.to2mbn.lolixl.ui.model.DisplayableItem;
 import org.to2mbn.lolixl.ui.model.DisplayableTile;
 import org.to2mbn.lolixl.ui.model.SidebarTileElement;
 import org.to2mbn.lolixl.utils.MappedObservableList;
-import com.sun.javafx.binding.StringConstant;
+import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.value.ObservableStringValue;
 
 @Component
@@ -64,7 +63,7 @@ public class TileManagementPresenter extends Presenter<TileManagementView> imple
 
 			@Override
 			public ObservableStringValue getLocalizedName() {
-				return StringConstant.valueOf("...");
+				return FxConstants.string("...");
 			}
 		});
 		Panel panel = panelDisplayService.newPanel();

@@ -22,7 +22,6 @@ import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.wiring.BundleRevision;
-import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 
@@ -200,17 +199,13 @@ class Main {
 	}
 
 	private static void initFx() {
-		try {
-			LOGGER.info("Initializing JavaFX");
-			new JFXPanel(); // init JavaFX
-		} catch (Throwable e) {
-			LOGGER.log(Level.WARNING, "Couldn't init JavaFX by invoking javafx.embed.swing.JFXPanel.<init>", e);
+		new Thread(() -> {
 			try {
-				PlatformImpl.startup(() -> {});
-			} catch (Throwable e2) {
-				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX by invoking com.sun.javafx.application.PlatformImpl.startup(Runnable)", e);
-				throw new IllegalStateException("Couldn't init JavaFX");
+				LOGGER.info("Initializing JavaFX");
+				new JFXPanel(); // init JavaFX
+			} catch (Throwable e) {
+				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX", e);
 			}
-		}
+		}, "JavaFx-init").start();
 	}
 }
