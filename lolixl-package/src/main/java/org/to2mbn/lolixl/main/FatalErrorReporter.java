@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +26,8 @@ import javax.swing.event.HyperlinkListener;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -47,6 +52,8 @@ class FatalErrorReporter {
 	private static final String BUG_REPORT_EMAIL = "yushijinhun@gmail.com";
 	private static final String BUG_REPORT_URL = "https://github.com/to2mbn/LoliXL/issues";
 
+	private static final String[] FONTS = { "Segoe UI Semilight", "Segoe UI Light", "Segoe UI", "Helvetica", "Ubuntu Mono", "Arial", "sans-serif" };
+
 	private Throwable e;
 
 	public FatalErrorReporter(Throwable e) {
@@ -64,6 +71,24 @@ class FatalErrorReporter {
 				LOGGER.log(Level.SEVERE, "Couldn't show Swing error dialog", swingEx);
 			}
 		}
+	}
+
+	private static String throwableToString(Throwable e) {
+		CharArrayWriter writer = new CharArrayWriter();
+		PrintWriter printWriter = new PrintWriter(writer);
+		e.printStackTrace(printWriter);
+		printWriter.flush();
+		return writer.toString();
+	}
+
+	private Optional<String> getAvailableFontFamily() {
+		Set<String> families = new HashSet<>(javafx.scene.text.Font.getFamilies());
+		for (String font : FONTS) {
+			if (families.contains(font)) {
+				return Optional.ofNullable(font);
+			}
+		}
+		return Optional.empty();
 	}
 
 	// Swing
@@ -93,10 +118,11 @@ class FatalErrorReporter {
 		// for copying style
 		JLabel label = new JLabel();
 		Font font = label.getFont();
+		String fontFamily = getAvailableFontFamily().orElse(font.getFamily());
 
 		// create some css from the label's font
-		StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
-		style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+		StringBuffer style = new StringBuffer("font-family:" + fontFamily + ";");
+		style.append("font-weight: normal;");
 		style.append("font-size:" + font.getSize() + "pt;");
 
 		// html content
@@ -125,14 +151,6 @@ class FatalErrorReporter {
 		JOptionPane.showMessageDialog(null, ep, Metadata.LOLIXL_NAME, JOptionPane.ERROR_MESSAGE);
 	}
 	//
-
-	private static String throwableToString(Throwable e) {
-		CharArrayWriter writer = new CharArrayWriter();
-		PrintWriter printWriter = new PrintWriter(writer);
-		e.printStackTrace(printWriter);
-		printWriter.flush();
-		return writer.toString();
-	}
 
 	// === JFX
 	private void showFx() throws InterruptedException, ExecutionException {
@@ -188,11 +206,11 @@ class FatalErrorReporter {
 				alert.getDialogPane().requestLayout();
 				stage.sizeToScene();
 			}));
+			getAvailableFontFamily().ifPresent(font -> setNodeFont(scene.getRoot(), font));
 			alert.show();
+			alert.setOnHidden(e -> latch.countDown());
 			return alert;
-		}, Platform::runLater)
-				.get()
-				.setOnHidden(e -> latch.countDown());
+		}, Platform::runLater).get();
 		latch.await();
 	}
 
@@ -212,6 +230,16 @@ class FatalErrorReporter {
 		result.setOnMouseEntered(e -> scene.setCursor(Cursor.HAND));
 		result.setOnMouseExited(e -> scene.setCursor(Cursor.DEFAULT));
 		return result;
+	}
+
+	private static void setNodeFont(Node node, String font) {
+		String style = node.getStyle();
+		if (style == null)
+			style = "";
+		style += "-fx-font-family: \"" + font + "\";";
+		node.setStyle(style);
+		if (node instanceof Parent)
+			((Parent) node).getChildrenUnmodifiable().forEach(n -> setNodeFont(n, font));
 	}
 	//
 }
