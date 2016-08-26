@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.FrameworkEvent;
-import org.osgi.framework.wiring.BundleRevision;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 
@@ -110,8 +109,6 @@ class Main {
 			setupWorkingDir();
 			configureJUL();
 
-			LOGGER.fine("System properties: " + System.getProperties());
-
 			initFx();
 
 			felixConfiguration = loadConfiguration();
@@ -120,7 +117,6 @@ class Main {
 
 			clearFelixCache();
 			felix = new Felix(felixConfiguration);
-			LOGGER.fine("Felix capabilities: " + felix.adapt(BundleRevision.class).getCapabilities(null));
 			felix.start();
 			OSGiListener osgiListener = new OSGiListener();
 			felix.getBundleContext().addBundleListener(osgiListener);
@@ -135,7 +131,8 @@ class Main {
 				}
 			} while (event.getType() == FrameworkEvent.WAIT_TIMEDOUT ||
 					event.getType() == FrameworkEvent.STOPPED_UPDATE);
-			shutdown();
+			clearFelixCache();
+			exitFx();
 		} catch (Throwable e) {
 			if (felix != null) {
 				try {
@@ -144,20 +141,11 @@ class Main {
 					e.addSuppressed(e1);
 				}
 			}
-			shutdown();
+			clearFelixCache();
 			FatalErrorReporter.process(e);
+			exitFx();
 			System.exit(1);
 		}
-	}
-
-	private static void shutdown() {
-		try {
-			Platform.exit();
-		} catch (Throwable e) {
-			// Some java runtimes don't have JavaFX, e.g. OpenJDK
-			LOGGER.log(Level.SEVERE, "Couldn't stop JavaFX", e);
-		}
-		clearFelixCache();
 	}
 
 	private static void clearFelixCache() {
@@ -207,5 +195,14 @@ class Main {
 				LOGGER.log(Level.SEVERE, "Couldn't init JavaFX", e);
 			}
 		}, "JavaFx-init").start();
+	}
+
+	private static void exitFx() {
+		try {
+			Platform.exit();
+		} catch (Throwable e) {
+			// Some java runtimes don't have JavaFX, e.g. OpenJDK
+			LOGGER.log(Level.SEVERE, "Couldn't stop JavaFX", e);
+		}
 	}
 }

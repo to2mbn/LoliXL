@@ -6,19 +6,20 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Cursor;
@@ -40,16 +41,7 @@ class FatalErrorReporter {
 
 	public static void process(Throwable e) {
 		LOGGER.log(Level.SEVERE, "发生致命错误", e);
-		try {
-			showThrowable(e);
-		} catch(Throwable fxEx) {
-			try {
-				new FatalErrorReporter(e).show();
-			} catch (Throwable awtEx) {
-				// AWT/Swing may be not supported
-				LOGGER.log(Level.SEVERE, "Couldn't show error dialog", awtEx);
-			}
-		}
+		new FatalErrorReporter(e).show();
 	}
 
 	private static final String BUG_REPORT_EMAIL = "yushijinhun@gmail.com";
@@ -62,9 +54,19 @@ class FatalErrorReporter {
 	}
 
 	public void show() {
-		showErrorDialog(generateErrorMessage());
+		try {
+			showFx();
+		} catch (Throwable fxEx) {
+			LOGGER.log(Level.WARNING, "Couldn't show JFX error dialog", fxEx);
+			try {
+				showSwing();
+			} catch (Throwable swingEx) {
+				LOGGER.log(Level.SEVERE, "Couldn't show Swing error dialog", swingEx);
+			}
+		}
 	}
 
+	// Swing
 	private String generateErrorMessage() {
 		String logPath = new File(Metadata.LOG_FILE).toURI().toString();
 
@@ -87,7 +89,7 @@ class FatalErrorReporter {
 		return result;
 	}
 
-	private void showErrorDialog(String text) {
+	private void showSwing() {
 		// for copying style
 		JLabel label = new JLabel();
 		Font font = label.getFont();
@@ -99,7 +101,7 @@ class FatalErrorReporter {
 
 		// html content
 		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ text
+				+ generateErrorMessage()
 				+ "</body></html>");
 
 		// handle link events
@@ -109,12 +111,12 @@ class FatalErrorReporter {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
 					if (Desktop.isDesktopSupported()) {
-						try {
-							Desktop.getDesktop().browse(e.getURL().toURI());
-						} catch (IOException | URISyntaxException ex) {
-							ex.printStackTrace();
-						}
+					try {
+						Desktop.getDesktop().browse(e.getURL().toURI());
+					} catch (IOException | URISyntaxException ex) {
+						ex.printStackTrace();
 					}
+				}
 			}
 		});
 		ep.setEditable(false);
@@ -122,6 +124,7 @@ class FatalErrorReporter {
 
 		JOptionPane.showMessageDialog(null, ep, Metadata.LOLIXL_NAME, JOptionPane.ERROR_MESSAGE);
 	}
+	//
 
 	private static String throwableToString(Throwable e) {
 		CharArrayWriter writer = new CharArrayWriter();
@@ -130,10 +133,12 @@ class FatalErrorReporter {
 		printWriter.flush();
 		return writer.toString();
 	}
-	
-	private static void showThrowable(Throwable ex){
+
+	// === JFX
+	private void showFx() throws InterruptedException, ExecutionException {
 		new JFXPanel();
-		Platform.runLater(() -> {
+		CountDownLatch latch = new CountDownLatch(1);
+		CompletableFuture.supplyAsync(() -> {
 			Alert alert = new Alert(AlertType.ERROR);
 			Scene scene = alert.getDialogPane().getScene();
 			Stage stage = (Stage) scene.getWindow();
@@ -141,13 +146,9 @@ class FatalErrorReporter {
 			alert.initOwner(null);
 			alert.setTitle("LoliXL");
 			alert.setHeaderText("LoliXL发生致命错误 ！");
-			alert.setContentText(ex.getClass().getName() + ": " + ex.getMessage());
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			ex.printStackTrace(pw);
-			String exceptionText = sw.toString();
+			alert.setContentText(e.getClass().getName() + ": " + e.getMessage());
 			Label label = new Label("The exception stacktrace was:");
-			TextArea textArea = new TextArea(exceptionText);
+			TextArea textArea = new TextArea(throwableToString(e));
 			textArea.setEditable(false);
 			textArea.setWrapText(true);
 			textArea.setMaxWidth(Double.MAX_VALUE);
@@ -170,43 +171,47 @@ class FatalErrorReporter {
 			HBox logBox = new HBox();
 			Label log = new Label("日志文件: ");
 			String logUri = new File(Metadata.LOG_FILE).toURI().toString();
-			Label logInfo = makeUnderLinkLabel(logUri, logUri, scene);
+			Label logInfo = createHyperlinkLabel(logUri, logUri, scene);
 			logBox.getChildren().addAll(log, logInfo);
 			HBox feedbackBox1 = new HBox(), feedbackBox2 = new HBox();
 			feedbackBox1.getChildren().addAll(
 					new Label("我们为对您造成的不便深感抱歉，请将以上错误信息及日志发送到"),
-					makeUnderLinkLabel("mailto:" + BUG_REPORT_EMAIL, BUG_REPORT_EMAIL, scene)
-			);
+					createHyperlinkLabel("mailto:" + BUG_REPORT_EMAIL, BUG_REPORT_EMAIL, scene));
 			feedbackBox2.getChildren().addAll(
 					new Label("或反馈到"),
-					makeUnderLinkLabel(BUG_REPORT_URL, BUG_REPORT_URL, scene)
-			);
+					createHyperlinkLabel(BUG_REPORT_URL, BUG_REPORT_URL, scene));
 			vbox.getChildren().addAll(new Label(), mavenInfo, logBox, new Label(), feedbackBox1, feedbackBox2);
 			expContent.add(vbox, 0, 2);
 			alert.getDialogPane().setExpandableContent(expContent);
 			alert.getDialogPane().setExpanded(true);
+			alert.getDialogPane().expandedProperty().addListener(dummy -> Platform.runLater(() -> {
+				alert.getDialogPane().requestLayout();
+				stage.sizeToScene();
+			}));
 			alert.show();
-		});
+			return alert;
+		}, Platform::runLater)
+				.get()
+				.setOnHidden(e -> latch.countDown());
+		latch.await();
 	}
-	
-	private static Label makeUnderLinkLabel(String uri, String str, Scene scene) {
+
+	private static Label createHyperlinkLabel(String uri, String str, Scene scene) {
 		Label result = new Label(str);
 		result.setUnderline(true);
 		result.setTextFill(Color.web("#0026ff"));
-		result.setOnMouseClicked(e -> labelCallback(uri));
+		result.setOnMouseClicked(e -> SwingUtilities.invokeLater(() -> { // call on EDT
+			if (Desktop.isDesktopSupported()) {
+				try {
+					Desktop.getDesktop().browse(new URI(uri));
+				} catch (IOException | URISyntaxException ex) {
+					ex.printStackTrace();
+				}
+			}
+		}));
 		result.setOnMouseEntered(e -> scene.setCursor(Cursor.HAND));
 		result.setOnMouseExited(e -> scene.setCursor(Cursor.DEFAULT));
 		return result;
 	}
-	
-	private static void labelCallback(String uri) {
-		if (Desktop.isDesktopSupported()) {
-			try {
-				Desktop.getDesktop().browse(new URI(uri));
-			} catch (IOException | URISyntaxException ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-	
+	//
 }
