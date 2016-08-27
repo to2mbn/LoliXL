@@ -37,7 +37,6 @@
 	<center>
 		<StackPane
 			id="xl-panel-content-container"
-			fx:id="panelContentContainer"
-			BorderPane.alignment="CENTER" />
+			fx:id="panelContentContainer" />
 	</center>
 </fx:root>

@@ -2,15 +2,16 @@ package org.to2mbn.lolixl.ui.impl.container.presenter;
 
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.Observable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Region;
-import javafx.stage.Stage;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -20,13 +21,15 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.Panel;
 import org.to2mbn.lolixl.ui.PanelDisplayService;
 import org.to2mbn.lolixl.ui.container.presenter.Presenter;
-import org.to2mbn.lolixl.ui.impl.MainStage;
 import org.to2mbn.lolixl.ui.impl.component.model.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.component.view.panel.PanelView;
 import org.to2mbn.lolixl.ui.impl.container.view.HomeFrameView;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
-import java.util.Deque;
+import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service({ PanelDisplayService.class, HomeFramePresenter.class })
@@ -37,9 +40,6 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private double panelAnimationDuration = 300.0;
 
-	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
-	private Stage stage;
-
 	@Reference
 	private LeftSideBarPresenter sideBarPresenter;
 
@@ -49,9 +49,43 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	@Reference
 	private BackgroundService backgroundService;
 
-	private final Deque<PanelEntry> panels = new LinkedList<>();
-	
-	private ParallelTransition lastParallel; // 上一个回退动画
+	/*
+	 * 动画伪代码：
+		shown : stack<panel>
+		pending_animations : queue<function>
+		current_animation : optional<animation>
+		
+		show(p : panel) : void
+		  if current_animation exists
+		    submit this to pending_animations
+		  else
+		    play show animation
+		
+		hide(p : panel)
+		  if current_animation exists
+		    if p takes part in current_animation
+		      if p is being hidden
+		        do nothing
+		      else if p is being shown
+		        cancel current_animation and play close animation
+		      else
+		        submit this to pending_animations
+		    else
+		      // p hasn't taken part in current_animation(not in display)
+		      directly remove p from shown
+		  else if shown.peek() = p // p is in display
+		    play hide animation
+		  else
+		    directly remove p from shown
+	 */
+
+	private static final int UNDEFINED = 0;
+	private static final int SHOWING = 1;
+	private static final int HIDING = 2;
+	private LinkedList<PanelEntry> panels = new LinkedList<>();
+	private LinkedList<Runnable> pendingAnimations = new LinkedList<>();
+	private Animation currentAnimation = null;
+	private int currentAnimationType = UNDEFINED;
 
 	@Activate
 	public void active(ComponentContext compCtx) {
@@ -60,8 +94,9 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Override
 	protected void initializePresenter() {
-		view.sidebarPane.getChildren().add(sideBarPresenter.getView().rootContainer);
-		view.contentPane.getChildren().add(homeContentPresenter.getView().rootContainer);
+		view.homeContentPane.setLeft(sideBarPresenter.getView().rootContainer);
+		view.homeContentPane.setCenter(homeContentPresenter.getView().rootContainer);
+		view.contentPane.getChildren().add(view.homeContentPane);
 
 		view.rootContainer.sceneProperty().addListener((Observable dummy) -> {
 			Scene scene = view.rootContainer.getScene();
@@ -89,117 +124,160 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	@Override
 	public Panel newPanel() {
 		checkFxThread();
-		return new PanelImpl(this::displayPanelEntry, this::hideCurrent);
+		return new PanelImpl(this::showPanel, this::hidePanel);
 	}
 
 	@Override
 	public Optional<Panel> getCurrent() {
 		checkFxThread();
-		PanelEntry entry = panels.peek();
-		return entry != null ? Optional.of(entry.model) : Optional.empty();
+		return Optional.ofNullable(panels.peek())
+				.map(p -> p.model);
 	}
 
 	@Override
 	public Panel[] getOpenedPanels() {
 		checkFxThread();
-		return panels.stream().map(entry -> entry.model).toArray(Panel[]::new);
+		return panels.stream()
+				.map(entry -> entry.model)
+				.toArray(Panel[]::new);
 	}
 
-	private void displayPanelEntry(Panel model) {
+	private void showPanel(Panel panel) {
 		checkFxThread();
-		PanelEntry entry;
-		entry = new PanelEntry(model, new PanelView(model));
-		panels.push(entry);
-		// 先隐藏添加的面板 等待之后的动画效果即将播放了再显示回来
-		entry.view.setVisible(false);
-		if (view.rootContainer.getLeft() != null) { // 如果此时没有已经显示了的面板
-			// 暂时移除默认的侧边栏和主页栏
-			view.rootContainer.setCenter(null);
-			view.rootContainer.setLeft(null);
+		Objects.requireNonNull(panel);
+
+		if (currentAnimation == null) {
+			playShowAnimation(panel);
+		} else {
+			pendingAnimations.add(() -> showPanel(panel));
 		}
-		// 向主页栏添加面板
-		view.rootContainer.setCenter(entry.view);
-		Animation animation = generateAnimation(entry.view, false);
-		animation.play();
-		entry.view.setVisible(true);
 	}
 
-	private void hideCurrent() {
+	private void hidePanel(Panel panel) {
 		checkFxThread();
-		if (panels.isEmpty()) {
+		Objects.requireNonNull(panel);
+
+		PanelEntry entry = null;
+		for (PanelEntry e : panels) {
+			if (e.model == panel) {
+				entry = e;
+				break;
+			}
+		}
+		if (entry == null) {
 			return;
 		}
-		PanelEntry entry = panels.pop();
-		if (panels.isEmpty()) {
-			view.sidebarPane.setVisible(false);
-			view.contentPane.setVisible(false);
-			view.rootContainer.setLeft(view.sidebarPane);
-			view.rootContainer.setCenter(view.contentPane);
-			Animation fallback = fallbackAnimation(view.sidebarPane, view.contentPane);
-			fallback.play();
-			view.sidebarPane.setVisible(true);
-			view.contentPane.setVisible(true);
-		} else { // 如果此时存在多层叠加(逻辑上的)着的面板
-			PanelEntry previous = panels.peek();
-			Animation animation = generateAnimation(entry.view, true);
-			animation.setOnFinished(event -> {
-				// 设置为下一层的面板
-				previous.view.setVisible(false);
-				view.rootContainer.setCenter(previous.view);
-				Animation fallback = fallbackAnimation(previous.view);
-				fallback.play();
-				previous.view.setVisible(true);
-			});
-			animation.play();
-		}
-	}
 
-	private ParallelTransition generateAnimation(Region pane, boolean reverse) {
-		// 移动动画
-		TranslateTransition tran = new TranslateTransition(Duration.millis(panelAnimationDuration), pane);
-		double fromX = (view.contentPane.getLayoutX() + view.contentPane.getWidth() + view.sidebarPane.getWidth()) / 15;
-		double toX = view.sidebarPane.getLayoutX();
-		tran.setFromX(reverse ? toX : fromX);
-		tran.setToX(reverse ? fromX : toX);
-
-		// 渐变动画
-		FadeTransition fade = new FadeTransition(Duration.millis(panelAnimationDuration), pane);
-		fade.setFromValue(reverse ? pane.getOpacity() : 0);
-		fade.setToValue(reverse ? 0 : pane.getOpacity());
-
-		ParallelTransition parallel = new ParallelTransition(tran, fade);
-		return parallel;
-	}
-
-	private ParallelTransition fallbackAnimation(Region... panes) {
-		ParallelTransition parallel = new ParallelTransition();
-		for (Region pane : panes) {
-			FadeTransition fade = new FadeTransition(Duration.millis(panelAnimationDuration), pane);
-			double val = -1;
-			if (lastParallel != null) { // 如果上一个动画没结束，从动画中获取磁贴的目标透明度
-				for (Animation ani : lastParallel.getChildren())
-					if (ani instanceof FadeTransition && ((FadeTransition) ani).getNode() == pane) {
-						val = ((FadeTransition) ani).getToValue();
-						break;
+		boolean isFirst = panels.peek() == entry;
+		if (currentAnimation != null) {
+			boolean isSecond = panels.size() > 1 && panels.get(1) == entry;
+			if (isFirst || isSecond) {
+				if (isFirst) {
+					if (currentAnimationType == HIDING) {
+						// do nothing
+					} else if (currentAnimationType == SHOWING) {
+						double progress = currentAnimation.getCurrentTime().toMillis() / currentAnimation.getTotalDuration().toMillis();
+						currentAnimation.stop();
+						playHideAnimation(progress);
+					} else {
+						throw new IllegalStateException("Illegal animation type: " + currentAnimationType);
 					}
-				lastParallel.stop(); //结束上一个动画
+				} else {
+					pendingAnimations.add(() -> hidePanel(panel));
+				}
+			} else {
+				panels.remove(entry);
 			}
-			fade.setFromValue(0);
-			fade.setToValue(val == -1 ? pane.getOpacity() : val); // 如果不能从上个动画获取到磁贴目标透明度，则使用磁贴当前透明度
-			parallel.getChildren().add(fade);
-			parallel.setOnFinished(e -> lastParallel = null); // 若果动画正常完成，那么移除上一个动画缓存
+		} else if (isFirst) {
+			playHideAnimation(Double.NaN);
+		} else {
+			panels.remove(entry);
 		}
-		return lastParallel = parallel;
 	}
 
-	private static class PanelEntry {
+	private void onAnimationFinished() {
+		currentAnimation = null;
+		currentAnimationType = UNDEFINED;
+		Runnable next = pendingAnimations.poll();
+		if (next != null) {
+			next.run();
+		}
+	}
 
-		private final Panel model;
-		private final Region view;
+	private void playShowAnimation(Panel toShow) {
+		Region lower = panels.isEmpty() ? view.homeContentPane : panels.peek().view;
+		PanelEntry entry = new PanelEntry(toShow);
+		panels.push(entry);
+		Region upper = entry.view;
 
-		private PanelEntry(Panel _model, Region _view) {
-			model = _model;
-			view = _view;
+		view.contentPane.getChildren().add(upper);
+
+		List<KeyValue> keyValues = new ArrayList<>();
+
+		// opacity
+		upper.setOpacity(0.0);
+		keyValues.add(new KeyValue(upper.opacityProperty(), 1.0));
+		keyValues.add(new KeyValue(lower.opacityProperty(), 0.0));
+
+		// location
+		upper.setTranslateX(getPanelTranslateEndX());
+		keyValues.add(new KeyValue(upper.translateXProperty(), 0.0, FunctionInterpolator.S_CURVE));
+
+		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration), keyValues.toArray(new KeyValue[keyValues.size()])));
+
+		currentAnimationType = SHOWING;
+		currentAnimation.setOnFinished(e -> {
+			view.contentPane.getChildren().remove(0);
+			onAnimationFinished();
+		});
+		currentAnimation.play();
+	}
+
+	/**
+	 * @param showAnimationProgress the progress of the canceled show animation,
+	 *            NaN if no show animation is canceled
+	 */
+	private void playHideAnimation(double showAnimationProgress) {
+		boolean canceledShowAnimation = !Double.isNaN(showAnimationProgress);
+		Region upper = panels.peek().view;
+		Region lower = panels.size() > 1 ? panels.get(1).view : view.homeContentPane;
+
+		if (!canceledShowAnimation) {
+			view.contentPane.getChildren().add(0, lower);
+			lower.setOpacity(0.0);
+		}
+
+		List<KeyValue> keyValues = new ArrayList<>();
+		keyValues.add(new KeyValue(upper.opacityProperty(), 0.0));
+		keyValues.add(new KeyValue(lower.opacityProperty(), 1.0));
+
+		// location
+		keyValues.add(new KeyValue(upper.translateXProperty(), getPanelTranslateEndX(), FunctionInterpolator.S_CURVE));
+
+		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration * (canceledShowAnimation ? showAnimationProgress : 1.0)), keyValues.toArray(new KeyValue[keyValues.size()])));
+
+		currentAnimationType = HIDING;
+		currentAnimation.setOnFinished(e -> {
+			panels.pop();
+			view.contentPane.getChildren().remove(1);
+			onAnimationFinished();
+		});
+		currentAnimation.play();
+	}
+
+	private double getPanelTranslateEndX() {
+		return view.rootContainer.getWidth() / 8.0;
+	}
+
+	private class PanelEntry {
+
+		Panel model;
+		PanelView view;
+
+		private PanelEntry(Panel model) {
+			this.model = model;
+			this.view = new PanelView(model);
+			StackPane.setAlignment(this.view, Pos.TOP_LEFT);
 		}
 	}
 }

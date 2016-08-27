@@ -15,8 +15,6 @@ public interface SideBarPanelDisplayService extends PanelFactory {
 
 	/**
 	 * 获取当前打开的Panel。
-	 * <p>
-	 * 该方法可以从任意线程访问。
 	 *
 	 * @return 当前打开的Panel
 	 */

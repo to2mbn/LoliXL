@@ -69,13 +69,13 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 	@Override
 	public Panel newPanel() {
 		checkFxThread();
-		return new PanelImpl(this::showNewPanel, this::closeCurrentPanel);
+		return new PanelImpl(this::showPanel, this::closePanel);
 	}
 
 	@Override
 	public Optional<Panel> getCurrent() {
 		checkFxThread();
-		return Optional.ofNullable(currentPanel).map(view -> view.panel);
+		return Optional.ofNullable(currentPanel).map(view -> view.model);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 		});
 	}
 
-	private void showNewPanel(Panel panel) {
+	private void showPanel(Panel panel) {
 		if (currentPanel == null) {
 			currentPanel = new PanelView(panel);
 			view.sidebarContainer.setContent(currentPanel);
@@ -107,8 +107,8 @@ public class LeftSideBarPresenter extends Presenter<LeftSidebarView> implements 
 		}
 	}
 
-	private void closeCurrentPanel() {
-		if (currentPanel != null) {
+	private void closePanel(Panel panel) {
+		if (currentPanel.model == panel) {
 			showPanel(panelAnimationDuration, true, () -> {
 				currentPanel = null;
 				view.sidebarContainer.setContent(null);

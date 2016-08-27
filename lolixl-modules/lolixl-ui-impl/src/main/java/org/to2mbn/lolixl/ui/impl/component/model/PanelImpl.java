@@ -12,14 +12,14 @@ import java.util.function.Consumer;
 
 public class PanelImpl implements Panel {
 	private final Consumer<Panel> internalOnShow;
-	private final Runnable internalOnClose;
+	private final Consumer<Panel> internalOnClose;
 
 	private final ObjectProperty<Image> iconProperty;
 	private final StringProperty titleProperty;
 	private final ObjectProperty<Runnable> onShownProperty, onClosedProperty;
 	private final ObjectProperty<Region> contentProperty;
 
-	public PanelImpl(Consumer<Panel> _onShow, Runnable _onClose) {
+	public PanelImpl(Consumer<Panel> _onShow, Consumer<Panel> _onClose) {
 		internalOnShow = _onShow;
 		internalOnClose = _onClose;
 		iconProperty = new SimpleObjectProperty<>(null);
@@ -65,6 +65,6 @@ public class PanelImpl implements Panel {
 	public void hide() {
 		FXUtils.checkFxThread();
 		onClosedProperty.get().run();
-		internalOnClose.run();
+		internalOnClose.accept(this);
 	}
 }

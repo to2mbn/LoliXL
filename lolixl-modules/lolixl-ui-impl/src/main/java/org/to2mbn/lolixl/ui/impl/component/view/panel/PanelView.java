@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.component.view.panel;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,10 +37,11 @@ public class PanelView extends BorderPane {
 	@FXML
 	public StackPane panelContentContainer;
 
-	public final Panel panel;
+	public final Panel model;
 
 	public PanelView(Panel _panel) {
-		panel = _panel;
+		model = _panel;
+		FXUtils.checkFxThread();
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
 		loader.setController(this);
@@ -52,7 +54,7 @@ public class PanelView extends BorderPane {
 	}
 
 	private void initComponent() {
-		FXUtils.checkFxThread();
+		setAlignment(headerContainer, Pos.TOP_LEFT);
 
 		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button.png");
 		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button_hover.png");
@@ -61,11 +63,11 @@ public class PanelView extends BorderPane {
 		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));
 		previousButton.setOnMouseExited(event -> previousButton.imageProperty().bind(previous_button_img));
 
-		previousButton.setOnMouseClicked(event -> panel.hide());
+		previousButton.setOnMouseClicked(event -> model.hide());
 		titleLabel.setLabelFor(iconView);
-		titleLabel.textProperty().bind(panel.titleProperty());
-		CollectionUtils.bindSingleton(panel.contentProperty(), panelContentContainer.getChildren());
-		iconView.imageProperty().bind(panel.iconProperty());
+		titleLabel.textProperty().bind(model.titleProperty());
+		CollectionUtils.bindSingleton(model.contentProperty(), panelContentContainer.getChildren());
+		iconView.imageProperty().bind(model.iconProperty());
 		iconView.imageProperty().addListener((observable, oldValue, newValue) -> checkEmptyIcon());
 		checkEmptyIcon();
 	}

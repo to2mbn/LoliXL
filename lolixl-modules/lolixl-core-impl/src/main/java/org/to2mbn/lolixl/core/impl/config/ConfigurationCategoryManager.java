@@ -58,7 +58,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 					ObservableContext observableContext = new ObservableContext();
 					observableContext.addListener(dummy -> {
 						updateConfiguration(reference, service);
-						localIOPool.submit(() -> trySaveConfiguration(reference, service));
+						Optional.ofNullable(localIOPool).ifPresent(pool -> pool.submit(() -> trySaveConfiguration(reference, service)));
 					});
 					service.setObservableContext(observableContext);
 
@@ -121,7 +121,7 @@ public class ConfigurationCategoryManager implements ConfigurationManager {
 			Configuration configuration = service.store();
 			String category = getCategoryName(reference, service);
 			Event event = new ConfigurationEvent(configuration, category);
-			eventAdmin.postEvent(event);
+			Optional.ofNullable(eventAdmin).ifPresent(ea -> ea.postEvent(event));
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, format("Couldn't post configuration update event for %s", reference), e);
 		}
