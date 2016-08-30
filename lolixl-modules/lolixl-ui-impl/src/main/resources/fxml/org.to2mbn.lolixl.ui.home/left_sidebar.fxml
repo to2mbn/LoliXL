@@ -20,6 +20,7 @@
 	<left>
 		<BorderPane
 			id="xl-left-sidebar-main-content-container"
+			styleClass="xl-panel"
 			fx:id="mainContentContainer">
 			<top>
 				<StackPane

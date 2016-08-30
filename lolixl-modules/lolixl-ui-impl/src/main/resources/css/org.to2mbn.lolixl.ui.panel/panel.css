@@ -1,17 +1,10 @@
 .xl-panel-header-container {
-	-fx-pref-height: 50.0;
-	-fx-spacing: 5.0;
-	-fx-padding: 5.0;
-}
-
-.xl-panel-previous-button {
+	-fx-pref-height: 50.0px;
+	-fx-spacing: 5.0px;
+	-fx-padding: 5.0px;
 }
 
 .xl-panel-title-label {
-	-fx-pref-height: 45.0;
-}
-
-.xl-panel-title-label {
-	-fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
-	-fx-font-size: 20.0pt;
+	-fx-alignment: center-left;
+	-fx-pref-height: 45.0px;
 }

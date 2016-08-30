@@ -1,9 +1,11 @@
 [
 	"css/org.to2mbn.lolixl.ui/metro.css",
+	"css/org.to2mbn.lolixl.ui/general.css",
 	"css/org.to2mbn.lolixl.ui/tile.css",
 	"css/org.to2mbn.lolixl.ui.home/sidebar_tiles.css",
 	"css/org.to2mbn.lolixl.ui.home/content.css",
 	"css/org.to2mbn.lolixl.ui.home/frame.css",
 	"css/org.to2mbn.lolixl.ui.home/left_sidebar.css",
-	"css/org.to2mbn.lolixl.ui.panel/panel.css"
+	"css/org.to2mbn.lolixl.ui.panel/panel.css",
+	"css/org.to2mbn.lolixl.ui.tiles_management/content.css"
 ]

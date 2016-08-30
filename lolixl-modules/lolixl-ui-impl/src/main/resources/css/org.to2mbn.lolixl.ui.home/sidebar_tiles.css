@@ -24,5 +24,6 @@
 	-fx-pref-width: 60.0;
 	-fx-pref-height: 60.0;
 	-fx-content-display: left;
+	-fx-alignment: center;
 	-xl-no-effect-pos: center-right;
 }

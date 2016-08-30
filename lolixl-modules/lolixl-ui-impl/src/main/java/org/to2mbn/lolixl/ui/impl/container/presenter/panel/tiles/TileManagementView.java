@@ -26,10 +26,12 @@ public class TileManagementView extends View {
 		shownTilesLabel = new Label();
 		shownTilesLabel.getStyleClass().add(CSS_CLASS_TILES_LABEL);
 		shownTilesLabel.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.tiles_management.tiles_label.shown"));
+		shownTilesLabel.getStyleClass().add("h3");
 
 		hiddenTileLabel = new Label();
 		hiddenTileLabel.getStyleClass().add(CSS_CLASS_TILES_LABEL);
 		hiddenTileLabel.textProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.tiles_management.tiles_label.hidden"));
+		hiddenTileLabel.getStyleClass().add("h3");
 	}
 
 }

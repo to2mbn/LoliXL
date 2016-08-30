@@ -86,6 +86,7 @@ public class TileManagementPresenter extends Presenter<TileManagementView> imple
 
 	private Tile createTile(SidebarTileElement element) {
 		Tile tile = element.createTile();
+		tile.getStyleClass().add("xl-tile-management-tile-element");
 		return tile;
 	}
 

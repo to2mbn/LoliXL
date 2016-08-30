@@ -1,0 +1,14 @@
+#xl-tiles-management-root-container {
+	-fx-padding: 20.0;
+}
+
+#xl-tiles-management-tiles-container {
+	-fx-orientation: vertical;
+	-fx-hgap: 20.0;
+	-fx-vgap: 10.0;
+}
+
+.xl-tile-management-tile-element {
+	-fx-pref-width: 250.0;
+	-fx-pref-height: 60.0;
+}
