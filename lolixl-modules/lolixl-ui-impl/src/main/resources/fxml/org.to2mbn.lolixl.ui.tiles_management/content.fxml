@@ -10,7 +10,7 @@
 	fx:id="rootContainer"
 	xmlns="http://javafx.com/javafx/8.0.60"
 	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="org.to2mbn.lolixl.ui.impl.container.presenter.panel.tiles.TileManagementView">
+	fx:controller="org.to2mbn.lolixl.ui.impl.pages.tile.TileManagementView">
 	<center>
 		<FlowPane
 			id="xl-tiles-management-tiles-container"

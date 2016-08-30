@@ -1,7 +1,7 @@
 package org.to2mbn.lolixl.core.game.download;
 
 import java.util.Set;
-import org.to2mbn.lolixl.ui.model.DisplayableTile;
+import org.to2mbn.lolixl.ui.DisplayableTile;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Region;
 

@@ -4,7 +4,7 @@ import java.util.Map;
 import org.to2mbn.jmccc.auth.Authenticator;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.Texture;
 import org.to2mbn.jmccc.auth.yggdrasil.core.texture.TextureType;
-import org.to2mbn.lolixl.ui.model.DisplayableTile;
+import org.to2mbn.lolixl.ui.DisplayableTile;
 import org.to2mbn.lolixl.utils.ObservableContextAware;
 import org.to2mbn.lolixl.utils.Storable;
 import javafx.beans.value.ObservableStringValue;

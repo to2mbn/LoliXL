@@ -1,0 +1,52 @@
+package org.to2mbn.lolixl.ui.impl.pages.auth;
+
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Reference;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationProfileManager;
+import org.to2mbn.lolixl.core.game.auth.AuthenticationService;
+import org.to2mbn.lolixl.ui.Presenter;
+import org.to2mbn.lolixl.ui.component.Tile;
+import org.to2mbn.lolixl.utils.MappedObservableList;
+import org.to2mbn.lolixl.utils.ObservableServiceTracker;
+import javafx.beans.binding.Bindings;
+
+//TODO: 在重构完毕后令enabled=true
+@Component(enabled = false)
+public class AuthTypeSelectorPresenter extends Presenter<AuthTypeSelectorView> {
+
+	private static final String FXML_LOCATION = "/ui/fxml/panel/auth_type_selector_panel.fxml";
+
+	@Reference
+	private AuthenticationProfileManager profileManager;
+
+	private ObservableServiceTracker<AuthenticationService> serviceTracker;
+	private MappedObservableList<AuthenticationService, Tile> tilesMapping;
+
+	@Activate
+	public void active(ComponentContext compCtx) {
+		super.active();
+		BundleContext bundleCtx = compCtx.getBundleContext();
+		serviceTracker = new ObservableServiceTracker<>(bundleCtx, AuthenticationService.class);
+		tilesMapping = new MappedObservableList<>(serviceTracker.getServiceList(), AuthenticationService::createTile);
+		serviceTracker.open(true);
+	}
+
+	@Deactivate
+	public void deactive() {
+		serviceTracker.close();
+	}
+
+	@Override
+	protected void initializePresenter() {
+		Bindings.bindContent(view.tilesContainer.getChildren(), tilesMapping);
+	}
+
+	@Override
+	protected String getFxmlLocation() {
+		return FXML_LOCATION;
+	}
+}

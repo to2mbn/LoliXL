@@ -5,12 +5,25 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<ScrollPane id="-xl-download-center-panel-root-container" fx:id="rootContainer" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.to2mbn.lolixl.ui.impl.container.view.panel.downloads.DownloadCenterView">
-   <content>
-      <VBox id="-xl-download-center-panel-items-container" fx:id="itemsContainer" spacing="5.0">
-         <padding>
-            <Insets left="5.0" right="5.0" />
-         </padding>
-      </VBox>
-   </content>
+<ScrollPane
+	id="xl-download-center-panel-root-container"
+	fx:id="rootContainer"
+	hbarPolicy="NEVER"
+	prefHeight="390.0"
+	prefWidth="850.0"
+	xmlns="http://javafx.com/javafx/8.0.65"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="org.to2mbn.lolixl.ui.impl.pages.download.DownloadCenterView">
+	<content>
+		<VBox
+			id="xl-download-center-panel-items-container"
+			fx:id="itemsContainer"
+			spacing="5.0">
+			<padding>
+				<Insets
+					left="5.0"
+					right="5.0" />
+			</padding>
+		</VBox>
+	</content>
 </ScrollPane>

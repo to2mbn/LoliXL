@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import org.to2mbn.jmccc.mcdownloader.download.concurrent.Cancelable;
-import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import org.to2mbn.lolixl.ui.DisplayableItem;
 
 public class DownloadTaskGroup extends AbstractDownloadTaskModel implements Cancelable {
 

@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.ui.theme;
 
-import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import org.to2mbn.lolixl.ui.DisplayableItem;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 

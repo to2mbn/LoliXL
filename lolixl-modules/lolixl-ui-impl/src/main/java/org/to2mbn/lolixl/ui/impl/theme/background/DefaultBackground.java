@@ -5,7 +5,7 @@ import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.to2mbn.lolixl.i18n.I18N;
-import org.to2mbn.lolixl.ui.ImageLoading;
+import org.to2mbn.lolixl.ui.image.ImageLoading;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundProvider;
 import org.to2mbn.lolixl.ui.theme.background.ImageBackgroundProvider;
 import javafx.beans.value.ObservableObjectValue;

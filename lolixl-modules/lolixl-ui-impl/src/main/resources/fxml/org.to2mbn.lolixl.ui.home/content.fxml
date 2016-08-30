@@ -10,7 +10,7 @@
 	xmlns="http://javafx.com/javafx/8.0.65"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:id="rootContainer"
-	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.HomeContentView">
+	fx:controller="org.to2mbn.lolixl.ui.impl.pages.home.HomeContentView">
 
 	<bottom>
 		<AnchorPane

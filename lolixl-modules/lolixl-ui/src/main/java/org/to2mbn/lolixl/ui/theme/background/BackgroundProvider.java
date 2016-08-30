@@ -1,6 +1,6 @@
 package org.to2mbn.lolixl.ui.theme.background;
 
-import org.to2mbn.lolixl.ui.model.DisplayableTile;
+import org.to2mbn.lolixl.ui.DisplayableTile;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.layout.Background;
 

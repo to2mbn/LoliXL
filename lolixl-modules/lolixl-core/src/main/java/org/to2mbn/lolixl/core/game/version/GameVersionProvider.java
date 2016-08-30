@@ -1,7 +1,7 @@
 package org.to2mbn.lolixl.core.game.version;
 
 import java.nio.file.Path;
-import org.to2mbn.lolixl.ui.model.DisplayableTile;
+import org.to2mbn.lolixl.ui.DisplayableTile;
 import org.to2mbn.lolixl.utils.Aliasable;
 import javafx.collections.ObservableList;
 

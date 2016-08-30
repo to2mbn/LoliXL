@@ -2,7 +2,7 @@ package org.to2mbn.lolixl.core.image;
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
-import org.to2mbn.lolixl.ui.ImageLoadingService;
+import org.to2mbn.lolixl.ui.image.ImageLoadingService;
 import org.to2mbn.lolixl.utils.ClassUtils;
 import org.to2mbn.lolixl.utils.binding.FxConstants;
 import javafx.beans.value.ObservableObjectValue;

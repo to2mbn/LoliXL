@@ -11,7 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import java.util.List;
 import java.util.Objects;
-import org.to2mbn.lolixl.ui.model.DisplayableItem;
+import org.to2mbn.lolixl.ui.DisplayableItem;
 
 /**
  * 从 {@link DisplayableItem} 创建的磁贴。

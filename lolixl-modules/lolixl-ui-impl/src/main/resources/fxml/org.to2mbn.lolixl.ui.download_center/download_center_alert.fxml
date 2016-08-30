@@ -5,11 +5,24 @@
 <?import javafx.scene.layout.BorderPane?>
 
 
-<fx:root id="-xl-download-center-alert-root-container" prefHeight="45.0" prefWidth="245.0" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <Label id="-xl-download-center-alert-msg-label" fx:id="msgLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
-   </center>
-   <left>
-      <ImageView id="-xl-download-center-alert-icon-view" fx:id="iconView" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-   </left>
+<fx:root
+	id="xl-download-center-alert-root-container"
+	prefHeight="45.0"
+	prefWidth="245.0"
+	type="BorderPane"
+	xmlns="http://javafx.com/javafx/8.0.65"
+	xmlns:fx="http://javafx.com/fxml/1">
+	<center>
+		<Label
+			id="xl-download-center-alert-msg-label"
+			fx:id="msgLabel" />
+	</center>
+	<left>
+		<ImageView
+			id="xl-download-center-alert-icon-view"
+			fx:id="iconView"
+			fitHeight="45.0"
+			fitWidth="45.0"
+			pickOnBounds="true" />
+	</left>
 </fx:root>

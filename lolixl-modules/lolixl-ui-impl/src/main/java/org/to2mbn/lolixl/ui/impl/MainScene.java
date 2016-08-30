@@ -7,7 +7,7 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.ui.impl.container.presenter.HomeFramePresenter;
+import org.to2mbn.lolixl.ui.impl.pages.home.HomeFramePresenter;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
 import java.util.HashMap;
 import java.util.Map;

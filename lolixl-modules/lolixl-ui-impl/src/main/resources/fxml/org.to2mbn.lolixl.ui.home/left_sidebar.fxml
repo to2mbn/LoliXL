@@ -10,7 +10,7 @@
 	fx:id="rootContainer"
 	xmlns="http://javafx.com/javafx/8.0.65"
 	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="org.to2mbn.lolixl.ui.impl.container.view.LeftSidebarView">
+	fx:controller="org.to2mbn.lolixl.ui.impl.pages.home.LeftSidebarView">
 	<center>
 		<ScrollPane
 			id="xl-left-sidebar-sidebar-container"
