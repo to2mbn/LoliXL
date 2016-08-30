@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.layout.Region;
 
 public final class FXUtils {
 
@@ -22,6 +23,18 @@ public final class FXUtils {
 			return false;
 		}
 		return true;
+	}
+
+	public static void setSizeToPref(Region node) {
+		node.maxWidthProperty().set(Region.USE_PREF_SIZE);
+		node.minWidthProperty().set(Region.USE_PREF_SIZE);
+		node.maxHeightProperty().set(Region.USE_PREF_SIZE);
+		node.minHeightProperty().set(Region.USE_PREF_SIZE);
+	}
+
+	public static void bindPrefSize(Region a, Region b) {
+		a.prefWidthProperty().bind(b.widthProperty());
+		a.prefHeightProperty().bind(b.heightProperty());
 	}
 
 	// TODO: 删除此方法

@@ -3,15 +3,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<BorderPane
+<StackPane
 	id="xl-frame-root-container"
 	fx:id="rootContainer"
 	xmlns="http://javafx.com/javafx/8.0.60"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="org.to2mbn.lolixl.ui.impl.pages.home.HomeFrameView">
-	<center>
-		<StackPane
-			id="xl-frame-content-container"
-			fx:id="contentPane" />
-	</center>
-</BorderPane>
+	<BorderPane
+		id="xl-frame-main-container"
+		fx:id="mainContainer">
+		<center>
+			<StackPane
+				id="xl-frame-content-container"
+				fx:id="contentPane" />
+		</center>
+	</BorderPane>
+</StackPane>

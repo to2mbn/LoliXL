@@ -5,9 +5,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.Observable;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Region;
@@ -21,9 +20,11 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.Presenter;
 import org.to2mbn.lolixl.ui.impl.panel.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.panel.PanelView;
+import org.to2mbn.lolixl.ui.impl.util.BlurArea;
 import org.to2mbn.lolixl.ui.panel.Panel;
 import org.to2mbn.lolixl.ui.panel.PanelDisplayService;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
+import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,7 +41,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	private double panelAnimationDuration = 300.0;
 
 	@Reference
-	private LeftSidebarPresenter sideBarPresenter;
+	private LeftSidebarPresenter sidebarPresenter;
 
 	@Reference
 	private HomeContentPresenter homeContentPresenter;
@@ -86,6 +87,17 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	private Animation currentAnimation = null;
 	private int currentAnimationType = UNDEFINED;
 
+	private Runnable onEscPress = () -> {
+		if (getCurrent().isPresent()) {
+			getCurrent().get().hide();
+		} else if (sidebarPresenter.getCurrent().isPresent()) {
+			sidebarPresenter.getCurrent().get().hide();
+		}
+	};
+
+	private BlurArea areaSidebar;
+	private BlurArea areaTitleBar;
+
 	@Activate
 	public void active(ComponentContext compCtx) {
 		super.active();
@@ -93,26 +105,37 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Override
 	protected void initializePresenter() {
-		view.homeContentPane.setLeft(sideBarPresenter.getView().rootContainer);
+		view.homeContentPane.setLeft(sidebarPresenter.getView().rootContainer);
 		view.homeContentPane.setCenter(homeContentPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(view.homeContentPane);
 
-		view.rootContainer.sceneProperty().addListener((Observable dummy) -> {
-			Scene scene = view.rootContainer.getScene();
-			if (scene != null) {
-				view.rootContainer.getScene().getAccelerators().put(
-						new KeyCodeCombination(KeyCode.ESCAPE),
-						() -> {
-							if (getCurrent().isPresent()) {
-								getCurrent().get().hide();
-							} else if (sideBarPresenter.getCurrent().isPresent()) {
-								sideBarPresenter.getCurrent().get().hide();
-							}
-						});
+		view.rootContainer.sceneProperty().addListener((dummy, oldVal, newVal) -> {
+			if (oldVal != null) {
+				oldVal.getAccelerators().remove(KeyCode.ESCAPE, onEscPress);
+			}
+			if (newVal != null) {
+				newVal.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), onEscPress);
 			}
 		});
 
-		view.rootContainer.backgroundProperty().bind(backgroundService.getCurrentBackground());
+		areaSidebar = new BlurArea(sidebarPresenter.getView().mainContentContainer);
+		areaTitleBar = new BlurArea(); // TODO: Set its value when adding a title bar
+		view.backgroundPane = new BlurBackgroundPane(() -> {
+			List<BlurArea> areas = new ArrayList<>();
+			areas.add(areaTitleBar);
+			for (Node node : view.contentPane.getChildren()) {
+				if (node == view.homeContentPane) {
+					areas.add(areaSidebar);
+				} else if (node instanceof Region) {
+					areas.add(new BlurArea((Region) node));
+				}
+			}
+			return areas;
+		}, backgroundService.getCurrentBackground());
+		view.rootContainer.getChildren().add(0, view.backgroundPane);
+		FXUtils.bindPrefSize(view.backgroundPane, view.rootContainer);
+		FXUtils.setSizeToPref(view.backgroundPane);
+		updatePanelsBlur();
 	}
 
 	@Override
@@ -210,6 +233,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		Region upper = entry.view;
 
 		view.contentPane.getChildren().add(upper);
+		updatePanelsBlur();
 
 		List<KeyValue> keyValues = new ArrayList<>();
 
@@ -227,6 +251,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		currentAnimationType = SHOWING;
 		currentAnimation.setOnFinished(e -> {
 			view.contentPane.getChildren().remove(0);
+			updatePanelsBlur();
 			onAnimationFinished();
 		});
 		currentAnimation.play();
@@ -245,6 +270,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 			view.contentPane.getChildren().add(0, lower);
 			lower.setOpacity(0.0);
 		}
+		updatePanelsBlur();
 
 		List<KeyValue> keyValues = new ArrayList<>();
 		keyValues.add(new KeyValue(upper.opacityProperty(), 0.0));
@@ -259,6 +285,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		currentAnimation.setOnFinished(e -> {
 			panels.pop();
 			view.contentPane.getChildren().remove(1);
+			updatePanelsBlur();
 			onAnimationFinished();
 		});
 		currentAnimation.play();
@@ -266,6 +293,10 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private double getPanelTranslateEndX() {
 		return view.rootContainer.getWidth() / 8.0;
+	}
+
+	private void updatePanelsBlur() {
+		view.backgroundPane.updateArea();
 	}
 
 	private class PanelEntry {
