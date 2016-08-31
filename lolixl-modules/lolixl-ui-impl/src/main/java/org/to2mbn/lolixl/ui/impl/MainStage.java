@@ -1,17 +1,19 @@
 package org.to2mbn.lolixl.ui.impl;
 
 import javafx.application.Platform;
+import javafx.beans.value.ObservableStringValue;
 import javafx.stage.Stage;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.event.EventAdmin;
+import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
+import org.to2mbn.lolixl.utils.GlobalVariables;
 import org.to2mbn.lolixl.utils.event.ApplicationExitEvent;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 @Component
@@ -31,9 +33,8 @@ public class MainStage {
 	private EventAdmin eventAdmin;
 
 	@Activate
-	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {
+	public void active(ComponentContext compCtx) {
 		Platform.runLater(() -> {
-
 			LOGGER.fine("Creating main stage");
 			Stage stage = new Stage();
 			stage.setOnCloseRequest(event -> eventAdmin.postEvent(new ApplicationExitEvent()));
@@ -41,11 +42,11 @@ public class MainStage {
 			stage.setHeight(HEIGHT);
 			stage.setMinWidth(MIN_WIDTH);
 			stage.setMinHeight(MIN_HEIGHT);
+			stage.titleProperty().bind(I18N.localize("org.to2mbn.lolixl.ui.title"));
 
 			Map<String, Object> properties = new HashMap<>();
 			properties.put(PROPERTY_STAGE_ID, MAIN_STAGE_ID);
 			compCtx.getBundleContext().registerService(Stage.class, stage, new DictionaryAdapter<>(properties));
-
 		});
 	}
 

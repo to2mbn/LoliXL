@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl.util;
+package org.to2mbn.lolixl.ui.impl.pages.home;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;

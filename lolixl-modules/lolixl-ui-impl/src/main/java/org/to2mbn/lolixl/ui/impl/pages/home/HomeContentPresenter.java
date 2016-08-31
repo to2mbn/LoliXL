@@ -16,6 +16,7 @@ import org.to2mbn.lolixl.ui.panel.SidebarPanelDisplayService;
 import org.to2mbn.lolixl.ui.sidebar.SidebarTileService;
 import org.to2mbn.lolixl.ui.sidebar.SidebarTileElement;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import org.to2mbn.lolixl.utils.GlobalVariables;
 import org.to2mbn.lolixl.utils.MappedObservableList;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -23,6 +24,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -44,6 +46,9 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	private double tileAnimationDuration = 300.0;
 	private double tileHeight = 60.0;
+
+	@Reference(target = GlobalVariables.ANIMATION_TIME_MULTIPLIER)
+	private ObservableDoubleValue animationTimeMultiplier;
 
 	@Reference
 	private SidebarTileService tileService;
@@ -163,7 +168,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 				current.stop();
 				current = null;
 			} else {
-				time = Duration.millis(tileAnimationDuration);
+				time = Duration.millis(tileAnimationDuration * animationTimeMultiplier.get());
 			}
 			return time;
 		}

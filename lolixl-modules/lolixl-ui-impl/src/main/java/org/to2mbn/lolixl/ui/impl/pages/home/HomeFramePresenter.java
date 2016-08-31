@@ -5,6 +5,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -20,12 +21,12 @@ import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.Presenter;
 import org.to2mbn.lolixl.ui.impl.panel.PanelImpl;
 import org.to2mbn.lolixl.ui.impl.panel.PanelView;
-import org.to2mbn.lolixl.ui.impl.util.BlurArea;
 import org.to2mbn.lolixl.ui.panel.Panel;
 import org.to2mbn.lolixl.ui.panel.PanelDisplayService;
 import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
 import org.to2mbn.lolixl.utils.FXUtils;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import org.to2mbn.lolixl.utils.GlobalVariables;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,9 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
 
 	private double panelAnimationDuration = 300.0;
+
+	@Reference(target = GlobalVariables.ANIMATION_TIME_MULTIPLIER)
+	private ObservableDoubleValue animationTimeMultiplier;
 
 	@Reference
 	private LeftSidebarPresenter sidebarPresenter;
@@ -246,7 +250,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		upper.setTranslateX(getPanelTranslateEndX());
 		keyValues.add(new KeyValue(upper.translateXProperty(), 0.0, FunctionInterpolator.S_CURVE));
 
-		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration), keyValues.toArray(new KeyValue[keyValues.size()])));
+		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration * animationTimeMultiplier.get()), keyValues.toArray(new KeyValue[keyValues.size()])));
 
 		currentAnimationType = SHOWING;
 		currentAnimation.setOnFinished(e -> {
@@ -279,7 +283,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		// location
 		keyValues.add(new KeyValue(upper.translateXProperty(), getPanelTranslateEndX(), FunctionInterpolator.S_CURVE));
 
-		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration * (canceledShowAnimation ? showAnimationProgress : 1.0)), keyValues.toArray(new KeyValue[keyValues.size()])));
+		currentAnimation = new Timeline(new KeyFrame(Duration.millis(panelAnimationDuration * animationTimeMultiplier.get() * (canceledShowAnimation ? showAnimationProgress : 1.0)), keyValues.toArray(new KeyValue[keyValues.size()])));
 
 		currentAnimationType = HIDING;
 		currentAnimation.setOnFinished(e -> {

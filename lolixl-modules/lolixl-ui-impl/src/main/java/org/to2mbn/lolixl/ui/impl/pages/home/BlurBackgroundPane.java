@@ -3,7 +3,6 @@ package org.to2mbn.lolixl.ui.impl.pages.home;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import org.to2mbn.lolixl.ui.impl.util.BlurArea;
 import org.to2mbn.lolixl.utils.FXUtils;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

@@ -3,6 +3,7 @@ package org.to2mbn.lolixl.ui.impl.pages.home;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ObservableDoubleValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
@@ -19,6 +20,7 @@ import org.to2mbn.lolixl.ui.impl.panel.PanelView;
 import org.to2mbn.lolixl.ui.panel.Panel;
 import org.to2mbn.lolixl.ui.panel.SidebarPanelDisplayService;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import org.to2mbn.lolixl.utils.GlobalVariables;
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -48,6 +50,9 @@ public class LeftSidebarPresenter extends Presenter<LeftSidebarView> implements 
 	private double panelAnimationDuration = 300.0;
 	private double sidebarPanelWidth = 250.0;
 	private double doubleOperationTimeMultiplier = 2.0 / 3.0;
+
+	@Reference(target = GlobalVariables.ANIMATION_TIME_MULTIPLIER)
+	private ObservableDoubleValue animationTimeMultiplier;
 
 	private PanelView currentPanel;
 	private Queue<Runnable> pendingAnimations = new LinkedList<>();
@@ -96,19 +101,19 @@ public class LeftSidebarPresenter extends Presenter<LeftSidebarView> implements 
 		if (currentPanel == null) {
 			currentPanel = new PanelView(panel);
 			view.sidebarContainer.setContent(currentPanel);
-			showPanel(panelAnimationDuration, false, null);
+			showPanel(panelAnimationDuration * animationTimeMultiplier.get(), false, null);
 		} else {
-			showPanel(panelAnimationDuration * doubleOperationTimeMultiplier, true, () -> {
+			showPanel(panelAnimationDuration * animationTimeMultiplier.get() * doubleOperationTimeMultiplier, true, () -> {
 				currentPanel = new PanelView(panel);
 				view.sidebarContainer.setContent(currentPanel);
-				showPanel(panelAnimationDuration * doubleOperationTimeMultiplier, false, null);
+				showPanel(panelAnimationDuration * animationTimeMultiplier.get() * doubleOperationTimeMultiplier, false, null);
 			});
 		}
 	}
 
 	private void closePanel(Panel panel) {
 		if (currentPanel.model == panel) {
-			showPanel(panelAnimationDuration, true, () -> {
+			showPanel(panelAnimationDuration * animationTimeMultiplier.get(), true, () -> {
 				currentPanel = null;
 				view.sidebarContainer.setContent(null);
 			});
