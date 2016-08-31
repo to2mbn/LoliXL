@@ -29,3 +29,14 @@
 .h6 {
 	-fx-font-size: 12.0px
 }
+
+.alpha-scrollpane {
+	-fx-hbar-policy: never;
+	-fx-vbar-policy: never;
+	-fx-background-color: transparent;
+	-fx-control-inner-background: transparent;
+}
+
+.alpha-scrollpane > .viewport {
+	-fx-background-color: transparent;
+}

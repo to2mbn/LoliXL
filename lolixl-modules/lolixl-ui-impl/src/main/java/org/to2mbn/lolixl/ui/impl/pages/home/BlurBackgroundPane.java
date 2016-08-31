@@ -13,8 +13,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -22,6 +21,8 @@ import javafx.scene.layout.StackPane;
 public class BlurBackgroundPane extends StackPane {
 
 	private static final String PROPERTY_OPACITY = "org.to2mbn.lolixl.ui.blurBackground.opacityProperty";
+
+	private double gaussianBlurRadius = 10.0;
 
 	private Supplier<List<BlurArea>> blurArea;
 	private ObservableValue<Background> background;
@@ -70,14 +71,13 @@ public class BlurBackgroundPane extends StackPane {
 	}
 
 	private void weakBind(Runnable doBind, Node bindedNode, String propertyName, Observable... dependencies) {
-		InvalidationListener listener = dummy -> doBind.run();
+		InvalidationListener listener = new DependenciesInvalidationListener(doBind, dependencies);
 		WeakInvalidationListener weakListener = new WeakInvalidationListener(listener);
-		bindedNode.getProperties().put(propertyName, listener);
-		String keyWeak = propertyName + ".weak";
-		Object prev = bindedNode.getProperties().put(keyWeak, weakListener);
-		if (prev instanceof WeakInvalidationListener) {
-			for (Observable dep : dependencies) {
-				dep.removeListener((InvalidationListener) prev);
+		Object prev = bindedNode.getProperties().put(propertyName, listener);
+		Object prevWeak = bindedNode.getProperties().put(propertyName + ".weak", weakListener);
+		if (prev instanceof DependenciesInvalidationListener) {
+			for (Observable observable : ((DependenciesInvalidationListener) prev).dependencies) {
+				observable.removeListener((InvalidationListener) prevWeak);
 			}
 		}
 		for (Observable dep : dependencies) {
@@ -88,16 +88,12 @@ public class BlurBackgroundPane extends StackPane {
 
 	private ScrollPane createScrollPane() {
 		ScrollPane pane = new ScrollPane();
-		pane.setHbarPolicy(ScrollBarPolicy.NEVER);
-		pane.setVbarPolicy(ScrollBarPolicy.NEVER);
-		pane.setBackground(null);
-		pane.setStyle("-fx-control-inner-background: transparent;");
-		pane.getStyleClass().add("edge-to-edge");
+		pane.getStyleClass().addAll("edge-to-edge", "alpha-scrollpane");
 		FXUtils.setSizeToPref(pane);
-		pane.setEffect(new BoxBlur());
+		pane.setSnapToPixel(false);
+		pane.setEffect(new GaussianBlur(gaussianBlurRadius));
 
 		Pane content = new Pane();
-		content.backgroundProperty().set(null);
 		content.backgroundProperty().bind(background);
 		FXUtils.bindPrefSize(content, this);
 		FXUtils.setSizeToPref(content);
@@ -109,5 +105,21 @@ public class BlurBackgroundPane extends StackPane {
 
 	@Override
 	protected void layoutChildren() {}
+
+	static class DependenciesInvalidationListener implements InvalidationListener {
+
+		private Runnable action;
+		public final Observable[] dependencies;
+
+		public DependenciesInvalidationListener(Runnable action, Observable[] dependencies) {
+			this.action = action;
+			this.dependencies = dependencies;
+		}
+
+		@Override
+		public void invalidated(Observable observable) {
+			action.run();
+		}
+	}
 
 }
