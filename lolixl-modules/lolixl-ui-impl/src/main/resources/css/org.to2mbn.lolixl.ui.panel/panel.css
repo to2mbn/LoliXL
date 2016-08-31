@@ -8,3 +8,18 @@
 	-fx-alignment: center-left;
 	-fx-pref-height: 45.0px;
 }
+
+.xl-panel-previous-button {
+}
+
+.xl-panel-previous-button-base {
+	-fx-opacity: 0.0;
+}
+
+.xl-panel-previous-button-base:button-hovered {
+	-fx-opacity: 0.4;
+}
+
+.xl-panel-previous-button-base:button-pressed {
+	-fx-opacity: 0.6;
+}

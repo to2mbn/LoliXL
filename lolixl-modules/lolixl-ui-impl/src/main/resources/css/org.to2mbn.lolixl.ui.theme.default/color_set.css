@@ -43,7 +43,14 @@
 	-fx-text-fill: white;
 }
 
+
 /* panel */
 .xl-panel {
 	-fx-background-color: rgba(205.0, 92.0, 94.0, 0.8);
+}
+
+
+/* icon */
+.xl-icon {
+	-fx-fill: white;
 }

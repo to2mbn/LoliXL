@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.shape.Circle?>
 
 <fx:root
 	styleClass="xl-panel, xl-panel-container"
@@ -16,12 +18,15 @@
 			styleClass="xl-panel-header-container"
 			fx:id="headerContainer">
 			<children>
-				<ImageView
-					styleClass="xl-panel-previous-button"
-					fx:id="previousButton"
-					fitHeight="45.0"
-					fitWidth="45.0"
-					pickOnBounds="true" />
+				<StackPane fx:id="previousButtonContainer">
+					<Circle
+						fx:id="previousCircle"
+						styleClass="xl-icon, xl-panel-previous-button-base" />
+					<SVGPath
+						styleClass="xl-icon, xl-panel-previous-button"
+						fx:id="previousButton"
+						content="M13.725001,8.2189779L15.310004,9.4369802 11.031797,15.000006 25.000019,15.000006 25.000019,17.000006 11.030393,17.000006 15.310004,22.564011 13.725001,23.783012 7.7389884,16.000996z M16,2C8.2799683,2 2,8.2800293 2,16 2,23.720093 8.2799683,30 16,30 23.719971,30 30,23.720093 30,16 30,8.2800293 23.719971,2 16,2z M16,0C24.836975,0 32,7.1630859 32,16 32,24.837036 24.836975,32 16,32 7.1629639,32 0,24.837036 0,16 0,7.1630859 7.1629639,0 16,0z" />
+				</StackPane>
 				<ImageView
 					styleClass="xl-panel-icon-view"
 					fx:id="iconView"

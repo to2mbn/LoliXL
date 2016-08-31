@@ -14,7 +14,7 @@
 	<center>
 		<ScrollPane
 			id="xl-left-sidebar-sidebar-container"
-			styleClass="edge-to-edge alpha-scrollpane"
+			styleClass="edge-to-edge, alpha-scrollpane"
 			fx:id="sidebarContainer" />
 	</center>
 	<left>

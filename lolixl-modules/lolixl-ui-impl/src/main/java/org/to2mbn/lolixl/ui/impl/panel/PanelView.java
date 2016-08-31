@@ -1,16 +1,20 @@
 package org.to2mbn.lolixl.ui.impl.panel;
 
-import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.InvalidationListener;
+import javafx.css.PseudoClass;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import org.to2mbn.lolixl.ui.image.ImageLoading;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 import org.to2mbn.lolixl.ui.panel.Panel;
 import org.to2mbn.lolixl.utils.BundleUtils;
 import org.to2mbn.lolixl.utils.CollectionUtils;
@@ -22,11 +26,20 @@ public class PanelView extends BorderPane {
 
 	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.panel/panel.fxml";
 
+	private double iconW = 45.0;
+	private double iconH = 45.0;
+
 	@FXML
 	public HBox headerContainer;
 
 	@FXML
-	public ImageView previousButton;
+	public StackPane previousButtonContainer;
+
+	@FXML
+	public Circle previousCircle;
+
+	@FXML
+	public SVGPath previousButton;
 
 	@FXML
 	public ImageView iconView;
@@ -39,8 +52,8 @@ public class PanelView extends BorderPane {
 
 	public final Panel model;
 
-	public PanelView(Panel _panel) {
-		model = _panel;
+	public PanelView(Panel model) {
+		this.model = model;
 		FXUtils.checkFxThread();
 		FXMLLoader loader = new FXMLLoader(BundleUtils.getResourceFromBundle(getClass(), FXML_LOCATION));
 		loader.setRoot(this);
@@ -55,21 +68,35 @@ public class PanelView extends BorderPane {
 
 	private void initComponent() {
 		setAlignment(headerContainer, Pos.TOP_LEFT);
-
-		ObservableObjectValue<Image> previous_button_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button.png");
-		ObservableObjectValue<Image> previous_button_hover_img = ImageLoading.load("img/org.to2mbn.lolixl.ui.panel/previous_button_hover.png");
-
-		previousButton.imageProperty().bind(previous_button_img);
-		previousButton.setOnMouseMoved(event -> previousButton.imageProperty().bind(previous_button_hover_img));
-		previousButton.setOnMouseExited(event -> previousButton.imageProperty().bind(previous_button_img));
-
-		previousButton.setOnMouseClicked(event -> model.hide());
+		initPreviousButton();
 		titleLabel.setLabelFor(iconView);
 		titleLabel.textProperty().bind(model.titleProperty());
 		CollectionUtils.bindSingleton(model.contentProperty(), panelContentContainer.getChildren());
 		iconView.imageProperty().bind(model.iconProperty());
 		iconView.imageProperty().addListener((observable, oldValue, newValue) -> checkEmptyIcon());
 		checkEmptyIcon();
+	}
+
+	private void initPreviousButton() {
+		previousCircle.radiusProperty().set(previousButton.prefWidth(-1) / 2);
+		double pW = previousButtonContainer.prefWidth(-1);
+		double pH = previousButtonContainer.prefHeight(-1);
+		previousButtonContainer.setScaleX(iconW / pW);
+		previousButtonContainer.setScaleY(iconH / pH);
+		double paddingH = (iconW - pW) / 2;
+		double paddingV = (iconH - pH) / 2;
+		HBox.setMargin(previousButtonContainer, new Insets(paddingV, paddingH, paddingV, paddingH));
+		InvalidationListener onHoveredChange = dummy -> previousCircle.pseudoClassStateChanged(PseudoClass.getPseudoClass("button-hovered"),
+				previousCircle.isHover() || previousButton.isHover());
+		previousCircle.hoverProperty().addListener(onHoveredChange);
+		previousButton.hoverProperty().addListener(onHoveredChange);
+		InvalidationListener onPressedChange = dummy -> previousCircle.pseudoClassStateChanged(PseudoClass.getPseudoClass("button-pressed"),
+				previousCircle.isPressed() || previousButton.isPressed());
+		previousCircle.pressedProperty().addListener(onPressedChange);
+		previousButton.pressedProperty().addListener(onPressedChange);
+		EventHandler<MouseEvent> onClick = event -> model.hide();
+		previousCircle.setOnMouseClicked(onClick);
+		previousButton.setOnMouseClicked(onClick);
 	}
 
 	private void checkEmptyIcon() {

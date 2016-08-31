@@ -5,14 +5,10 @@ import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.i18n.I18N;
 import org.to2mbn.lolixl.ui.Presenter;
 import org.to2mbn.lolixl.ui.component.Tile;
-import org.to2mbn.lolixl.ui.panel.Panel;
-import org.to2mbn.lolixl.ui.panel.SidebarPanelDisplayService;
 import org.to2mbn.lolixl.ui.sidebar.SidebarTileService;
 import org.to2mbn.lolixl.ui.sidebar.SidebarTileElement;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
@@ -21,7 +17,6 @@ import org.to2mbn.lolixl.utils.MappedObservableList;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.value.ObservableDoubleValue;
@@ -87,19 +82,6 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 			return shownCount;
 		}, view.tileContainer.heightProperty());
 		tileService.maxShownTilesProperty().bind(shownTilesCount);
-
-		// XXX: TEST CODE, delete it
-		view.startGameButton.setOnAction(event -> {
-			BundleContext ctx = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			SidebarPanelDisplayService display = ctx.getService(ctx.getServiceReference(SidebarPanelDisplayService.class));
-			Platform.runLater(() -> {
-				Panel panel = display.newPanel();
-				SidebarTileElement service = ctx.getService(ctx.getServiceReference(SidebarTileElement.class));
-				panel.bindItem(service);
-				panel.show();
-			});
-		});
-		//
 	}
 
 	/**

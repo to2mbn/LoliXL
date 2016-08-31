@@ -1,13 +1,11 @@
 package org.to2mbn.lolixl.ui.impl.pages.home;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.layout.Region;
-import javafx.util.Duration;
+import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Queue;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -21,12 +19,14 @@ import org.to2mbn.lolixl.ui.panel.Panel;
 import org.to2mbn.lolixl.ui.panel.SidebarPanelDisplayService;
 import org.to2mbn.lolixl.utils.FunctionInterpolator;
 import org.to2mbn.lolixl.utils.GlobalVariables;
-import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.value.ObservableDoubleValue;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.layout.Region;
+import javafx.util.Duration;
 
 @Service({ SidebarPanelDisplayService.class, LeftSidebarPresenter.class })
 @Component(immediate = true)
