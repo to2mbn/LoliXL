@@ -37,8 +37,6 @@ import java.util.Optional;
 @Component(immediate = true)
 public class HomeFramePresenter extends Presenter<HomeFrameView> implements PanelDisplayService {
 
-	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
-
 	private double panelAnimationDuration = 300.0;
 
 	@Reference(target = GlobalVariables.ANIMATION_TIME_MULTIPLIER)
@@ -52,6 +50,9 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Reference
 	private BackgroundService backgroundService;
+
+	@Reference
+	private TitleBarPresenter titleBarPresenter;
 
 	/*
 	 * 动画伪代码：
@@ -109,6 +110,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Override
 	protected void initializePresenter() {
+		view.bindTitleBar(titleBarPresenter.getView().rootContainer);
 		view.homeContentPane.setLeft(sidebarPresenter.getView().rootContainer);
 		view.homeContentPane.setCenter(homeContentPresenter.getView().rootContainer);
 		view.contentPane.getChildren().add(view.homeContentPane);
@@ -123,7 +125,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		});
 
 		areaSidebar = new BlurArea(sidebarPresenter.getView().mainContentContainer);
-		areaTitleBar = new BlurArea(); // TODO: Set its value when adding a title bar
+		areaTitleBar = new BlurArea(titleBarPresenter.getView().rootContainer);
 		view.backgroundPane = new BlurBackgroundPane(() -> {
 			List<BlurArea> areas = new ArrayList<>();
 			areas.add(areaTitleBar);
@@ -144,7 +146,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	@Override
 	protected String getFxmlLocation() {
-		return FXML_LOCATION;
+		return "fxml/org.to2mbn.lolixl.ui.home/frame.fxml";
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import org.to2mbn.lolixl.utils.FXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
 public class HomeFrameView extends View {
@@ -41,10 +42,13 @@ public class HomeFrameView extends View {
 		FXUtils.setSizeToPref(mainContainer);
 
 		BorderPane.setAlignment(contentPane, Pos.TOP_LEFT);
-		contentPane.prefWidthProperty().bind(rootContainer.widthProperty());
-		// TODO: if we use a customize title bar, remember to minus the height of title bar
-		contentPane.prefHeightProperty().bind(rootContainer.heightProperty());
 		FXUtils.setSizeToPref(contentPane);
+	}
+
+	public void bindTitleBar(Region titleBar) {
+		mainContainer.setTop(titleBar);
+		contentPane.prefWidthProperty().bind(rootContainer.widthProperty());
+		contentPane.prefHeightProperty().bind(rootContainer.heightProperty().subtract(titleBar.heightProperty()));
 	}
 
 }

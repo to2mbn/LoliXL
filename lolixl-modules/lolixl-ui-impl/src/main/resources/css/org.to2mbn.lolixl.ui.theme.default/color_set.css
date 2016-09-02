@@ -54,3 +54,8 @@
 .xl-icon {
 	-fx-fill: white;
 }
+
+/* title bar */
+#xl-title-bar {
+	-fx-background-color: rgba(205.0, 82.0, 84.0, 1.0);
+}

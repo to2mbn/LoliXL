@@ -1,0 +1,51 @@
+#xl-title-bar {
+	-fx-pref-height: 30.0px;
+	-fx-padding: 0.0px 0.0px 0.0px 8.0px;
+}
+
+#xl-title-bar-label {
+	-fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
+	-fx-font-size: 11.0pt;
+	-fx-font-weight: normal;
+}
+
+#xl-title-bar-button-container {
+	-fx-alignment: center-right;
+}
+
+.xl-title-bar-button {
+	-fx-background-color: transparent;
+	-fx-pref-width: 30.0px;
+	-fx-pref-height: 30.0px;
+	-fx-border-style: null;
+	-fx-background-radius: 0.0;
+}
+
+.xl-title-bar-button-shape {
+	-fx-stroke: white;
+	-fx-fill: white;
+}
+
+.xl-title-bar-button:hover {
+	-fx-background-color: rgba(255.0, 255.0, 255.0, 0.2);
+}
+
+.xl-title-bar-button:pressed {
+	-fx-background-color: rgba(255.0, 255.0, 255.0, 0.6);
+}
+
+#xl-title-bar-minimize-button {
+	-fx-alignment: bottom-center;
+}
+
+#xl-title-bar-minimize-button-shape {
+	-fx-stroke-width: 1.0px;
+}
+
+#xl-title-bar-close-button {
+	-fx-alignment: center;
+}
+
+#xl-title-bar-close-button-shape {
+	-fx-stroke-width: 0.3px;
+}

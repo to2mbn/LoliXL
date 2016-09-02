@@ -15,7 +15,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.core.config.ConfigurationCategory;
-import org.to2mbn.lolixl.ui.impl.MainScene;
+import org.to2mbn.lolixl.ui.impl.stage.MainScene;
 import org.to2mbn.lolixl.ui.impl.theme.ThemeConfiguration.ThemeEntry;
 import org.to2mbn.lolixl.ui.impl.util.CssUtils;
 import org.to2mbn.lolixl.ui.theme.Theme;

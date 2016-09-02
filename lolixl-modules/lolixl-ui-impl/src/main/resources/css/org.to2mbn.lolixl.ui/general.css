@@ -1,33 +1,34 @@
 .label {
 	-fx-font-family: "Segoe UI", Helvetica, "Ubuntu Mono", Arial, sans-serif;
+	-fx-font-size: 11.0pt;
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6 {
-	-fx-font-weight: 500;
+	-fx-font-weight: normal;
 }
 
 .h1 {
-	-fx-font-size: 36.0px
+	-fx-font-size: 24.0pt;
 }
 
 .h2 {
-	-fx-font-size: 30.0px
+	-fx-font-size: 20.0pt;
 }
 
 .h3 {
-	-fx-font-size: 24.0px
+	-fx-font-size: 16.0pt;
 }
 
 .h4 {
-	-fx-font-size: 18.0px
+	-fx-font-size: 12.0pt;
 }
 
 .h5 {
-	-fx-font-size: 14.0px
+	-fx-font-size: 10.0pt;
 }
 
 .h6 {
-	-fx-font-size: 12.0px
+	-fx-font-size: 8.0pt;
 }
 
 .alpha-scrollpane {

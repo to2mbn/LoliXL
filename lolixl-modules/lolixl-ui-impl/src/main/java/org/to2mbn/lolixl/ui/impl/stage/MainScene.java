@@ -1,4 +1,4 @@
-package org.to2mbn.lolixl.ui.impl;
+package org.to2mbn.lolixl.ui.impl.stage;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -19,8 +19,8 @@ public class MainScene {
 
 	private static final Logger LOGGER = Logger.getLogger(MainScene.class.getCanonicalName());
 
-	public static final String PROPERTY_SCENE_ID = "org.to2mbn.lolixl.ui.impl.scene.id";
-	public static final String MAIN_SCENE_ID = "org.to2mbn.lolixl.ui.impl.scene.main.id";
+	public static final String PROPERTY_SCENE_ID = "org.to2mbn.lolixl.ui.scene";
+	public static final String MAIN_SCENE_ID = "org.to2mbn.lolixl.ui.scene.main";
 
 	@Reference(target = "(" + MainStage.PROPERTY_STAGE_ID + "=" + MainStage.MAIN_STAGE_ID + ")")
 	private Stage stage;

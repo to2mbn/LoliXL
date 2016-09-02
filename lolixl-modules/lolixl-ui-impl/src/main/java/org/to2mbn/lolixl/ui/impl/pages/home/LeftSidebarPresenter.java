@@ -32,8 +32,6 @@ import javafx.util.Duration;
 @Component(immediate = true)
 public class LeftSidebarPresenter extends Presenter<LeftSidebarView> implements SidebarPanelDisplayService {
 
-	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/left_sidebar.fxml";
-
 	private static final String CSS_CLASS_PANEL_SHOWN = "xl-left-sidebar-sidebar-container-shown";
 	private static final String CSS_CLASS_PANEL_HIDDEN = "xl-left-sidebar-sidebar-container-hidden";
 
@@ -67,7 +65,7 @@ public class LeftSidebarPresenter extends Presenter<LeftSidebarView> implements 
 
 	@Override
 	protected String getFxmlLocation() {
-		return FXML_LOCATION;
+		return "fxml/org.to2mbn.lolixl.ui.home/left_sidebar.fxml";
 	}
 
 	@Override

@@ -32,8 +32,6 @@ import javafx.util.Duration;
 @Component(immediate = true)
 public class HomeContentPresenter extends Presenter<HomeContentView> {
 
-	private static final String FXML_LOCATION = "fxml/org.to2mbn.lolixl.ui.home/content.fxml";
-
 	private static final String CSS_CLASS_TILE = "xl-sidebar-tile";
 	private static final String CSS_CLASS_TILE_EXPANDED = "xl-sidebar-tile-expanded";
 	private static final String CSS_CLASS_TILE_UNEXPANDED = "xl-sidebar-tile-unexpanded";
@@ -59,7 +57,7 @@ public class HomeContentPresenter extends Presenter<HomeContentView> {
 
 	@Override
 	protected String getFxmlLocation() {
-		return FXML_LOCATION;
+		return "fxml/org.to2mbn.lolixl.ui.home/content.fxml";
 	}
 
 	@Override

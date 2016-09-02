@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane
+	id="xl-title-bar"
+	fx:id="rootContainer"
+	xmlns="http://javafx.com/javafx/null"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="org.to2mbn.lolixl.ui.impl.pages.home.TitleBarView">
+	<left>
+		<Label
+			id="xl-title-bar-label"
+			fx:id="titleLabel" />
+	</left>
+	<right>
+		<HBox
+			id="xl-title-bar-button-container"
+			fx:id="buttonContainer">
+			<children>
+				<Button id="xl-title-bar-minimize-button" fx:id="minimizeButton" />
+				<Button id="xl-title-bar-close-button" fx:id="closeButton" />
+			</children>
+		</HBox>
+	</right>
+</BorderPane>

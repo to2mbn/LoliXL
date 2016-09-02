@@ -9,7 +9,7 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.util.PluginResourceListener;
-import org.to2mbn.lolixl.ui.impl.MainScene;
+import org.to2mbn.lolixl.ui.impl.stage.MainScene;
 import org.to2mbn.lolixl.ui.impl.util.CssUtils;
 import org.to2mbn.lolixl.utils.ParameterizedTypeUtils;
 import javafx.scene.Scene;
