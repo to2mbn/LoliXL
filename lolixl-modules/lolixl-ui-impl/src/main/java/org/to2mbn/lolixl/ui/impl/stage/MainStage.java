@@ -23,10 +23,10 @@ public class MainStage {
 	public static final String PROPERTY_STAGE_ID = "org.to2mbn.lolixl.ui.stage";
 	public static final String MAIN_STAGE_ID = "org.to2mbn.lolixl.ui.stage.main";
 
-	private static final double WIDTH = 850.0 + WindowContainer.SHADOW_WIDTH;
-	private static final double HEIGHT = 450.0 + WindowContainer.SHADOW_WIDTH;
-	private static final double MIN_WIDTH = 650.0 + WindowContainer.SHADOW_WIDTH;
-	private static final double MIN_HEIGHT = 340.0 + WindowContainer.SHADOW_WIDTH;
+	private static final double WIDTH = 850.0;
+	private static final double HEIGHT = 450.0;
+	private static final double MIN_WIDTH = 650.0;
+	private static final double MIN_HEIGHT = 340.0;
 
 	@Reference
 	private EventAdmin eventAdmin;
