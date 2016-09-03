@@ -2,12 +2,14 @@ package org.to2mbn.lolixl.ui.impl.stage;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.osgi.service.component.ComponentContext;
 import org.to2mbn.lolixl.ui.impl.pages.home.HomeFramePresenter;
+import org.to2mbn.lolixl.ui.impl.pages.home.TitleBarPresenter;
 import org.to2mbn.lolixl.utils.DictionaryAdapter;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +30,20 @@ public class MainScene {
 	@Reference
 	private HomeFramePresenter defaultFramePresenter;
 
+	@Reference
+	private TitleBarPresenter titleBarPresenter;
+
 	@Activate
 	public void active(ComponentContext compCtx) throws InterruptedException, ExecutionException {
 		Platform.runLater(() -> {
 			LOGGER.fine("Creating main scene");
-			Scene scene = new Scene(defaultFramePresenter.getView().rootContainer);
+			WindowContainer container = new WindowContainer();
+			container.initContent(defaultFramePresenter.getView().rootContainer);
+			Scene scene = new Scene(container);
+			scene.setFill(Color.TRANSPARENT);
 			stage.setScene(scene);
+			container.initStage(stage);
+			container.setDraggable(titleBarPresenter.getView().rootContainer);
 			stage.show();
 
 			Map<String, Object> properties = new HashMap<>();

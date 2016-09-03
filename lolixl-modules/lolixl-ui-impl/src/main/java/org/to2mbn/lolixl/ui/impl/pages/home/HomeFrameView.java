@@ -27,16 +27,6 @@ public class HomeFrameView extends View {
 	private void initialize() {
 		homeContentPane = new BorderPane();
 
-		rootContainer.sceneProperty().addListener((dummy, oldVal, newVal) -> {
-			rootContainer.prefWidthProperty().unbind();
-			rootContainer.prefHeightProperty().unbind();
-			if (newVal != null) {
-				rootContainer.prefWidthProperty().bind(newVal.widthProperty());
-				rootContainer.prefHeightProperty().bind(newVal.heightProperty());
-			}
-		});
-		FXUtils.setSizeToPref(rootContainer);
-
 		StackPane.setAlignment(mainContainer, Pos.TOP_LEFT);
 		FXUtils.bindPrefSize(mainContainer, rootContainer);
 		FXUtils.setSizeToPref(mainContainer);

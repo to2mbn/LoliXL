@@ -5,13 +5,16 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -238,7 +241,11 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		panels.push(entry);
 		Region upper = entry.view;
 
+		turnOnSpeedCache(upper);
+		turnOnSpeedCache(lower);
+
 		view.contentPane.getChildren().add(upper);
+		view.contentPane.layout();
 		updatePanelsBlur();
 
 		List<KeyValue> keyValues = new ArrayList<>();
@@ -249,6 +256,14 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		keyValues.add(new KeyValue(lower.opacityProperty(), 0.0));
 
 		// location
+		Rectangle clip = new Rectangle(upper.getWidth(), upper.getHeight());
+		ChangeListener<? super Number> onTranslateXChange = (dummy, oldVal, newVal) -> {
+			clip.setWidth(Math.max(view.rootContainer.getWidth() - newVal.doubleValue(), 0.0));
+		};
+		upper.setClip(clip);
+
+		upper.translateXProperty().addListener(onTranslateXChange);
+
 		upper.setTranslateX(getPanelTranslateEndX());
 		keyValues.add(new KeyValue(upper.translateXProperty(), 0.0, FunctionInterpolator.S_CURVE));
 
@@ -256,6 +271,10 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 		currentAnimationType = SHOWING;
 		currentAnimation.setOnFinished(e -> {
+			upper.setClip(null);
+			turnOffSpeedCache(upper);
+			turnOffSpeedCache(lower);
+			upper.translateXProperty().removeListener(onTranslateXChange);
 			view.contentPane.getChildren().remove(0);
 			updatePanelsBlur();
 			onAnimationFinished();
@@ -272,6 +291,9 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		Region upper = panels.peek().view;
 		Region lower = panels.size() > 1 ? panels.get(1).view : view.homeContentPane;
 
+		turnOnSpeedCache(upper);
+		turnOnSpeedCache(lower);
+
 		if (!canceledShowAnimation) {
 			view.contentPane.getChildren().add(0, lower);
 			lower.setOpacity(0.0);
@@ -282,6 +304,14 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		keyValues.add(new KeyValue(upper.opacityProperty(), 0.0));
 		keyValues.add(new KeyValue(lower.opacityProperty(), 1.0));
 
+		Rectangle clip = new Rectangle(upper.getWidth(), upper.getHeight());
+		ChangeListener<? super Number> onTranslateXChange = (dummy, oldVal, newVal) -> {
+			clip.setWidth(Math.max(view.rootContainer.getWidth() - newVal.doubleValue(), 0.0));
+		};
+		upper.setClip(clip);
+
+		upper.translateXProperty().addListener(onTranslateXChange);
+
 		// location
 		keyValues.add(new KeyValue(upper.translateXProperty(), getPanelTranslateEndX(), FunctionInterpolator.S_CURVE));
 
@@ -289,6 +319,10 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 		currentAnimationType = HIDING;
 		currentAnimation.setOnFinished(e -> {
+			upper.setClip(null);
+			turnOffSpeedCache(upper);
+			turnOffSpeedCache(lower);
+			upper.translateXProperty().removeListener(onTranslateXChange);
 			panels.pop();
 			view.contentPane.getChildren().remove(1);
 			updatePanelsBlur();
@@ -303,6 +337,16 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 
 	private void updatePanelsBlur() {
 		view.backgroundPane.updateArea();
+	}
+
+	private void turnOnSpeedCache(Region node) {
+		node.setCache(true);
+		node.setCacheHint(CacheHint.SPEED);
+	}
+
+	private void turnOffSpeedCache(Region node) {
+		node.setCache(false);
+		node.setCacheHint(CacheHint.DEFAULT);
 	}
 
 	private class PanelEntry {

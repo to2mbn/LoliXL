@@ -7,25 +7,24 @@ import org.to2mbn.lolixl.utils.FXUtils;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
 
 public class BlurBackgroundPane extends StackPane {
 
-	private static final String PROPERTY_OPACITY = "org.to2mbn.lolixl.ui.blurBackground.opacityProperty";
+	private static final String PROPERTY_CHILD = "org.to2mbn.lolixl.ui.blurBackground.clipPanel.child";
 
 	private double gaussianBlurRadius = 10.0;
 
 	private Supplier<List<BlurArea>> blurArea;
 	private ObservableValue<Background> background;
-	private List<ScrollPane> blurLayers = new ArrayList<>();
+	private List<Pane> blurLayers = new ArrayList<>();
 
 	public BlurBackgroundPane(Supplier<List<BlurArea>> blurArea, ObservableValue<Background> background) {
 		this.blurArea = blurArea;
@@ -39,7 +38,7 @@ public class BlurBackgroundPane extends StackPane {
 		if (difference != 0) {
 			if (difference > 0) {
 				for (int i = 0; i < difference; i++) {
-					blurLayers.add(createScrollPane());
+					blurLayers.add(createClipPane());
 				}
 			} else if (difference < 0) {
 				difference = -difference;
@@ -52,21 +51,34 @@ public class BlurBackgroundPane extends StackPane {
 		}
 		for (int i = 0; i < areas.size(); i++) {
 			BlurArea area = areas.get(i);
-			ScrollPane pane = blurLayers.get(i);
+			Pane pane = blurLayers.get(i);
+			Pane child = (Pane) pane.getProperties().get(PROPERTY_CHILD);
+			Rectangle clip = new Rectangle();
+			clip.widthProperty().bind(area.w);
+			clip.heightProperty().bind(area.h);
+			pane.setClip(clip);
 
-			weakBind(() -> pane.relocate(area.x.get(), area.y.get()),
-					pane, "org.to2mbn.lolixl.ui.blurBackground.locationListener", area.x, area.y);
+			weakBind(() -> {
+				Point2D pos = localAreaPosition(area);
+				pane.relocate(pos.getX(), pos.getY());
+				child.relocate(-pos.getX(), -pos.getY());
+			}, pane, "org.to2mbn.lolixl.ui.blurBackground.locationListener", area.x, area.y);
 
-			weakBind(() -> pane.resize(
-					Math.min(area.w.get(), getWidth() - area.x.get()),
-					Math.min(area.h.get(), getHeight() - area.y.get())),
-					pane, "org.to2mbn.lolixl.ui.blurBackground.sizeListener", area.x, area.y, area.w, area.h, widthProperty(), heightProperty());
+			weakBind(() -> {
+				Point2D pos = localAreaPosition(area);
+				pane.resize(
+						Math.min(area.w.get(), getWidth() - pos.getX()),
+						Math.min(area.h.get(), getHeight() - pos.getY()));
+			}, pane, "org.to2mbn.lolixl.ui.blurBackground.sizeListener", area.x, area.y, area.w, area.h, widthProperty(), heightProperty());
 
-			pane.hvalueProperty().bind(area.x.divide(widthProperty().subtract(Bindings.min(area.w, widthProperty().subtract(area.x)))));
-			pane.vvalueProperty().bind(area.y.divide(heightProperty().subtract(Bindings.min(area.y, heightProperty().subtract(area.y)))));
-
-			((DoubleProperty) pane.getProperties().get(PROPERTY_OPACITY)).bind(area.opacity);
+			child.opacityProperty().bind(area.opacity);
 		}
+	}
+
+	private Point2D localAreaPosition(BlurArea area) {
+		Point2D p0 = localToScene(0, 0);
+		Point2D p1 = area.node.localToScene(0, 0);
+		return p1.subtract(p0);
 	}
 
 	private void weakBind(Runnable doBind, Node bindedNode, String propertyName, Observable... dependencies) {
@@ -85,21 +97,23 @@ public class BlurBackgroundPane extends StackPane {
 		doBind.run();
 	}
 
-	private ScrollPane createScrollPane() {
-		ScrollPane pane = new ScrollPane();
-		pane.getStyleClass().addAll("edge-to-edge", "alpha-scrollpane");
-		FXUtils.setSizeToPref(pane);
-		pane.setSnapToPixel(false);
-		pane.setEffect(new GaussianBlur(gaussianBlurRadius));
+	private Pane createClipPane() {
+		Pane backgroundPane = new Pane();
+		backgroundPane.backgroundProperty().bind(background);
+		FXUtils.bindPrefSize(backgroundPane, this);
+		FXUtils.setSizeToPref(backgroundPane);
+		backgroundPane.setManaged(false);
+		backgroundPane.setEffect(new GaussianBlur(gaussianBlurRadius));
+		weakBind(() -> backgroundPane.resize(getWidth(), getHeight()),
+				backgroundPane, "org.to2mbn.lolixl.ui.blurBackground.backgroundSizeListener", this.widthProperty(), this.heightProperty());
 
-		Pane content = new Pane();
-		content.backgroundProperty().bind(background);
-		FXUtils.bindPrefSize(content, this);
-		FXUtils.setSizeToPref(content);
-		pane.setContent(content);
+		Pane clipPane = new Pane();
+		clipPane.getChildren().add(backgroundPane);
+		FXUtils.setSizeToPref(clipPane);
+		clipPane.setStyle("-fx-background-color: transparent;");
 
-		pane.getProperties().put(PROPERTY_OPACITY, content.opacityProperty());
-		return pane;
+		clipPane.getProperties().put(PROPERTY_CHILD, backgroundPane);
+		return clipPane;
 	}
 
 	@Override

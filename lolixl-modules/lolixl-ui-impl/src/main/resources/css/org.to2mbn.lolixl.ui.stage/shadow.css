@@ -1,0 +1,7 @@
+.xl-shadow-stage {
+	-fx-effect: dropshadow(three-pass-box, darkgrey, 15.0 , 0.0 , 0.0 , 0.0);
+}
+
+.xl-shadow-stage:window-focused {
+	-fx-effect: dropshadow(three-pass-box, black, 15.0 , 0.1 , 0.0 , 0.0);
+}

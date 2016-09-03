@@ -23,10 +23,10 @@ public class MainStage {
 	public static final String PROPERTY_STAGE_ID = "org.to2mbn.lolixl.ui.stage";
 	public static final String MAIN_STAGE_ID = "org.to2mbn.lolixl.ui.stage.main";
 
-	private static final double WIDTH = 850.0;
-	private static final double HEIGHT = 450.0;
-	private static final double MIN_WIDTH = 650.0;
-	private static final double MIN_HEIGHT = 340.0;
+	private static final double WIDTH = 850.0 + WindowContainer.SHADOW_WIDTH;
+	private static final double HEIGHT = 450.0 + WindowContainer.SHADOW_WIDTH;
+	private static final double MIN_WIDTH = 650.0 + WindowContainer.SHADOW_WIDTH;
+	private static final double MIN_HEIGHT = 340.0 + WindowContainer.SHADOW_WIDTH;
 
 	@Reference
 	private EventAdmin eventAdmin;
@@ -35,7 +35,7 @@ public class MainStage {
 	public void active(ComponentContext compCtx) {
 		Platform.runLater(() -> {
 			LOGGER.fine("Creating main stage");
-			Stage stage = new Stage(StageStyle.UNDECORATED);
+			Stage stage = new Stage(StageStyle.TRANSPARENT);
 			stage.setOnCloseRequest(event -> Platform.runLater(() -> eventAdmin.postEvent(new ApplicationExitEvent())));
 			stage.setWidth(WIDTH);
 			stage.setHeight(HEIGHT);
