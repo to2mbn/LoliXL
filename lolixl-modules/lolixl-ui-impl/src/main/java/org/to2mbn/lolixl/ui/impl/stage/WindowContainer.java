@@ -1,7 +1,6 @@
 package org.to2mbn.lolixl.ui.impl.stage;
 
 import javafx.css.PseudoClass;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -80,7 +79,6 @@ public class WindowContainer extends Pane {
 			}
 			dragX = event.getScreenX();
 			dragY = event.getScreenY();
-			node.setCursor(Cursor.HAND);
 			stage.setX(dragX - initDx);
 			stage.setY(dragY - initDy);
 
@@ -88,7 +86,6 @@ public class WindowContainer extends Pane {
 		});
 		node.setOnMouseReleased(event -> {
 			if (stage.isResizable()) {
-				node.setCursor(Cursor.DEFAULT);
 				dragX = Double.NaN;
 				dragY = Double.NaN;
 				initDx = Double.NaN;

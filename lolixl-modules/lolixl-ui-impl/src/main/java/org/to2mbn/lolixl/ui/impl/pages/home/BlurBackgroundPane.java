@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import org.to2mbn.lolixl.utils.FXUtils;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.WeakInvalidationListener;
@@ -58,18 +59,18 @@ public class BlurBackgroundPane extends StackPane {
 			clip.heightProperty().bind(area.h);
 			pane.setClip(clip);
 
-			weakBind(() -> {
+			weakBind(() -> Platform.runLater(() -> {
 				Point2D pos = localAreaPosition(area);
 				pane.relocate(pos.getX(), pos.getY());
 				child.relocate(-pos.getX(), -pos.getY());
-			}, pane, "org.to2mbn.lolixl.ui.blurBackground.locationListener", area.x, area.y);
+			}), pane, "org.to2mbn.lolixl.ui.blurBackground.locationListener", area.x, area.y, area.absPosChangeNotfier);
 
-			weakBind(() -> {
+			weakBind(() -> Platform.runLater(() -> {
 				Point2D pos = localAreaPosition(area);
 				pane.resize(
 						Math.min(area.w.get(), getWidth() - pos.getX()),
 						Math.min(area.h.get(), getHeight() - pos.getY()));
-			}, pane, "org.to2mbn.lolixl.ui.blurBackground.sizeListener", area.x, area.y, area.w, area.h, widthProperty(), heightProperty());
+			}), pane, "org.to2mbn.lolixl.ui.blurBackground.sizeListener", area.x, area.y, area.w, area.h, widthProperty(), heightProperty(), area.absPosChangeNotfier);
 
 			child.opacityProperty().bind(area.opacity);
 		}
@@ -77,7 +78,7 @@ public class BlurBackgroundPane extends StackPane {
 
 	private Point2D localAreaPosition(BlurArea area) {
 		Point2D p0 = localToScene(0, 0);
-		Point2D p1 = area.node.localToScene(0, 0);
+		Point2D p1 = area.node.localToScene(area.x.get(), area.y.get());
 		return p1.subtract(p0);
 	}
 
@@ -111,6 +112,7 @@ public class BlurBackgroundPane extends StackPane {
 		clipPane.getChildren().add(backgroundPane);
 		FXUtils.setSizeToPref(clipPane);
 		clipPane.setStyle("-fx-background-color: transparent;");
+		clipPane.setSnapToPixel(false);
 
 		clipPane.getProperties().put(PROPERTY_CHILD, backgroundPane);
 		return clipPane;

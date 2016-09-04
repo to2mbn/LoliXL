@@ -1,6 +1,25 @@
 package org.to2mbn.lolixl.ui.impl.pages.home;
 
 import static org.to2mbn.lolixl.utils.FXUtils.checkFxThread;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
+import org.osgi.service.component.ComponentContext;
+import org.to2mbn.lolixl.ui.Presenter;
+import org.to2mbn.lolixl.ui.impl.panel.PanelImpl;
+import org.to2mbn.lolixl.ui.impl.panel.PanelView;
+import org.to2mbn.lolixl.ui.panel.Panel;
+import org.to2mbn.lolixl.ui.panel.PanelDisplayService;
+import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
+import org.to2mbn.lolixl.utils.FXUtils;
+import org.to2mbn.lolixl.utils.FunctionInterpolator;
+import org.to2mbn.lolixl.utils.GlobalVariables;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -16,25 +35,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
-import org.osgi.service.component.ComponentContext;
-import org.to2mbn.lolixl.ui.Presenter;
-import org.to2mbn.lolixl.ui.impl.panel.PanelImpl;
-import org.to2mbn.lolixl.ui.impl.panel.PanelView;
-import org.to2mbn.lolixl.ui.panel.Panel;
-import org.to2mbn.lolixl.ui.panel.PanelDisplayService;
-import org.to2mbn.lolixl.ui.theme.background.BackgroundService;
-import org.to2mbn.lolixl.utils.FXUtils;
-import org.to2mbn.lolixl.utils.FunctionInterpolator;
-import org.to2mbn.lolixl.utils.GlobalVariables;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service({ PanelDisplayService.class, HomeFramePresenter.class })
 @Component(immediate = true)
@@ -171,6 +171,11 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		return panels.stream()
 				.map(entry -> entry.model)
 				.toArray(Panel[]::new);
+	}
+
+	public void updateAreaPosition() {
+		areaSidebar.absPosChangeNotfier.notifyChanged();
+		areaTitleBar.absPosChangeNotfier.notifyChanged();
 	}
 
 	private void showPanel(Panel panel) {
@@ -332,7 +337,7 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 	}
 
 	private double getPanelTranslateEndX() {
-		return view.rootContainer.getWidth() / 8.0;
+		return view.rootContainer.getWidth() / 4.0;
 	}
 
 	private void updatePanelsBlur() {

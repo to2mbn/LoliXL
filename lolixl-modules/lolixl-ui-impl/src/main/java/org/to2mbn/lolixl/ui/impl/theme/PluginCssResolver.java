@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
+import org.osgi.service.event.EventAdmin;
 import org.to2mbn.lolixl.plugin.PluginManager;
 import org.to2mbn.lolixl.plugin.util.PluginResourceListener;
+import org.to2mbn.lolixl.ui.event.CssApplyEvent;
 import org.to2mbn.lolixl.ui.impl.stage.MainScene;
 import org.to2mbn.lolixl.ui.impl.util.CssUtils;
 import org.to2mbn.lolixl.utils.ParameterizedTypeUtils;
@@ -25,12 +27,16 @@ public class PluginCssResolver {
 	@Reference
 	private PluginManager pluginManager;
 
+	@Reference
+	private EventAdmin eventAdmin;
+
 	private PluginResourceListener<Set<String>> resourceListener = PluginResourceListener
 			.<Set<String>> json("META-INF/lolixl/css.json", ParameterizedTypeUtils.createParameterizedType(Set.class, String.class))
 			.whenAdding((plugin, cssFiles) -> Optional.ofNullable(this.scene).ifPresent(scene -> {
 				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
 				LOGGER.info("Loading css " + css);
 				scene.getStylesheets().addAll(css);
+				eventAdmin.postEvent(new CssApplyEvent(plugin));
 			}))
 			.whenRemoving((plugin, cssFiles) -> Optional.ofNullable(this.scene).ifPresent(scene -> {
 				List<String> css = CssUtils.mapCssToUrls(plugin.getBundle(), cssFiles);
