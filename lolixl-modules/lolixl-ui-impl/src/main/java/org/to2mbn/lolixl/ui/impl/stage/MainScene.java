@@ -72,7 +72,10 @@ public class MainScene implements EventHandler {
 		if (event instanceof CssApplyEvent && ((CssApplyEvent) event).getPlugin().getBundle() == bundleCtx.getBundle()) {
 			Platform.runLater(() -> {
 				stage.show();
-				Platform.runLater(() -> defaultFramePresenter.updateAreaPosition());
+				Platform.runLater(() -> {
+					stage.setResizable(false);
+					defaultFramePresenter.updateAreaPosition();
+				});
 			});
 		}
 	}

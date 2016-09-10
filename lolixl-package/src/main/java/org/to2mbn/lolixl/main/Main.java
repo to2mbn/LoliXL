@@ -61,7 +61,6 @@ class Main {
 		System.setProperty("lolixl.forciblyExit", "true");
 		System.setProperty("lolixl.overwriteSystemPlugins", "true");
 		System.setProperty("lolixl.hackCss", "true");
-		System.setProperty("lolixl.windowShadow", "true");
 		System.setProperty("org.ehcache.sizeof.AgentSizeOf.bypass", "true");
 	}
 
