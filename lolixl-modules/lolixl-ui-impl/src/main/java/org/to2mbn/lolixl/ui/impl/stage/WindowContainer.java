@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class WindowContainer extends Pane {
@@ -19,6 +20,7 @@ public class WindowContainer extends Pane {
 	private Stage stage;
 	private Pane shadowPane;
 	private Pane resizePane;
+	private Region contentNode;
 
 	private double moveDragX = Double.NaN;
 	private double moveDragY = Double.NaN;
@@ -47,8 +49,15 @@ public class WindowContainer extends Pane {
 		addEventHandler(MouseEvent.MOUSE_EXITED, this::onMouseExited);
 	}
 
-	public void initContent(Region content) {
-		this.content = content;
+	public void initContent(Region contentNode) {
+		this.contentNode = contentNode;
+		Rectangle rect = new Rectangle();
+		rect.widthProperty().bind(widthProperty().subtract(2 * SHADOW_WIDTH));
+		rect.heightProperty().bind(heightProperty().subtract(2 * SHADOW_WIDTH));
+		contentNode.setClip(rect);
+
+		this.content = new Pane(contentNode);
+		content.setStyle("-fx-background-color: transparent;");
 		content.getStyleClass().add("xl-shadow-stage");
 		getChildren().add(content);
 	}
@@ -66,6 +75,8 @@ public class WindowContainer extends Pane {
 		resizePane.resize(getWidth() - 2 * MOUSE_TRANSPARENT_WIDTH, getHeight() - 2 * MOUSE_TRANSPARENT_WIDTH);
 		content.relocate(SHADOW_WIDTH, SHADOW_WIDTH);
 		content.resize(getWidth() - 2 * SHADOW_WIDTH, getHeight() - 2 * SHADOW_WIDTH);
+		contentNode.relocate(0, 0);
+		contentNode.resize(getWidth() - 2 * SHADOW_WIDTH, getHeight() - 2 * SHADOW_WIDTH);
 	}
 
 	public void setDraggable(Node node) {

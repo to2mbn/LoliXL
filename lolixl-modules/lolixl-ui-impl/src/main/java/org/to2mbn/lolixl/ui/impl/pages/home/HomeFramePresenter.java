@@ -24,7 +24,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableDoubleValue;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
@@ -33,7 +32,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 @Service({ PanelDisplayService.class, HomeFramePresenter.class })
@@ -260,15 +258,6 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		keyValues.add(new KeyValue(upper.opacityProperty(), 1.0));
 		keyValues.add(new KeyValue(lower.opacityProperty(), 0.0));
 
-		// location
-		Rectangle clip = new Rectangle(upper.getWidth(), upper.getHeight());
-		ChangeListener<? super Number> onTranslateXChange = (dummy, oldVal, newVal) -> {
-			clip.setWidth(Math.max(view.rootContainer.getWidth() - newVal.doubleValue(), 0.0));
-		};
-		upper.setClip(clip);
-
-		upper.translateXProperty().addListener(onTranslateXChange);
-
 		upper.setTranslateX(getPanelTranslateEndX());
 		keyValues.add(new KeyValue(upper.translateXProperty(), 0.0, FunctionInterpolator.S_CURVE));
 
@@ -279,7 +268,6 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 			upper.setClip(null);
 			turnOffSpeedCache(upper);
 			turnOffSpeedCache(lower);
-			upper.translateXProperty().removeListener(onTranslateXChange);
 			view.contentPane.getChildren().remove(0);
 			updatePanelsBlur();
 			onAnimationFinished();
@@ -309,14 +297,6 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 		keyValues.add(new KeyValue(upper.opacityProperty(), 0.0));
 		keyValues.add(new KeyValue(lower.opacityProperty(), 1.0));
 
-		Rectangle clip = new Rectangle(upper.getWidth(), upper.getHeight());
-		ChangeListener<? super Number> onTranslateXChange = (dummy, oldVal, newVal) -> {
-			clip.setWidth(Math.max(view.rootContainer.getWidth() - newVal.doubleValue(), 0.0));
-		};
-		upper.setClip(clip);
-
-		upper.translateXProperty().addListener(onTranslateXChange);
-
 		// location
 		keyValues.add(new KeyValue(upper.translateXProperty(), getPanelTranslateEndX(), FunctionInterpolator.S_CURVE));
 
@@ -327,7 +307,6 @@ public class HomeFramePresenter extends Presenter<HomeFrameView> implements Pane
 			upper.setClip(null);
 			turnOffSpeedCache(upper);
 			turnOffSpeedCache(lower);
-			upper.translateXProperty().removeListener(onTranslateXChange);
 			panels.pop();
 			view.contentPane.getChildren().remove(1);
 			updatePanelsBlur();
