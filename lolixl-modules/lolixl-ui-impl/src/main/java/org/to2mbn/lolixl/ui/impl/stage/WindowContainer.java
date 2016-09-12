@@ -1,6 +1,8 @@
 package org.to2mbn.lolixl.ui.impl.stage;
 
+import static org.to2mbn.lolixl.utils.MathUtils.*;
 import java.math.BigDecimal;
+import javax.sql.rowset.spi.TransactionalWriter;
 import javafx.css.PseudoClass;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -31,22 +33,15 @@ public class WindowContainer extends Pane {
 	private double resizeDragY = Double.NaN;
 
 	public WindowContainer() {
-		setStyle("-fx-background-color: transparent;");
+		setStyle("-fx-background-color: null;");
 
 		shadowPane = new Pane();
-		shadowPane.setStyle("-fx-background-color: transparent;");
-		shadowPane.setMouseTransparent(true);
+		shadowPane.setStyle("-fx-background-color: null;");
 		getChildren().add(shadowPane);
 
 		resizePane = new Pane();
-		resizePane.setStyle("-fx-background-color: transparent;");
+		resizePane.setStyle("-fx-background-color: null;");
 		getChildren().add(resizePane);
-
-		addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
-		addEventHandler(MouseEvent.MOUSE_PRESSED, this::onMousePressed);
-		addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
-		addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseEntered);
-		addEventHandler(MouseEvent.MOUSE_EXITED, this::onMouseExited);
 	}
 
 	public void initContent(Region contentNode) {
@@ -65,6 +60,11 @@ public class WindowContainer extends Pane {
 	public void initStage(Stage stage) {
 		this.stage = stage;
 		stage.focusedProperty().addListener((dummy, oldVal, newVal) -> content.pseudoClassStateChanged(PseudoClass.getPseudoClass("window-focused"), newVal));
+		stage.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::onMouseDragged);
+		stage.addEventHandler(MouseEvent.MOUSE_PRESSED, this::onMousePressed);
+		stage.addEventHandler(MouseEvent.MOUSE_RELEASED, this::onMouseReleased);
+		stage.addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseEntered);
+		stage.addEventHandler(MouseEvent.MOUSE_EXITED, this::onMouseExited);
 	}
 
 	@Override
@@ -138,29 +138,53 @@ public class WindowContainer extends Pane {
 		}
 		double newX = event.getScreenX();
 		double newY = event.getScreenY();
-		double deltaX = newX - resizeDragX;
-		double deltaY = newY - resizeDragY;
+		double windowX = stage.getX() + SHADOW_WIDTH;
+		double windowY = stage.getY() + SHADOW_WIDTH;
+		double minWidth = stage.getMinWidth() - 2 * SHADOW_WIDTH;
+		double maxWidth = stage.getMaxWidth() - 2 * SHADOW_WIDTH;
+		double minHeight = stage.getMinHeight() - 2 * SHADOW_WIDTH;
+		double maxHeight = stage.getMaxHeight() - 2 * SHADOW_WIDTH;
+		double oldWidth = stage.getWidth() - 2 * SHADOW_WIDTH;
+		double oldHeight = stage.getHeight() - 2 * SHADOW_WIDTH;
+
+		double toHeight = Double.NaN;
+		double toWidth = Double.NaN;
+		double toX = Double.NaN;
+		double toY = Double.NaN;
+
+		Cursor cursor = getCursor();
+		if (cursor == Cursor.N_RESIZE || cursor == Cursor.NW_RESIZE || cursor == Cursor.NE_RESIZE) {
+			toHeight = clamp(minHeight, windowY + oldHeight - newY, maxHeight);
+			toY = windowY + oldHeight - toHeight;
+		}
+		if (cursor == Cursor.S_RESIZE || cursor == Cursor.SW_RESIZE || cursor == Cursor.SE_RESIZE) {
+			toHeight = clamp(minHeight, newY - windowY, maxHeight);
+		}
+		if (cursor == Cursor.W_RESIZE || cursor == Cursor.NW_RESIZE || cursor == Cursor.SW_RESIZE) {
+			toWidth = clamp(minWidth, windowX + oldWidth - newX, maxWidth);
+			toX = windowX + oldWidth - toWidth;
+		}
+		if (cursor == Cursor.E_RESIZE || cursor == Cursor.NE_RESIZE || cursor == Cursor.SE_RESIZE) {
+			toWidth = clamp(minWidth, newX - windowX, maxWidth);
+		}
+
+		if (!Double.isNaN(toX)) {
+			stage.setX(toX - SHADOW_WIDTH);
+		}
+		if (!Double.isNaN(toY)) {
+			stage.setY(toY - SHADOW_WIDTH);
+		}
+		if (!Double.isNaN(toWidth)) {
+			stage.setWidth(toWidth + 2 * SHADOW_WIDTH);
+		}
+		if (!Double.isNaN(toHeight)) {
+			stage.setHeight(toHeight + 2 * SHADOW_WIDTH);
+		}
+
 		resizeDragX = newX;
 		resizeDragY = newY;
 
-		Cursor cursor = getCursor();
-		if (cursor == Cursor.NW_RESIZE) {
-
-		} else if (cursor == Cursor.NE_RESIZE) {
-
-		} else if (cursor == Cursor.SW_RESIZE) {
-
-		} else if (cursor == Cursor.SE_RESIZE) {
-
-		} else if (cursor == Cursor.N_RESIZE) {
-
-		} else if (cursor == Cursor.S_RESIZE) {
-
-		} else if (cursor == Cursor.W_RESIZE) {
-
-		} else if (cursor == Cursor.E_RESIZE) {
-			stage.setWidth(stage.getWidth() + deltaX);
-		}
+		event.consume();
 	}
 
 	private void onMouseReleased(MouseEvent event) {
